@@ -1,4 +1,4 @@
-module Atsu06/gtfs-gorm
+module github.com/Atsu06/gtfs-gorm
 
 go 1.21
 
