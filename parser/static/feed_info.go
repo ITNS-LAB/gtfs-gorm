@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadFeedInfo(path string) []static.FeedInfo {
+func ParseFeedInfo(path string) []static.FeedInfo {
 	var feedInfos []static.FeedInfo
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

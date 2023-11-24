@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadStops(path string) []static.Stop {
+func ParseStops(path string) []static.Stop {
 	var stops []static.Stop
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

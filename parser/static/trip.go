@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadTrips(path string) []static.Trip {
+func ParseTrips(path string) []static.Trip {
 	var trips []static.Trip
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

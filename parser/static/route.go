@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadRoutes(path string) []static.Route {
+func ParseRoutes(path string) []static.Route {
 	var routes []static.Route
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

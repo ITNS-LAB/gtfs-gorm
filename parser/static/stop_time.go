@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadStopTimes(path string) []static.StopTime {
+func ParseStopTimes(path string) []static.StopTime {
 	var stopTimes []static.StopTime
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

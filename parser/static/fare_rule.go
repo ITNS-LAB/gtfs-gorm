@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadFareRules(path string) []static.FareRule {
+func ParseFareRules(path string) []static.FareRule {
 	var fareRules []static.FareRule
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

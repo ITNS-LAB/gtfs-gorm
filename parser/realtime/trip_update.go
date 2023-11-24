@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func ReadTripUpdatePb(file string) []realtime.TripUpdate {
+func ParseTripUpdatePb(file string) []realtime.TripUpdate {
 	// gtfs-realtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {

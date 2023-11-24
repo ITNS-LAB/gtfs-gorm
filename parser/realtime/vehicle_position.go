@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func ReadVehiclePositionPb(file string) []realtime.VehiclePosition {
+func ParseVehiclePositionPb(file string) []realtime.VehiclePosition {
 	// gtfs-realtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {

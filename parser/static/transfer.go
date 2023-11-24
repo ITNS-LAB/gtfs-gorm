@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadTransfers(path string) []static.Transfer {
+func ParseTransfers(path string) []static.Transfer {
 	var transfers []static.Transfer
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

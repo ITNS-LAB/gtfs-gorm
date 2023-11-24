@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadTranslations(path string) []static.Translation {
+func ParseTranslations(path string) []static.Translation {
 	var translations []static.Translation
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

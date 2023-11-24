@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadAttributions(path string) []static.Attribution {
+func ParseAttributions(path string) []static.Attribution {
 	var attributions []static.Attribution
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

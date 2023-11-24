@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadShapes(path string) []static.Shape {
+func ParseShapes(path string) []static.Shape {
 	var shapes []static.Shape
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

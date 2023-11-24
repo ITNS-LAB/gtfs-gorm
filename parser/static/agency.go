@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadAgency(path string) []static.Agency {
+func ParseAgency(path string) []static.Agency {
 	var agencies []static.Agency
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadLevels(path string) []static.Level {
+func ParseLevels(path string) []static.Level {
 	var levels []static.Level
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

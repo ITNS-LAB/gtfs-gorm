@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadFareAttributes(path string) []static.FareAttribute {
+func ParseFareAttributes(path string) []static.FareAttribute {
 	var fareAttributes []static.FareAttribute
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

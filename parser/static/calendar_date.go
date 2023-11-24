@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadCalendarDates(path string) []static.CalendarDate {
+func ParseCalendarDates(path string) []static.CalendarDate {
 	var calendarDates []static.CalendarDate
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {

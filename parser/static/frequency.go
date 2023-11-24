@@ -6,7 +6,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func LoadFrequencies(path string) []static.Frequency {
+func ParseFrequencies(path string) []static.Frequency {
 	var frequencies []static.Frequency
 	df := dataframe.OpenCsv(path)
 	for df.HasNext() {
