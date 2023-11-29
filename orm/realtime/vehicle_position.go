@@ -3,10 +3,10 @@ package realtime
 import "time"
 
 type VehiclePosition struct {
-	VehiclePositionId   uint                             `gorm:"primaryKey" gorm:"auto_increment"`
-	Trip                VehiclePositionTripDescriptor    `gorm:"foreignkey:VehiclePositionId"`
-	Vehicle             VehiclePositionVehicleDescriptor `gorm:"foreignkey:VehiclePositionId"`
-	Position            Position                         `gorm:"foreignkey:VehiclePositionId"`
+	VehiclePositionId   uint                             `gorm:"primaryKey;auto_increment"`
+	Trip                VehiclePositionTripDescriptor    `gorm:"foreignKey:VehiclePositionId"`
+	Vehicle             VehiclePositionVehicleDescriptor `gorm:"foreignKey:VehiclePositionId"`
+	Position            Position                         `gorm:"foreignKey:VehiclePositionId"`
 	CurrentStopSequence *uint32
 	StopId              *string
 	CurrentStatus       *string
@@ -21,7 +21,7 @@ func (VehiclePosition) TableName() string {
 }
 
 type VehiclePositionTripDescriptor struct {
-	SerialId             uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId             uint `gorm:"primaryKey;auto_increment"`
 	VehiclePositionId    uint
 	TripId               *string
 	RouteId              *string
@@ -36,7 +36,7 @@ func (VehiclePositionTripDescriptor) TableName() string {
 }
 
 type VehiclePositionVehicleDescriptor struct {
-	SerialId          uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId          uint `gorm:"primaryKey;auto_increment"`
 	VehiclePositionId uint
 	Id                *string
 	Label             *string
@@ -48,7 +48,7 @@ func (VehiclePositionVehicleDescriptor) TableName() string {
 }
 
 type Position struct {
-	SerialId          uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId          uint `gorm:"primaryKey;auto_increment"`
 	VehiclePositionId uint
 	Latitude          *float32
 	Longitude         *float32

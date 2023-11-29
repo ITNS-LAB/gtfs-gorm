@@ -3,7 +3,7 @@ package realtime
 import "time"
 
 type TripUpdate struct {
-	TripUpdateId   uint                        `gorm:"primaryKey" gorm:"auto_increment"`
+	TripUpdateId   uint                        `gorm:"primaryKey;auto_increment"`
 	Trip           TripUpdateTripDescriptor    `gorm:"foreignKey:TripUpdateId"`
 	Vehicle        TripUpdateVehicleDescriptor `gorm:"foreignKey:TripUpdateId"`
 	StopTimeUpdate []StopTimeUpdate            `gorm:"foreignKey:TripUpdateId"`
@@ -17,7 +17,7 @@ func (TripUpdate) TableName() string {
 }
 
 type TripUpdateTripDescriptor struct {
-	SerialId             uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId             uint `gorm:"primaryKey;auto_increment"`
 	TripUpdateId         uint
 	TripId               *string
 	RouteId              *string
@@ -32,7 +32,7 @@ func (TripUpdateTripDescriptor) TableName() string {
 }
 
 type TripUpdateVehicleDescriptor struct {
-	SerialId     uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId     uint `gorm:"primaryKey;auto_increment"`
 	TripUpdateId uint
 	Id           *string
 	Label        *string
@@ -44,7 +44,7 @@ func (TripUpdateVehicleDescriptor) TableName() string {
 }
 
 type StopTimeUpdate struct {
-	StopTimeUpdateId     uint `gorm:"primaryKey" gorm:"auto_increment"`
+	StopTimeUpdateId     uint `gorm:"primaryKey;auto_increment"`
 	TripUpdateId         uint
 	StopSequence         *uint32
 	StopId               *string
@@ -58,7 +58,7 @@ func (StopTimeUpdate) TableName() string {
 }
 
 type ArrivalStopTimeEvent struct {
-	SerialId         uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId         uint `gorm:"primaryKey;auto_increment"`
 	StopTimeUpdateId uint
 	Delay            *int32
 	Time             *int64
@@ -70,7 +70,7 @@ func (ArrivalStopTimeEvent) TableName() string {
 }
 
 type DepartureStopTimeEvent struct {
-	SerialId         uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId         uint `gorm:"primaryKey;auto_increment"`
 	StopTimeUpdateId uint
 	Delay            *int32
 	Time             *int64

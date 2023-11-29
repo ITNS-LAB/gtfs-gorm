@@ -16,7 +16,7 @@ func (Alert) TableName() string {
 }
 
 type TimeRange struct {
-	SerialId uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId uint `gorm:"primaryKey;auto_increment"`
 	AlertId  uint
 	Start    *uint64
 	End      *uint64
@@ -27,7 +27,7 @@ func (TimeRange) TableName() string {
 }
 
 type EntitySelector struct {
-	InformedEntityId uint `gorm:"primaryKey" gorm:"auto_increment"`
+	InformedEntityId uint `gorm:"primaryKey;auto_increment"`
 	AlertId          uint
 	AgencyId         *string
 	RouteId          *string
@@ -42,7 +42,7 @@ func (EntitySelector) TableName() string {
 }
 
 type AlertTripDescriptor struct {
-	SerialId             uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId             uint `gorm:"primaryKey;auto_increment"`
 	InformedEntityId     uint
 	TripId               *string
 	RouteId              *string
@@ -57,7 +57,7 @@ func (AlertTripDescriptor) TableName() string {
 }
 
 type UrlTranslation struct {
-	SerialId uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId uint `gorm:"primaryKey;auto_increment"`
 	AlertId  uint
 	Text     *string
 	Language *string
@@ -68,7 +68,7 @@ func (UrlTranslation) TableName() string {
 }
 
 type HeaderTextTranslation struct {
-	SerialId uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId uint `gorm:"primaryKey;auto_increment"`
 	AlertId  uint
 	Text     *string
 	Language *string
@@ -79,7 +79,7 @@ func (HeaderTextTranslation) TableName() string {
 }
 
 type DescriptionTranslation struct {
-	SerialId uint `gorm:"primaryKey" gorm:"auto_increment"`
+	SerialId uint `gorm:"primaryKey;auto_increment"`
 	AlertId  uint
 	Text     *string
 	Language *string
