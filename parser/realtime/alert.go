@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func ParseAlertPb(file string) []realtime.Alert {
+func AlertPbSlice(file string) []realtime.Alert {
 	// gtfs-realtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
