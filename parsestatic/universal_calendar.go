@@ -48,17 +48,17 @@ func ParseUniversalCalendar(calendars []ormstatic.Calendar, calendarDates []orms
 		if i.ExceptionType == nil {
 			panic("'exceptionType' is nil")
 		}
-		if *i.ExceptionType == 0 {
-			date, _ := i.Date.Value()
-			delete(ucMap, date.(time.Time))
-			continue
-		}
 		if *i.ExceptionType == 1 {
 			date, _ := i.Date.Value()
 			ucMap[date.(time.Time)] = ormstatic.UniversalCalendar{
 				ServiceId: i.ServiceId,
 				Date:      i.Date,
 			}
+			continue
+		}
+		if *i.ExceptionType == 2 {
+			date, _ := i.Date.Value()
+			delete(ucMap, date.(time.Time))
 			continue
 		}
 		panic("'exception type' is not a valid value")
