@@ -6,7 +6,7 @@ type CalendarDate struct {
 	ServiceId     *string         `gorm:"primaryKey;index;not null"`
 	Date          *datatypes.Date `gorm:"primaryKey;index;not null"`
 	ExceptionType *int            `gorm:"not null"`
-	Calendar      Calendar        `gorm:"foreignKey:ServiceId"`
+	//UniversalCalendar UniversalCalendar `gorm:"foreignKey:ServiceId"`
 }
 
 func (CalendarDate) TableName() string {

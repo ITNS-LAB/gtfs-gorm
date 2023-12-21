@@ -13,7 +13,8 @@ type Calendar struct {
 	Sunday    *int            `gorm:"not null"`
 	StartDate *datatypes.Date `gorm:"not null"`
 	EndDate   *datatypes.Date `gorm:"not null"`
-	Trip      Trip            `gorm:"foreignKey:ServiceId"`
+	//Trip      Trip            `gorm:"foreignKey:ServiceId"`
+	//UniversalCalendar UniversalCalendar `gorm:"foreignKey:ServiceId"`
 }
 
 func (Calendar) TableName() string {
