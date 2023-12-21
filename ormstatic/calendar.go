@@ -14,7 +14,7 @@ type Calendar struct {
 	StartDate *datatypes.Date `gorm:"not null"`
 	EndDate   *datatypes.Date `gorm:"not null"`
 	//Trip      Trip            `gorm:"foreignKey:ServiceId"`
-	UniversalCalendar UniversalCalendar `gorm:"foreignKey:ServiceId"`
+	//UniversalCalendar UniversalCalendar `gorm:"foreignKey:ServiceId"`
 }
 
 func (Calendar) TableName() string {
