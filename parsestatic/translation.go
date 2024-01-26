@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseTranslations(path string) []ormstatic.Translation {
+func ParseTranslations(path string) ([]ormstatic.Translation, error) {
 	var translations []ormstatic.Translation
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return translations, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -26,5 +29,5 @@ func ParseTranslations(path string) []ormstatic.Translation {
 			FieldValue:  dataframe.IsBlank(df.GetElement("field_value")),
 		})
 	}
-	return translations
+	return translations, nil
 }

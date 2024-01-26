@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseFeedInfo(path string) []ormstatic.FeedInfo {
+func ParseFeedInfo(path string) ([]ormstatic.FeedInfo, error) {
 	var feedInfos []ormstatic.FeedInfo
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return feedInfos, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -28,5 +31,5 @@ func ParseFeedInfo(path string) []ormstatic.FeedInfo {
 			FeedContactUrl:    dataframe.IsBlank(df.GetElement("feed_contact_url")),
 		})
 	}
-	return feedInfos
+	return feedInfos, nil
 }

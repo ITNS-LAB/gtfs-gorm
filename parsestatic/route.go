@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseRoutes(path string) []ormstatic.Route {
+func ParseRoutes(path string) ([]ormstatic.Route, error) {
 	var routes []ormstatic.Route
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return routes, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -31,5 +34,5 @@ func ParseRoutes(path string) []ormstatic.Route {
 			ContinuousDropOff: dataframe.ParseEnum(df.GetElement("continuous_drop_off")),
 		})
 	}
-	return routes
+	return routes, nil
 }

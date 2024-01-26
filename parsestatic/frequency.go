@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseFrequencies(path string) []ormstatic.Frequency {
+func ParseFrequencies(path string) ([]ormstatic.Frequency, error) {
 	var frequencies []ormstatic.Frequency
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return frequencies, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -24,5 +27,5 @@ func ParseFrequencies(path string) []ormstatic.Frequency {
 			ExactTimes:  dataframe.ParseEnum(df.GetElement("exact_times")),
 		})
 	}
-	return frequencies
+	return frequencies, nil
 }

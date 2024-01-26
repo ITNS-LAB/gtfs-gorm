@@ -1,27 +1,26 @@
 package parserealtime
 
 import (
-	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormrealtime"
 	"github.com/MobilityData/gtfs-realtime-bindings/golang/gtfs"
 	"google.golang.org/protobuf/proto"
 	"os"
 )
 
-func VehiclePositionPbSlice(file string) []ormrealtime.VehiclePosition {
+func VehiclePositionPbSlice(file string) ([]ormrealtime.VehiclePosition, error) {
+	var res []ormrealtime.VehiclePosition
+
 	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
-		fmt.Println("ファイルの読み込みエラー:", err)
+		return res, err
 	}
 
 	// データをデシリアライズする
 	feed := &gtfs.FeedMessage{}
 	if err := proto.Unmarshal(data, feed); err != nil {
-		fmt.Println("デシリアライズエラー:", err)
+		return res, err
 	}
-
-	var res []ormrealtime.VehiclePosition
 
 	for _, entity := range feed.Entity {
 		var trip ormrealtime.VehiclePositionTripDescriptor
@@ -101,24 +100,24 @@ func VehiclePositionPbSlice(file string) []ormrealtime.VehiclePosition {
 			OccupancyStatus:     occupancyStatus,
 		})
 	}
-	return res
+	return res, nil
 }
 
-func VehiclePositionPbMap(file string) map[string]ormrealtime.VehiclePosition {
+func VehiclePositionPbMap(file string) (map[string]ormrealtime.VehiclePosition, error) {
+	// mapの初期化
+	res := make(map[string]ormrealtime.VehiclePosition)
+
 	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
-		fmt.Println("ファイルの読み込みエラー:", err)
+		return res, err
 	}
 
 	// データをデシリアライズする
 	feed := &gtfs.FeedMessage{}
 	if err := proto.Unmarshal(data, feed); err != nil {
-		fmt.Println("デシリアライズエラー:", err)
+		return res, err
 	}
-
-	// mapの初期化
-	res := make(map[string]ormrealtime.VehiclePosition)
 
 	for _, entity := range feed.Entity {
 		var trip ormrealtime.VehiclePositionTripDescriptor
@@ -198,5 +197,5 @@ func VehiclePositionPbMap(file string) map[string]ormrealtime.VehiclePosition {
 			OccupancyStatus:     occupancyStatus,
 		}
 	}
-	return res
+	return res, nil
 }

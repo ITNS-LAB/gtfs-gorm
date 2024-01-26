@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseStopTimes(path string) []ormstatic.StopTime {
+func ParseStopTimes(path string) ([]ormstatic.StopTime, error) {
 	var stopTimes []ormstatic.StopTime
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return stopTimes, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -30,5 +33,5 @@ func ParseStopTimes(path string) []ormstatic.StopTime {
 			Timepoint:         dataframe.ParseEnum(df.GetElement("timepoint")),
 		})
 	}
-	return stopTimes
+	return stopTimes, nil
 }

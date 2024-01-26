@@ -2,17 +2,16 @@ package dataframe
 
 import (
 	"encoding/csv"
-	"fmt"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 	"os"
 )
 
-func OpenCsv(f string) DataFrame {
+func OpenCsv(f string) (DataFrame, error) {
 	// ファイルをオープン
 	file, err := os.Open(f)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		return DataFrame{}, err
 	}
 	defer file.Close()
 
@@ -23,7 +22,7 @@ func OpenCsv(f string) DataFrame {
 	// ヘッダーを読み込む
 	headers, err := reader.Read()
 	if err != nil {
-		fmt.Println("Error reading Headers:", err)
+		return DataFrame{}, err
 	}
 
 	// データフレームの作成とヘッダーの挿入
@@ -38,5 +37,5 @@ func OpenCsv(f string) DataFrame {
 
 		df = df.AppendRow(record)
 	}
-	return df
+	return df, nil
 }

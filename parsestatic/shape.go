@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseShapes(path string) []ormstatic.Shape {
+func ParseShapes(path string) ([]ormstatic.Shape, error) {
 	var shapes []ormstatic.Shape
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return shapes, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -24,5 +27,5 @@ func ParseShapes(path string) []ormstatic.Shape {
 			ShapeDistTraveled: dataframe.ParseFloat64(df.GetElement("shape_dist_traveled")),
 		})
 	}
-	return shapes
+	return shapes, nil
 }
