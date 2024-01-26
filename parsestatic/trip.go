@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseTrips(path string) []ormstatic.Trip {
+func ParseTrips(path string) ([]ormstatic.Trip, error) {
 	var trips []ormstatic.Trip
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return trips, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -29,5 +32,5 @@ func ParseTrips(path string) []ormstatic.Trip {
 			BikesAllowed:         dataframe.ParseEnum(df.GetElement("bikes_allowed")),
 		})
 	}
-	return trips
+	return trips, nil
 }

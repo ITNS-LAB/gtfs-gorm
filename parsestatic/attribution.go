@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseAttributions(path string) []ormstatic.Attribution {
+func ParseAttributions(path string) ([]ormstatic.Attribution, error) {
 	var attributions []ormstatic.Attribution
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return attributions, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -30,5 +33,5 @@ func ParseAttributions(path string) []ormstatic.Attribution {
 			AttributionPhone: dataframe.IsBlank(df.GetElement("attribution_phone")),
 		})
 	}
-	return attributions
+	return attributions, nil
 }

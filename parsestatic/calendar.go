@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseCalendar(path string) []ormstatic.Calendar {
+func ParseCalendar(path string) ([]ormstatic.Calendar, error) {
 	var calendars []ormstatic.Calendar
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return calendars, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -29,5 +32,5 @@ func ParseCalendar(path string) []ormstatic.Calendar {
 			EndDate:   dataframe.ParseDate(df.GetElement("end_date")),
 		})
 	}
-	return calendars
+	return calendars, nil
 }

@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseFareRules(path string) []ormstatic.FareRule {
+func ParseFareRules(path string) ([]ormstatic.FareRule, error) {
 	var fareRules []ormstatic.FareRule
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return fareRules, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -24,5 +27,5 @@ func ParseFareRules(path string) []ormstatic.FareRule {
 			ContainsId:    dataframe.IsBlank(df.GetElement("contains_id")),
 		})
 	}
-	return fareRules
+	return fareRules, nil
 }

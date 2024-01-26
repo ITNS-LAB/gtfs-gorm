@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseLevels(path string) []ormstatic.Level {
+func ParseLevels(path string) ([]ormstatic.Level, error) {
 	var levels []ormstatic.Level
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return levels, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -22,5 +25,5 @@ func ParseLevels(path string) []ormstatic.Level {
 			LevelName:  dataframe.IsBlank(df.GetElement("level_name")),
 		})
 	}
-	return levels
+	return levels, nil
 }

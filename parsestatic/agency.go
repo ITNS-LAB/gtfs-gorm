@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseAgency(path string) []ormstatic.Agency {
+func ParseAgency(path string) ([]ormstatic.Agency, error) {
 	var agencies []ormstatic.Agency
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return agencies, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -27,5 +30,5 @@ func ParseAgency(path string) []ormstatic.Agency {
 			AgencyEmail:    dataframe.IsBlank(df.GetElement("agency_email")),
 		})
 	}
-	return agencies
+	return agencies, nil
 }

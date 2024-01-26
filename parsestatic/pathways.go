@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParsePathways(path string) []ormstatic.Pathway {
+func ParsePathways(path string) ([]ormstatic.Pathway, error) {
 	var pathways []ormstatic.Pathway
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return pathways, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -31,5 +34,5 @@ func ParsePathways(path string) []ormstatic.Pathway {
 			ReversedSignpostedAs: dataframe.IsBlank(df.GetElement("reversed_signposted_as")),
 		})
 	}
-	return pathways
+	return pathways, nil
 }

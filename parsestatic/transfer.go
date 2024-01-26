@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseTransfers(path string) []ormstatic.Transfer {
+func ParseTransfers(path string) ([]ormstatic.Transfer, error) {
 	var transfers []ormstatic.Transfer
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return transfers, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -23,5 +26,5 @@ func ParseTransfers(path string) []ormstatic.Transfer {
 			MinTransferTime: dataframe.ParseInt(df.GetElement("min_transfer_time")),
 		})
 	}
-	return transfers
+	return transfers, nil
 }

@@ -6,9 +6,13 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseFareAttributes(path string) []ormstatic.FareAttribute {
+func ParseFareAttributes(path string) ([]ormstatic.FareAttribute, error) {
 	var fareAttributes []ormstatic.FareAttribute
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return fareAttributes, err
+	}
+
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -26,5 +30,5 @@ func ParseFareAttributes(path string) []ormstatic.FareAttribute {
 			TransferDuration: dataframe.ParseInt(df.GetElement("transfer_duration")),
 		})
 	}
-	return fareAttributes
+	return fareAttributes, nil
 }

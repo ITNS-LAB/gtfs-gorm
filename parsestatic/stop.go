@@ -6,9 +6,12 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
-func ParseStops(path string) []ormstatic.Stop {
+func ParseStops(path string) ([]ormstatic.Stop, error) {
 	var stops []ormstatic.Stop
-	df := dataframe.OpenCsv(path)
+	df, err := dataframe.OpenCsv(path)
+	if err != nil {
+		return stops, err
+	}
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
@@ -33,5 +36,5 @@ func ParseStops(path string) []ormstatic.Stop {
 			PlatformCode:       dataframe.IsBlank(df.GetElement("platform_code")),
 		})
 	}
-	return stops
+	return stops, nil
 }
