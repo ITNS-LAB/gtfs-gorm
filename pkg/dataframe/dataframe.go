@@ -1,6 +1,7 @@
 package dataframe
 
 import (
+	"database/sql"
 	"errors"
 	"strings"
 )
@@ -26,7 +27,7 @@ func (df *DataFrame) Next() ([]string, error) {
 		df.Position++
 		return rows, nil
 	}
-	return []string{}, errors.New("no more elements")
+	return nil, errors.New("no more elements")
 }
 
 func (df *DataFrame) setHeader(header []string) DataFrame {
@@ -51,11 +52,11 @@ func (df *DataFrame) HasHeader(s string) (bool, int) {
 	return isExists, i
 }
 
-func (df *DataFrame) GetElement(s string) *string {
+func (df *DataFrame) GetElement(s string) sql.NullString {
 	exists, i := df.HasHeader(s)
 	if exists {
-		return &df.Rows[df.Position-1][i]
+		return sql.NullString{String: df.Rows[df.Position-1][i], Valid: true}
 	} else {
-		return nil
+		return sql.NullString{String: "", Valid: false}
 	}
 }
