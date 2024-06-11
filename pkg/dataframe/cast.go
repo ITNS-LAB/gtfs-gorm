@@ -94,6 +94,28 @@ func ParseNullInt64(ns sql.NullString) (sql.NullInt64, error) {
 	return sql.NullInt64{Int64: 0, Valid: false}, nil
 }
 
+func ParseFloat64(ns sql.NullString) (float64, error) {
+	if ns.Valid {
+		f, err := strconv.ParseFloat(ns.String, 64)
+		if err != nil {
+			return 0, errors.New("not a valid float")
+		}
+		return f, nil
+	}
+	return 0, errors.New("invalid string")
+}
+
+func ParseNullFloat64(ns sql.NullString) (sql.NullFloat64, error) {
+	if ns.Valid {
+		f, err := strconv.ParseFloat(ns.String, 64)
+		if err != nil {
+			return sql.NullFloat64{Float64: 0, Valid: false}, errors.New("not a valid float")
+		}
+		return sql.NullFloat64{Float64: f, Valid: true}, nil
+	}
+	return sql.NullFloat64{Float64: 0, Valid: false}, nil
+}
+
 func ParseTime(ns sql.NullString) (time.Time, error) {
 	if ns.Valid {
 		layout := "20060102"

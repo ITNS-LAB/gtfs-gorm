@@ -196,6 +196,58 @@ func TestParseNullInt64(t *testing.T) {
 	}
 }
 
+func TestParseFloat64(t *testing.T) {
+	tests := []struct {
+		name    string
+		ns      sql.NullString
+		want    float64
+		wantErr bool
+	}{
+		{"valid float64", sql.NullString{String: "123.456", Valid: true}, 123.456, false},
+		{"invalid float64", sql.NullString{String: "abc", Valid: true}, 0, true},
+		{"null string", sql.NullString{String: "", Valid: false}, 0, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseFloat64(tt.ns)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseFloat64() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("ParseFloat64() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestParseNullFloat64(t *testing.T) {
+	tests := []struct {
+		name    string
+		ns      sql.NullString
+		want    sql.NullFloat64
+		wantErr bool
+	}{
+		{"valid float64", sql.NullString{String: "123.456", Valid: true}, sql.NullFloat64{Float64: 123.456, Valid: true}, false},
+		{"invalid float64", sql.NullString{String: "abc", Valid: true}, sql.NullFloat64{Float64: 0, Valid: false}, true},
+		{"null string", sql.NullString{String: "", Valid: false}, sql.NullFloat64{Float64: 0, Valid: false}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseNullFloat64(tt.ns)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseNullFloat64() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("ParseNullFloat64() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestParseTime(t *testing.T) {
 	tests := []struct {
 		name    string
