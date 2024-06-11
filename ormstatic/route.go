@@ -13,8 +13,8 @@ type Route struct {
 	RouteColor        sql.NullString
 	RouteTextColor    sql.NullString
 	RouteSortOrder    sql.NullInt64 `gorm:"index"`
-	ContinuousPickup  int16         `gorm:"default:1"`
-	ContinuousDropOff int16         `gorm:"default:1"`
+	ContinuousPickup  sql.NullInt16 `gorm:"default:1"`
+	ContinuousDropOff sql.NullInt16 `gorm:"default:1"`
 	Trip              Trip          `gorm:"foreignKey:RouteId"`
 	FareRule          FareRule      `gorm:"foreignKey:RouteId"`
 }
@@ -88,9 +88,15 @@ func (r Route) GetRouteSortOrder() any {
 }
 
 func (r Route) GetContinuousPickup() any {
-	return r.ContinuousPickup
+	if r.ContinuousPickup.Valid {
+		return r.ContinuousPickup.Int16
+	}
+	return nil
 }
 
 func (r Route) GetContinuousDropOff() any {
-	return r.ContinuousDropOff
+	if r.ContinuousDropOff.Valid {
+		return r.ContinuousDropOff.Int16
+	}
+	return nil
 }

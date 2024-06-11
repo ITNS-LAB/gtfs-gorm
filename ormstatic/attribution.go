@@ -9,9 +9,9 @@ type Attribution struct {
 	RouteId          sql.NullString `gorm:"primaryKey"`
 	TripId           sql.NullString `gorm:"primaryKey"`
 	OrganizationName string         `gorm:"not null"`
-	IsProducer       int16          `gorm:"default:0"`
-	IsOperator       int16          `gorm:"default:0"`
-	IsAuthority      int16          `gorm:"default:0"`
+	IsProducer       sql.NullInt16  `gorm:"default:0"`
+	IsOperator       sql.NullInt16  `gorm:"default:0"`
+	IsAuthority      sql.NullInt16  `gorm:"default:0"`
 	AttributionUrl   sql.NullString
 	AttributionEmail sql.NullString
 	AttributionPhone sql.NullString
@@ -19,6 +19,10 @@ type Attribution struct {
 
 func (Attribution) TableName() string {
 	return "attributions"
+}
+
+func (a Attribution) GetId() any {
+	return a.Id
 }
 
 func (a Attribution) GetAttributionId() any {
@@ -54,15 +58,24 @@ func (a Attribution) GetOrganizationName() any {
 }
 
 func (a Attribution) GetIsProducer() any {
-	return a.IsProducer
+	if a.IsProducer.Valid {
+		return a.IsProducer.Int16
+	}
+	return nil
 }
 
 func (a Attribution) GetIsOperator() any {
-	return a.IsOperator
+	if a.IsOperator.Valid {
+		return a.IsOperator.Int16
+	}
+	return nil
 }
 
 func (a Attribution) GetIsAuthority() any {
-	return a.IsAuthority
+	if a.IsAuthority.Valid {
+		return a.IsAuthority.Int16
+	}
+	return nil
 }
 
 func (a Attribution) GetAttributionUrl() any {

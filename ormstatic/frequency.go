@@ -1,13 +1,16 @@
 package ormstatic
 
-import "gorm.io/datatypes"
+import (
+	"database/sql"
+	"gorm.io/datatypes"
+)
 
 type Frequency struct {
 	TripId      string         `gorm:"primaryKey;index;not null"`
 	StartTime   datatypes.Time `gorm:"index;not null"`
 	EndTime     datatypes.Time `gorm:"index;not null"`
 	HeadwaySecs int            `gorm:"not null"`
-	ExactTimes  int16          `gorm:"default:0"`
+	ExactTimes  sql.NullInt16  `gorm:"default:0"`
 }
 
 func (Frequency) TableName() string {
@@ -31,5 +34,8 @@ func (f Frequency) GetHeadwaySecs() any {
 }
 
 func (f Frequency) GetExactTimes() any {
-	return f.ExactTimes
+	if f.ExactTimes.Valid {
+		return f.ExactTimes.Int16
+	}
+	return nil
 }

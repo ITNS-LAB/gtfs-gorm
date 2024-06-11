@@ -10,8 +10,8 @@ type Pathway struct {
 	IsBidirectional      int16  `gorm:"index;not null"`
 	Length               sql.NullFloat64
 	TraversalTime        sql.NullInt32
-	StairCount           sql.NullInt32 //non null integer だが、データがないことを示すnullが必要なためNullInt型に指定
-	MaxSlope             float64       `gorm:"default:0"`
+	StairCount           sql.NullInt32   //non null integer だが、データがないことを示すnullが必要なためNullInt型に指定
+	MaxSlope             sql.NullFloat64 `gorm:"default:0"`
 	MinWidth             sql.NullFloat64
 	SignpostedAs         sql.NullString
 	ReversedSignpostedAs sql.NullString
@@ -63,7 +63,10 @@ func (p Pathway) GetStairCount() any {
 }
 
 func (p Pathway) GetMaxSlope() any {
-	return p.MaxSlope
+	if p.MaxSlope.Valid {
+		return p.MaxSlope.Float64
+	}
+	return nil
 }
 
 func (p Pathway) GetMinWidth() any {

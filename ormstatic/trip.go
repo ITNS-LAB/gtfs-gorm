@@ -11,8 +11,8 @@ type Trip struct {
 	DirectionId          sql.NullInt16  `gorm:"index"`
 	BlockId              sql.NullString `gorm:"index"`
 	ShapeId              sql.NullString `gorm:"index"`
-	WheelchairAccessible int16          `gorm:"default:0"`
-	BikesAllowed         int16          `gorm:"default:0"`
+	WheelchairAccessible sql.NullInt16  `gorm:"default:0"`
+	BikesAllowed         sql.NullInt16  `gorm:"default:0"`
 	Frequency            Frequency      `gorm:"foreignKey:TripId"`
 }
 
@@ -68,9 +68,15 @@ func (t Trip) GetShapeId() any {
 }
 
 func (t Trip) GetWheelchairAccessible() any {
-	return t.WheelchairAccessible
+	if t.WheelchairAccessible.Valid {
+		return t.WheelchairAccessible.Int16
+	}
+	return nil
 }
 
 func (t Trip) GetBikesAllowed() any {
-	return t.BikesAllowed
+	if t.BikesAllowed.Valid {
+		return t.BikesAllowed.Int16
+	}
+	return nil
 }

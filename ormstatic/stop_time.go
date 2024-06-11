@@ -10,15 +10,15 @@ type StopTime struct {
 	ArrivalTime       nulldatatypes.NullTime `gorm:"index"`
 	DepartureTime     nulldatatypes.NullTime `gorm:"index"`
 	StopId            string                 `gorm:"primaryKey;index;not null"`
-	StopSequence      int                    `gorm:"primaryKey;index;not null"`
+	StopSequence      int64                  `gorm:"primaryKey;index;not null"`
 	StopHeadsign      sql.NullString
-	PickupType        int16 `gorm:"default:0"`
-	DropOffType       int16 `gorm:"default:0"`
-	ContinuousPickup  int16 `gorm:"default:1"`
-	ContinuousDropOff int16 `gorm:"default:1"`
+	PickupType        sql.NullInt16 `gorm:"default:0"`
+	DropOffType       sql.NullInt16 `gorm:"default:0"`
+	ContinuousPickup  sql.NullInt16 `gorm:"default:1"`
+	ContinuousDropOff sql.NullInt16 `gorm:"default:1"`
 	ShapeDistTraveled sql.NullFloat64
-	Timepoint         int16 `gorm:"default:1"`
-	Trip              Trip  `gorm:"foreignKey:TripId"`
+	Timepoint         sql.NullInt16 `gorm:"default:1"`
+	Trip              Trip          `gorm:"foreignKey:TripId"`
 }
 
 func (StopTime) TableName() string {
@@ -59,19 +59,31 @@ func (st StopTime) GetStopHeadsign() any {
 }
 
 func (st StopTime) GetPickupType() any {
-	return st.PickupType
+	if st.PickupType.Valid {
+		return st.PickupType.Int16
+	}
+	return nil
 }
 
 func (st StopTime) GetDropOffType() any {
-	return st.DropOffType
+	if st.DropOffType.Valid {
+		return st.DropOffType.Int16
+	}
+	return nil
 }
 
 func (st StopTime) GetContinuousPickup() any {
-	return st.ContinuousPickup
+	if st.ContinuousPickup.Valid {
+		return st.ContinuousPickup.Int16
+	}
+	return nil
 }
 
 func (st StopTime) GetContinuousDropOff() any {
-	return st.ContinuousDropOff
+	if st.ContinuousDropOff.Valid {
+		return st.ContinuousDropOff.Int16
+	}
+	return nil
 }
 
 func (st StopTime) GetShapeDistTraveled() any {
@@ -82,5 +94,8 @@ func (st StopTime) GetShapeDistTraveled() any {
 }
 
 func (st StopTime) GetTimepoint() any {
-	return st.Timepoint
+	if st.Timepoint.Valid {
+		return st.Timepoint.Int16
+	}
+	return nil
 }

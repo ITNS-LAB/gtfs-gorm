@@ -11,10 +11,10 @@ type Stop struct {
 	StopLon            sql.NullFloat64 //jpでは必須
 	ZoneId             sql.NullString  `gorm:"unique"`
 	StopUrl            sql.NullString
-	LocationType       int16 `gorm:"default:0"`
+	LocationType       sql.NullInt16 `gorm:"default:0"`
 	ParentStation      sql.NullString
 	StopTimezone       sql.NullString
-	WheelchairBoarding int16 `gorm:"default:0"`
+	WheelchairBoarding sql.NullInt16 `gorm:"default:0"`
 	LevelId            sql.NullString
 	PlatformCode       sql.NullString
 	StopTime           StopTime `gorm:"foreignKey:StopId"`
@@ -78,7 +78,10 @@ func (s Stop) GetStopUrl() any {
 }
 
 func (s Stop) GetLocationType() any {
-	return s.LocationType
+	if s.LocationType.Valid {
+		return s.LocationType.Int16
+	}
+	return nil
 }
 
 func (s Stop) GetParentStation() any {
@@ -96,7 +99,10 @@ func (s Stop) GetStopTimezone() any {
 }
 
 func (s Stop) GetWheelchairBoarding() any {
-	return s.WheelchairBoarding
+	if s.WheelchairBoarding.Valid {
+		return s.WheelchairBoarding.Int16
+	}
+	return nil
 }
 
 func (s Stop) GetLevelId() any {
@@ -111,8 +117,4 @@ func (s Stop) GetPlatformCode() any {
 		return s.PlatformCode.String
 	}
 	return nil
-}
-
-func (s Stop) GetStopTime() any {
-	return s.StopTime
 }
