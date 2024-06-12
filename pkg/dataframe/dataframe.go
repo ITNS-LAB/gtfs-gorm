@@ -56,7 +56,6 @@ func (df *DataFrame) GetElement(s string) sql.NullString {
 	exists, i := df.HasHeader(s)
 	if exists {
 		return sql.NullString{String: df.Rows[df.Position-1][i], Valid: true}
-	} else {
-		return sql.NullString{String: "", Valid: false}
 	}
+	return sql.NullString{String: "", Valid: false}
 }
