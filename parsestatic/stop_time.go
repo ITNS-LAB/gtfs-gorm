@@ -19,18 +19,40 @@ func ParseStopTimes(path string) ([]ormstatic.StopTime, error) {
 			break
 		}
 
+		tripId, err := dataframe.ParseString(df.GetElement("trip_id"))
+		if err != nil {
+			return []ormstatic.StopTime{}, err
+		}
+		arrivalTime, err := dataframe.ParseNullDataTypesTime(df.GetElement("arrival_time"))
+		departureTime, err := dataframe.ParseNullDataTypesTime(df.GetElement("departure_time"))
+		stopId, err := dataframe.ParseString(df.GetElement("stop_id"))
+		if err != nil {
+			return []ormstatic.StopTime{}, err
+		}
+		stopSequence, err := dataframe.ParseInt64(df.GetElement("stop_sequence"))
+		if err != nil {
+			return []ormstatic.StopTime{}, err
+		}
+		pickupType, err := dataframe.ParseNullInt16(df.GetElement("pickup_type"))
+		dropOffType, err := dataframe.ParseNullInt16(df.GetElement("drop_off_type"))
+		continuousPickup, err := dataframe.ParseNullInt16(df.GetElement("continuous_pickup"))
+		continuousDropOff, err := dataframe.ParseNullInt16(df.GetElement("continuous_drop_off"))
+		shapeDistTraveled, err := dataframe.ParseNullFloat64(df.GetElement("shape_dist_traveled"))
+		timePoint, err := dataframe.ParseNullInt16(df.GetElement("timepoint"))
+
 		stopTimes = append(stopTimes, ormstatic.StopTime{
-			TripId:            dataframe.IsBlank(df.GetElement("trip_id")),
-			ArrivalTime:       dataframe.ParseTime(df.GetElement("arrival_time")),
-			DepartureTime:     dataframe.ParseTime(df.GetElement("departure_time")),
-			StopId:            dataframe.IsBlank(df.GetElement("stop_id")),
-			StopSequence:      dataframe.ParseInt(df.GetElement("stop_sequence")),
-			StopHeadsign:      dataframe.IsBlank(df.GetElement("stop_headsign")),
-			PickupType:        dataframe.ParseEnum(df.GetElement("pickup_type")),
-			DropOffType:       dataframe.ParseEnum(df.GetElement("drop_off_type")),
-			ContinuousDropOff: dataframe.ParseEnum(df.GetElement("continuous_drop_off")),
-			ShapeDistTraveled: dataframe.ParseFloat64(df.GetElement("shape_dist_traveled")),
-			Timepoint:         dataframe.ParseEnum(df.GetElement("timepoint")),
+			TripId:            tripId,
+			ArrivalTime:       arrivalTime,
+			DepartureTime:     departureTime,
+			StopId:            stopId,
+			StopSequence:      stopSequence,
+			StopHeadsign:      df.GetElement("stop_headsign"),
+			PickupType:        pickupType,
+			DropOffType:       dropOffType,
+			ContinuousPickup:  continuousPickup,
+			ContinuousDropOff: continuousDropOff,
+			ShapeDistTraveled: shapeDistTraveled,
+			Timepoint:         timePoint,
 		})
 	}
 	return stopTimes, nil

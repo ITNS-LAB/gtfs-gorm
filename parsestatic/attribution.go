@@ -1,7 +1,6 @@
 package parsestatic
 
 import (
-	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
@@ -15,22 +14,29 @@ func ParseAttributions(path string) ([]ormstatic.Attribution, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			fmt.Println("Error:", err)
-			break
+			return attributions, err
 		}
 
+		organizationName, err := dataframe.ParseString(df.GetElement("organization_name"))
+		if err != nil {
+			return []ormstatic.Attribution{}, err
+		}
+		isProducer, err := dataframe.ParseNullInt16(df.GetElement("is_producer"))
+		isOperator, err := dataframe.ParseNullInt16(df.GetElement("is_operator"))
+		isAuthority, err := dataframe.ParseNullInt16(df.GetElement("is-authority"))
+
 		attributions = append(attributions, ormstatic.Attribution{
-			AttributionId:    dataframe.IsBlank(df.GetElement("attribution_id")),
-			AgencyId:         dataframe.IsBlank(df.GetElement("agency_id")),
-			RouteId:          dataframe.IsBlank(df.GetElement("route_id")),
-			TripId:           dataframe.IsBlank(df.GetElement("trip_id")),
-			OrganizationName: dataframe.IsBlank(df.GetElement("organization_name")),
-			IsProducer:       dataframe.ParseEnum(df.GetElement("is_producer")),
-			IsOperator:       dataframe.ParseEnum(df.GetElement("is_operator")),
-			IsAuthority:      dataframe.ParseEnum(df.GetElement("is_authority")),
-			AttributionUrl:   dataframe.IsBlank(df.GetElement("attribution_url")),
-			AttributionEmail: dataframe.IsBlank(df.GetElement("attribution_email")),
-			AttributionPhone: dataframe.IsBlank(df.GetElement("attribution_phone")),
+			AttributionId:    df.GetElement("attribution_id"),
+			AgencyId:         df.GetElement("agency_id"),
+			RouteId:          df.GetElement("route_id"),
+			TripId:           df.GetElement("trip_id"),
+			OrganizationName: organizationName,
+			IsProducer:       isProducer,
+			IsOperator:       isOperator,
+			IsAuthority:      isAuthority,
+			AttributionUrl:   df.GetElement("attribution_url"),
+			AttributionEmail: df.GetElement("attribution_email"),
+			AttributionPhone: df.GetElement("attribution_phone"),
 		})
 	}
 	return attributions, nil
