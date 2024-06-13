@@ -1,7 +1,6 @@
 package parsestatic
 
 import (
-	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
@@ -15,16 +14,37 @@ func ParseShapes(path string) ([]ormstatic.Shape, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			fmt.Println("Error:", err)
-			break
+			return []ormstatic.Shape{}, err
 		}
 
+		shapeId, err := dataframe.ParseString(df.GetElement("shape_id"))
+		if err != nil {
+			return []ormstatic.Shape{}, err
+		}
+
+		shapePtLat, err := dataframe.ParseFloat64(df.GetElement("shape_pt_lat"))
+		if err != nil {
+			return []ormstatic.Shape{}, err
+		}
+
+		shapePtLon, err := dataframe.ParseFloat64(df.GetElement("shape_pt_lon"))
+		if err != nil {
+			return []ormstatic.Shape{}, err
+		}
+
+		shapePtSequence, err := dataframe.ParseInt32(df.GetElement("shape_pt_sequence"))
+		if err != nil {
+			return []ormstatic.Shape{}, err
+		}
+
+		shapeDistTraveled, err := dataframe.ParseNullFloat64(df.GetElement("shape_dist_traveled"))
+
 		shapes = append(shapes, ormstatic.Shape{
-			ShapeId:           dataframe.IsBlank(df.GetElement("shape_id")),
-			ShapePtLat:        dataframe.ParseFloat64(df.GetElement("shape_pt_lat")),
-			ShapePtLon:        dataframe.ParseFloat64(df.GetElement("shape_pt_lon")),
-			ShapePtSequence:   dataframe.ParseInt(df.GetElement("shape_pt_sequence")),
-			ShapeDistTraveled: dataframe.ParseFloat64(df.GetElement("shape_dist_traveled")),
+			ShapeId:           shapeId,
+			ShapePtLat:        shapePtLat,
+			ShapePtLon:        shapePtLon,
+			ShapePtSequence:   shapePtSequence,
+			ShapeDistTraveled: shapeDistTraveled,
 		})
 	}
 	return shapes, nil

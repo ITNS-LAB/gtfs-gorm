@@ -14,13 +14,14 @@ func ParseAttributions(path string) ([]ormstatic.Attribution, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			return attributions, err
+			return []ormstatic.Attribution{}, err
 		}
 
 		organizationName, err := dataframe.ParseString(df.GetElement("organization_name"))
 		if err != nil {
 			return []ormstatic.Attribution{}, err
 		}
+
 		isProducer, err := dataframe.ParseNullInt16(df.GetElement("is_producer"))
 		isOperator, err := dataframe.ParseNullInt16(df.GetElement("is_operator"))
 		isAuthority, err := dataframe.ParseNullInt16(df.GetElement("is-authority"))

@@ -1,7 +1,6 @@
 package parsestatic
 
 import (
-	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
@@ -15,20 +14,37 @@ func ParseFeedInfo(path string) ([]ormstatic.FeedInfo, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			fmt.Println("Error:", err)
-			break
+			return []ormstatic.FeedInfo{}, err
 		}
 
+		feedPublisherName, err := dataframe.ParseString(df.GetElement("feed_publisher_name"))
+		if err != nil {
+			return []ormstatic.FeedInfo{}, err
+		}
+
+		feedPublisherUrl, err := dataframe.ParseString(df.GetElement("feed_publisher_url"))
+		if err != nil {
+			return []ormstatic.FeedInfo{}, err
+		}
+
+		feedLang, err := dataframe.ParseString(df.GetElement("feed_lang"))
+		if err != nil {
+			return []ormstatic.FeedInfo{}, err
+		}
+
+		feedStartDate, err := dataframe.ParseNullDataTypesDate(df.GetElement("feed_start_date"))
+		feedEndDate, err := dataframe.ParseNullDataTypesDate(df.GetElement("feed_end_date"))
+
 		feedInfos = append(feedInfos, ormstatic.FeedInfo{
-			FeedPublisherName: dataframe.IsBlank(df.GetElement("feed_publisher_name")),
-			FeedPublisherUrl:  dataframe.IsBlank(df.GetElement("feed_publisher_url")),
-			FeedLang:          dataframe.IsBlank(df.GetElement("feed_lang")),
-			DefaultLang:       dataframe.IsBlank(df.GetElement("default_lang")),
-			FeedStartDate:     dataframe.ParseDate(df.GetElement("feed_start_date")),
-			FeedEndDate:       dataframe.ParseDate(df.GetElement("feed_end_date")),
-			FeedVersion:       dataframe.IsBlank(df.GetElement("feed_version")),
-			FeedContactEmail:  dataframe.IsBlank(df.GetElement("feed_contact_email")),
-			FeedContactUrl:    dataframe.IsBlank(df.GetElement("feed_contact_url")),
+			FeedPublisherName: feedPublisherName,
+			FeedPublisherUrl:  feedPublisherUrl,
+			FeedLang:          feedLang,
+			DefaultLang:       df.GetElement("default_lang"),
+			FeedStartDate:     feedStartDate,
+			FeedEndDate:       feedEndDate,
+			FeedVersion:       df.GetElement("feed_version"),
+			FeedContactEmail:  df.GetElement("feed_contact_email"),
+			FeedContactUrl:    df.GetElement("feed_contact_url"),
 		})
 	}
 	return feedInfos, nil

@@ -6,7 +6,7 @@ type Shape struct {
 	ShapeId           string  `gorm:"primaryKey;index;not null"`
 	ShapePtLat        float64 `gorm:"not null"`
 	ShapePtLon        float64 `gorm:"not null"`
-	ShapePtSequence   int     `gorm:"primaryKey;index;not null"`
+	ShapePtSequence   int32   `gorm:"primaryKey;index;not null"`
 	ShapeDistTraveled sql.NullFloat64
 }
 

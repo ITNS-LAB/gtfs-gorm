@@ -1,7 +1,6 @@
 package parsestatic
 
 import (
-	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
@@ -15,16 +14,37 @@ func ParseFrequencies(path string) ([]ormstatic.Frequency, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			fmt.Println("Error:", err)
-			break
+			return []ormstatic.Frequency{}, err
 		}
 
+		tripId, err := dataframe.ParseString(df.GetElement("trip_id"))
+		if err != nil {
+			return []ormstatic.Frequency{}, err
+		}
+
+		startTime, err := dataframe.ParseDataTypesTime(df.GetElement("start_time"))
+		if err != nil {
+			return []ormstatic.Frequency{}, err
+		}
+
+		endTime, err := dataframe.ParseDataTypesTime(df.GetElement("end_time"))
+		if err != nil {
+			return []ormstatic.Frequency{}, err
+		}
+
+		headwaySecs, err := dataframe.ParseInt32(df.GetElement("headway_secs"))
+		if err != nil {
+			return []ormstatic.Frequency{}, err
+		}
+
+		exactTimes, err := dataframe.ParseNullInt16(df.GetElement("exact_times"))
+
 		frequencies = append(frequencies, ormstatic.Frequency{
-			TripId:      dataframe.IsBlank(df.GetElement("trip_id")),
-			StartTime:   dataframe.ParseTime(df.GetElement("start_time")),
-			EndTime:     dataframe.ParseTime(df.GetElement("end_time")),
-			HeadwaySecs: dataframe.ParseInt(df.GetElement("headway_secs")),
-			ExactTimes:  dataframe.ParseEnum(df.GetElement("exact_times")),
+			TripId:      tripId,
+			StartTime:   startTime,
+			EndTime:     endTime,
+			HeadwaySecs: headwaySecs,
+			ExactTimes:  exactTimes,
 		})
 	}
 	return frequencies, nil

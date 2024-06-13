@@ -14,25 +14,29 @@ func ParseAgency(path string) ([]ormstatic.Agency, error) {
 	for df.HasNext() {
 		_, err := df.Next()
 		if err != nil {
-			return agencies, err
+			return []ormstatic.Agency{}, err
 		}
 
 		agencyId, err := dataframe.ParseString(df.GetElement("agency_id"))
 		if err != nil {
 			return []ormstatic.Agency{}, err
 		}
+
 		agencyName, err := dataframe.ParseString(df.GetElement("agency_name"))
 		if err != nil {
 			return []ormstatic.Agency{}, err
 		}
+
 		agencyUrl, err := dataframe.ParseString(df.GetElement("agency_url"))
 		if err != nil {
 			return []ormstatic.Agency{}, err
 		}
+
 		agencyTimeZone, err := dataframe.ParseString(df.GetElement("agency_timezone"))
 		if err != nil {
 			return []ormstatic.Agency{}, err
 		}
+
 		agencies = append(agencies, ormstatic.Agency{
 			AgencyId:       agencyId,
 			AgencyName:     agencyName,

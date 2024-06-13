@@ -3,14 +3,14 @@ package ormstatic
 import "database/sql"
 
 type Transfer struct {
-	Id              int    `gorm:"primaryKey;auto_increment;not null"`
+	Id              uint   `gorm:"primaryKey;auto_increment;not null"`
 	FromStopId      string `gorm:"primaryKey;not null"`
 	ToStopId        string `gorm:"primaryKey;not null"`
 	FromRouteId     sql.NullString
 	ToRouteId       sql.NullString
 	FromTripId      sql.NullString
 	ToTripId        sql.NullString
-	TransferType    int `gorm:"not null"`
+	TransferType    int16 `gorm:"not null"`
 	MinTransferTime sql.NullInt32
 	FromStop        Stop `gorm:"foreignKey:FromStopId;references:StopId"`
 	ToStop          Stop `gorm:"foreignKey:ToStopId;references:StopId"`
