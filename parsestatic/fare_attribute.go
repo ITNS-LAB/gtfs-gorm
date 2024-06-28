@@ -28,7 +28,7 @@ func ParseFareAttributes(path string) ([]ormstatic.FareAttribute, error) {
 			return []ormstatic.FareAttribute{}, err
 		}
 
-		currencyType, err := dataframe.ParseString(df.GetElement("currencyType"))
+		currencyType, err := dataframe.ParseString(df.GetElement("currency_type"))
 		if err != nil {
 			return []ormstatic.FareAttribute{}, err
 		}
