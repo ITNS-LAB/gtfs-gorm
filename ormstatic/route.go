@@ -15,8 +15,8 @@ type Route struct {
 	RouteSortOrder    sql.NullInt64 `gorm:"index"`
 	ContinuousPickup  sql.NullInt16 `gorm:"default:1"`
 	ContinuousDropOff sql.NullInt16 `gorm:"default:1"`
-	Trip              Trip          `gorm:"foreignKey:RouteId"`
-	FareRule          FareRule      `gorm:"foreignKey:RouteId"`
+	Trips             []Trip        `gorm:"foreignKey:RouteId;references:RouteId"`
+	FareRules         []FareRule    `gorm:"foreignKey:RouteId;references:RouteId"`
 }
 
 func (Route) TableName() string {

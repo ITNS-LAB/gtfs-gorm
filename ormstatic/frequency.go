@@ -6,9 +6,9 @@ import (
 )
 
 type Frequency struct {
-	TripId      string         `gorm:"primaryKey;index;not null"`
-	StartTime   datatypes.Time `gorm:"index;not null"`
-	EndTime     datatypes.Time `gorm:"index;not null"`
+	TripId      string         `gorm:"primaryKey;not null"`
+	StartTime   datatypes.Time `gorm:"primaryKey;not null"`
+	EndTime     datatypes.Time `gorm:"primaryKey;not null"`
 	HeadwaySecs int32          `gorm:"not null"`
 	ExactTimes  sql.NullInt16  `gorm:"default:0"`
 }

@@ -12,6 +12,7 @@ type Agency struct {
 	AgencyPhone    sql.NullString
 	AgencyFareUrl  sql.NullString
 	AgencyEmail    sql.NullString
+	Routes         []Route `gorm:"foreignKey:AgencyId;references:AgencyId"`
 }
 
 func (Agency) TableName() string {

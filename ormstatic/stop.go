@@ -17,7 +17,7 @@ type Stop struct {
 	WheelchairBoarding sql.NullInt16 `gorm:"default:0"`
 	LevelId            sql.NullString
 	PlatformCode       sql.NullString
-	StopTime           StopTime `gorm:"foreignKey:StopId"`
+	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func (Stop) TableName() string {

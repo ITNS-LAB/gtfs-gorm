@@ -13,7 +13,8 @@ type Trip struct {
 	ShapeId              sql.NullString `gorm:"index"`
 	WheelchairAccessible sql.NullInt16  `gorm:"default:0"`
 	BikesAllowed         sql.NullInt16  `gorm:"default:0"`
-	Frequency            Frequency      `gorm:"foreignKey:TripId"`
+	StopTimes            []StopTime     `gorm:"foreignKey:TripId;references:TripId"`
+	Frequencies          []Frequency    `gorm:"foreignKey:TripId;references:TripId"`
 }
 
 func (Trip) TableName() string {

@@ -10,7 +10,7 @@ type FareAttribute struct {
 	Transfers        sql.NullInt16 //必須の項目だが、空の場合があるため、nullを許容
 	AgencyId         sql.NullString
 	TransferDuration sql.NullInt32
-	FareRule         FareRule `gorm:"foreignKey:FareId"`
+	//FareRule         FareRule `gorm:"foreignKey:FareId"`
 }
 
 func (FareAttribute) TableName() string {

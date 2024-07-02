@@ -18,7 +18,6 @@ type StopTime struct {
 	ContinuousDropOff sql.NullInt16 `gorm:"default:1"`
 	ShapeDistTraveled sql.NullFloat64
 	Timepoint         sql.NullInt16 `gorm:"default:1"`
-	Trip              Trip          `gorm:"foreignKey:TripId"`
 }
 
 func (StopTime) TableName() string {

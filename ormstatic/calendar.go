@@ -15,7 +15,7 @@ type Calendar struct {
 	Sunday    int16          `gorm:"not null"`
 	StartDate datatypes.Date `gorm:"not null"`
 	EndDate   datatypes.Date `gorm:"not null"`
-	Trip      Trip           `gorm:"foreignKey:ServiceId"`
+	Trips     []Trip         `gorm:"foreignKey:ServiceId;references:ServiceId"`
 	//UniversalCalendar UniversalCalendar `gorm:"foreignKey:ServiceId"`
 }
 
