@@ -12,9 +12,8 @@ type DataFrame struct {
 	Position int
 }
 
-func NewDataFrame() DataFrame {
-	df := DataFrame{Headers: make(map[string]int), Position: 0}
-	return df
+func NewDataFrame() *DataFrame {
+	return &DataFrame{Headers: make(map[string]int), Position: 0}
 }
 
 func (df *DataFrame) HasNext() bool {
@@ -23,33 +22,29 @@ func (df *DataFrame) HasNext() bool {
 
 func (df *DataFrame) Next() ([]string, error) {
 	if df.HasNext() {
-		rows := df.Rows[df.Position]
+		row := df.Rows[df.Position]
 		df.Position++
-		return rows, nil
+		return row, nil
 	}
 	return nil, errors.New("no more elements")
 }
 
-func (df *DataFrame) setHeader(header []string) DataFrame {
-	tempDf := *df
+func (df *DataFrame) setHeader(header []string) {
 	for i, v := range header {
-		tempDf.Headers[strings.TrimSpace(v)] = i
+		df.Headers[strings.TrimSpace(v)] = i
 	}
-	return tempDf
 }
 
-func (df *DataFrame) AppendRow(row []string) DataFrame {
-	tempDf := *df
-	tempDf.Rows = append(tempDf.Rows, [][]string{row}...)
-	return tempDf
+func (df *DataFrame) AppendRow(row []string) {
+	df.Rows = append(df.Rows, row)
 }
 
 func (df *DataFrame) HasHeader(s string) (bool, int) {
-	i, isExists := df.Headers[s]
-	if isExists == false {
-		i = -1
+	i, exists := df.Headers[s]
+	if !exists {
+		return false, -1
 	}
-	return isExists, i
+	return true, i
 }
 
 func (df *DataFrame) GetElement(s string) sql.NullString {

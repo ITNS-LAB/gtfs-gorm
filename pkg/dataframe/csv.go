@@ -7,11 +7,11 @@ import (
 	"os"
 )
 
-func OpenCsv(f string) (DataFrame, error) {
+func OpenCsv(f string) (*DataFrame, error) {
 	// ファイルをオープン
 	file, err := os.Open(f)
 	if err != nil {
-		return DataFrame{}, err
+		return nil, err
 	}
 	defer file.Close()
 
@@ -22,12 +22,12 @@ func OpenCsv(f string) (DataFrame, error) {
 	// ヘッダーを読み込む
 	headers, err := reader.Read()
 	if err != nil {
-		return DataFrame{}, err
+		return nil, err
 	}
 
 	// データフレームの作成とヘッダーの挿入
 	df := NewDataFrame()
-	df = df.setHeader(headers)
+	df.setHeader(headers)
 
 	for {
 		record, err := reader.Read()
@@ -35,7 +35,7 @@ func OpenCsv(f string) (DataFrame, error) {
 			break // ファイルの終わりに達したらループを終了
 		}
 
-		df = df.AppendRow(record)
+		df.AppendRow(record)
 	}
 	return df, nil
 }
