@@ -9,7 +9,7 @@ func ParseTranslations(path string) ([]ormstatic.Translation, error) {
 	var translations []ormstatic.Translation
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
-		return translations, err
+		return []ormstatic.Translation{}, err
 	}
 	for df.HasNext() {
 		_, err := df.Next()
