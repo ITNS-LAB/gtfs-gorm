@@ -3,11 +3,11 @@ package ormstatic
 import "gorm.io/datatypes"
 
 type StopTime struct {
-	TripId            *string         `gorm:"primaryKey;index;not null" gorm:"index" gorm:"not null"`
+	TripId            *string         `gorm:"primaryKey"`
 	ArrivalTime       *datatypes.Time `gorm:"index"`
 	DepartureTime     *datatypes.Time `gorm:"index"`
-	StopId            *string         `gorm:"primaryKey;index;not null" gorm:"index" gorm:"not null"`
-	StopSequence      *int            `gorm:"primaryKey;index;not null" gorm:"index" gorm:"not null"`
+	StopId            *string         `gorm:"primaryKey"`
+	StopSequence      *int            `gorm:"primaryKey"`
 	StopHeadsign      *string
 	PickupType        *int `gorm:"default:0"`
 	DropOffType       *int `gorm:"default:0"`
@@ -15,7 +15,6 @@ type StopTime struct {
 	ContinuousDropOff *int `gorm:"default:1"`
 	ShapeDistTraveled *float64
 	Timepoint         *int `gorm:"default:1"`
-	Trip              Trip `gorm:"foreignKey:TripId"`
 }
 
 func (StopTime) TableName() string {

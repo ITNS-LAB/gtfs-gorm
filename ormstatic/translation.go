@@ -1,7 +1,7 @@
 package ormstatic
 
 type Translation struct {
-	Id int `gorm:"primaryKey;auto_increment;not null"`
+	Id int `gorm:"primaryKey;auto_increment"`
 	//To avoid duplication with "TableName", "N" should be written in lower case.
 	Tablename   *string `gorm:"column:table_name;not null"`
 	FieldName   *string `gorm:"not null"`

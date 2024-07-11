@@ -3,9 +3,9 @@ package ormstatic
 import "gorm.io/datatypes"
 
 type Frequency struct {
-	TripId      *string         `gorm:"primaryKey;index;not null"`
-	StartTime   *datatypes.Time `gorm:"index;not null"`
-	EndTime     *datatypes.Time `gorm:"index;not null"`
+	TripId      *string         `gorm:"primaryKey"`
+	StartTime   *datatypes.Time `gorm:"primaryKey"`
+	EndTime     *datatypes.Time `gorm:"primaryKey"`
 	HeadwaySecs *int            `gorm:"not null"`
 	ExactTimes  *int            `gorm:"default:0"`
 }

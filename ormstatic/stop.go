@@ -1,7 +1,7 @@
 package ormstatic
 
 type Stop struct {
-	StopId             *string `gorm:"primaryKey;index;not null"`
+	StopId             *string `gorm:"primaryKey"`
 	StopCode           *string
 	StopName           *string
 	StopDesc           *string
@@ -15,7 +15,7 @@ type Stop struct {
 	WheelchairBoarding *int `gorm:"default:0"`
 	LevelId            *string
 	PlatformCode       *string
-	StopTime           StopTime `gorm:"foreignKey:StopId"`
+	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func (Stop) TableName() string {

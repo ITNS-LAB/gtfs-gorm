@@ -1,7 +1,7 @@
 package ormstatic
 
 type FareRule struct {
-	Id              int     `gorm:"primaryKey;auto_increment;not null"`
+	Id              int     `gorm:"primaryKey;auto_increment"`
 	FareId          *string `gorm:"index;not null"`
 	RouteId         *string
 	OriginId        *string

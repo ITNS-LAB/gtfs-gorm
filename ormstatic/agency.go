@@ -1,7 +1,7 @@
 package ormstatic
 
 type Agency struct {
-	Id             int     `gorm:"primaryKey;auto_increment;not null"`
+	Id             int     `gorm:"primaryKey;auto_increment"`
 	AgencyId       *string `gorm:"index;unique"`
 	AgencyName     *string `gorm:"not null"`
 	AgencyUrl      *string `gorm:"not null"`
@@ -10,6 +10,7 @@ type Agency struct {
 	AgencyPhone    *string
 	AgencyFareUrl  *string
 	AgencyEmail    *string
+	Routes         []Route `gorm:"foreignKey:AgencyId;references:AgencyId"`
 }
 
 func (Agency) TableName() string {
