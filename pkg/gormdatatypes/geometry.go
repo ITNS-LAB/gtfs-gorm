@@ -71,6 +71,6 @@ func (g Geometry) GeometryType() string {
 	case orb.Collection:
 		return "GEOMETRYCOLLECTION"
 	default:
-		return "UNSUPPORTED GEOMETRY TYPE"
+		return "GEOMETRY"
 	}
 }
