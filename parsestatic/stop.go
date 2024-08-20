@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
+	geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/pkg/gormdatatypes"
+	"github.com/paulmach/orb"
 )
 
 func ParseStops(path string) ([]ormstatic.Stop, error) {
@@ -18,6 +20,9 @@ func ParseStops(path string) ([]ormstatic.Stop, error) {
 			fmt.Println("Error:", err)
 			break
 		}
+
+		point := orb.Point{*dataframe.ParseFloat64(df.GetElement("stop_lon")),
+			*dataframe.ParseFloat64(df.GetElement("stop_lat"))}
 
 		stops = append(stops, ormstatic.Stop{
 			StopId:             dataframe.IsBlank(df.GetElement("stop_id")),
@@ -34,6 +39,7 @@ func ParseStops(path string) ([]ormstatic.Stop, error) {
 			WheelchairBoarding: dataframe.ParseEnum(df.GetElement("wheelchair_boarding")),
 			LevelId:            dataframe.IsBlank(df.GetElement("level_id")),
 			PlatformCode:       dataframe.IsBlank(df.GetElement("platform_code")),
+			Geom:               &geomdatatypes.Geometry{Geom: point, Srid: 4326},
 		})
 	}
 	return stops, nil

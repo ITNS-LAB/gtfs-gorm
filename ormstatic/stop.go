@@ -1,5 +1,7 @@
 package ormstatic
 
+import geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/pkg/gormdatatypes"
+
 type Stop struct {
 	StopId             *string `gorm:"primaryKey"`
 	StopCode           *string
@@ -15,6 +17,7 @@ type Stop struct {
 	WheelchairBoarding *int `gorm:"default:0"`
 	LevelId            *string
 	PlatformCode       *string
+	Geom               *geomdatatypes.Geometry
 	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
 }
 
