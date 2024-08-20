@@ -17,8 +17,8 @@ type Stop struct {
 	WheelchairBoarding *int `gorm:"default:0"`
 	LevelId            *string
 	PlatformCode       *string
-	Geom               *geomdatatypes.Geometry
-	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
+	Geom               *geomdatatypes.Geometry `gorm:"index"`
+	StopTimes          []StopTime              `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func (Stop) TableName() string {
