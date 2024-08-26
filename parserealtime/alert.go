@@ -10,7 +10,7 @@ import (
 func AlertPbSlice(file string) ([]ormrealtime.Alert, error) {
 	var res []ormrealtime.Alert
 
-	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
+	// gtfs.zip-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return res, err

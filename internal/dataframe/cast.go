@@ -56,3 +56,15 @@ func ParseTime(s *string) *datatypes.Time {
 	dtt := datatypes.NewTime(t.Hour(), t.Minute(), t.Second(), 0)
 	return &dtt
 }
+
+func StrPtr(s string) *string {
+	return &s
+}
+
+func FloatPtr(f float64) *float64 {
+	return &f
+}
+
+func IntPtr(i int) *int {
+	return &i
+}

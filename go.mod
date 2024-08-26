@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/MobilityData/gtfs-realtime-bindings/golang/gtfs v1.0.0
 	github.com/paulmach/orb v0.11.1
+	github.com/tidwall/geodesic v0.3.5
 	golang.org/x/net v0.28.0
 	golang.org/x/text v0.17.0
 	google.golang.org/protobuf v1.31.0

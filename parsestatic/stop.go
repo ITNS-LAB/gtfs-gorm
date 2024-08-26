@@ -2,9 +2,9 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
-	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
-	geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/pkg/gormdatatypes"
 	"github.com/paulmach/orb"
 )
 

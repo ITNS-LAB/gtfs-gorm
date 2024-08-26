@@ -10,7 +10,7 @@ import (
 func VehiclePositionPbSlice(file string) ([]ormrealtime.VehiclePosition, error) {
 	var res []ormrealtime.VehiclePosition
 
-	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
+	// gtfs.zip-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return res, err
@@ -107,7 +107,7 @@ func VehiclePositionPbMap(file string) (map[string]ormrealtime.VehiclePosition, 
 	// mapの初期化
 	res := make(map[string]ormrealtime.VehiclePosition)
 
-	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
+	// gtfs.zip-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return res, err

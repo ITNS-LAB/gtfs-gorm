@@ -1,6 +1,6 @@
 package ormstatic
 
-import geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/pkg/gormdatatypes"
+import geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 
 type Stop struct {
 	StopId             *string `gorm:"primaryKey"`
