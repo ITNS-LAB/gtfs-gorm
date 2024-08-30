@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/service"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/interfaces"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/usecase"
 	"log/slog"
 )
 
@@ -17,13 +18,21 @@ func main() {
 
 	// 引数読み込み
 	flag.Parse()
+	options := usecase.CmdOptions{
+		GtfsUrl:         *gtfsUrl,
+		GtfsFile:        *gtfsFile,
+		ShapesEx:        *shapesEx,
+		RecalculateDist: *recalculateDist,
+		Dsn:             *dsn,
+		Schema:          *schema,
+	}
 
 	// 引数チェック
-	if *dsn == "" {
+	if options.Dsn == "" {
 		slog.Error("dsnは必須オプションです。")
 		return
 	}
-	if *gtfsUrl == "" && *gtfsFile == "" {
+	if options.GtfsUrl == "" && options.GtfsFile == "" {
 		slog.Error("'url' または 'file' のどちらかの指定が必要です。")
 		return
 	}
@@ -34,21 +43,15 @@ func main() {
 
 	// ロジック
 	if *gtfsFile != "" {
-		if err := service.GtfsDbFile(*dsn, *gtfsFile, *schema); err != nil {
+		if err := interfaces.GtfsDbFile(options); err != nil {
 			slog.Error("処理中にエラーが発生したため終了します。", err)
 			return
 		}
 	} else {
-		if err := service.GtfsDbUrl(*dsn, *gtfsUrl, *schema); err != nil {
+		if err := interfaces.GtfsDbUrl(options); err != nil {
 			slog.Error("処理中にエラーが発生したため終了します。", err)
 		}
 	}
 
-	if *recalculateDist {
-		if err := service.UpdateShapes(*dsn, *schema); err != nil {
-			slog.Error("処理中にエラーが発生したため終了します。", err)
-		}
-	}
-
-	fmt.Println("Process finished !!", *gtfsUrl, *gtfsFile, *shapesEx, *recalculateDist, *dsn, *schema)
+	fmt.Println("Process finished !!")
 }

@@ -11,10 +11,10 @@ import (
 )
 
 type GtfsDbUseCase interface {
-	GtfsDbUrl(url, schema string) error
-	GtfsDbFile(file, schema string) error
-	recalculateShapes(schema string) ([]ormstatic.Shape, error)
-	RecalculateShapesUpdate(schema string) error
+	GtfsDbUrl(options CmdOptions) error
+	GtfsDbFile(options CmdOptions) error
+	recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error)
+	recalculateShapesUpdate(options CmdOptions) error
 }
 
 type gtfsDbUseCase struct {
@@ -22,24 +22,33 @@ type gtfsDbUseCase struct {
 	gtfsScheduleRepo repository.GtfsScheduleRepository
 }
 
-func (g gtfsDbUseCase) GtfsDbUrl(url, schema string) error {
+type CmdOptions struct {
+	GtfsUrl         string
+	GtfsFile        string
+	ShapesEx        bool
+	RecalculateDist bool
+	Dsn             string
+	Schema          string
+}
+
+func (g gtfsDbUseCase) GtfsDbUrl(options CmdOptions) error {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err := os.MkdirAll(tmp, 0755); err != nil {
 		return err
 	}
 	// gtfsをダウンロード
-	gtfsZip := path.Join(tmp, "gtfs.zip")
-	if err := g.fileManagerRepo.Download(url, gtfsZip); err != nil {
+	options.GtfsFile = path.Join(tmp, "gtfs.zip")
+	if err := g.fileManagerRepo.Download(options.GtfsUrl, options.GtfsFile); err != nil {
 		return err
 	}
-	if err := g.GtfsDbFile(gtfsZip, schema); err != nil {
+	if err := g.GtfsDbFile(options); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g gtfsDbUseCase) GtfsDbFile(file, schema string) error {
+func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) error {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err := os.MkdirAll(tmp, 0755); err != nil {
@@ -50,7 +59,7 @@ func (g gtfsDbUseCase) GtfsDbFile(file, schema string) error {
 		_ = fileManagerRepo.Remove(path)
 	}(g.fileManagerRepo, tmp)
 	// gtfsを解凍
-	gtfsPath, err := g.fileManagerRepo.UnZip(file, tmp)
+	gtfsPath, err := g.fileManagerRepo.UnZip(options.GtfsFile, tmp)
 	if err != nil {
 		return err
 	}
@@ -63,7 +72,7 @@ func (g gtfsDbUseCase) GtfsDbFile(file, schema string) error {
 		_ = gtfsScheduleRepo.DisConnectDatabase()
 	}(g.gtfsScheduleRepo)
 	// スキーマの移動
-	if err := g.gtfsScheduleRepo.SetSchema(schema); err != nil {
+	if err := g.gtfsScheduleRepo.SetSchema(options.Schema); err != nil {
 		return err
 	}
 	// マイグレーション
@@ -74,27 +83,20 @@ func (g gtfsDbUseCase) GtfsDbFile(file, schema string) error {
 	if err := g.gtfsScheduleRepo.Create(gtfsPath); err != nil {
 		return err
 	}
+
+	// optionsの実行
+	if options.RecalculateDist {
+		if err := g.recalculateShapesUpdate(options); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (g gtfsDbUseCase) recalculateShapes(schema string) ([]ormstatic.Shape, error) {
+func (g gtfsDbUseCase) recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error) {
 	var res []ormstatic.Shape
 
 	slog.Info("shapes shape_dist_traveled の再計算を行います。")
-
-	// DB接続
-	if err := g.gtfsScheduleRepo.ConnectDatabase(); err != nil {
-		return nil, err
-	}
-	// DB切断
-	defer func(gtfsScheduleRepo repository.GtfsScheduleRepository) {
-		_ = gtfsScheduleRepo.DisConnectDatabase()
-	}(g.gtfsScheduleRepo)
-
-	// スキーマの移動
-	if err := g.gtfsScheduleRepo.SetSchema(schema); err != nil {
-		return nil, err
-	}
 
 	// shape_idのスライスを取得
 	shapeIds, err := g.gtfsScheduleRepo.ReadShapeIds()
@@ -127,26 +129,13 @@ func (g gtfsDbUseCase) recalculateShapes(schema string) ([]ormstatic.Shape, erro
 	return res, nil
 }
 
-func (g gtfsDbUseCase) RecalculateShapesUpdate(schema string) error {
-	shapes, err := g.recalculateShapes(schema)
+func (g gtfsDbUseCase) recalculateShapesUpdate(options CmdOptions) error {
+	shapes, err := g.recalculateShapes(options)
 	if err != nil {
 		return err
 	}
 
 	slog.Info("shapes shape_dist_traveled の更新を行います。")
-	// DB接続
-	if err := g.gtfsScheduleRepo.ConnectDatabase(); err != nil {
-		return err
-	}
-	// DB切断
-	defer func(gtfsScheduleRepo repository.GtfsScheduleRepository) {
-		_ = gtfsScheduleRepo.DisConnectDatabase()
-	}(g.gtfsScheduleRepo)
-
-	// スキーマの移動
-	if err := g.gtfsScheduleRepo.SetSchema(schema); err != nil {
-		return err
-	}
 
 	if err := g.gtfsScheduleRepo.UpdateShapes(shapes); err != nil {
 		return err
