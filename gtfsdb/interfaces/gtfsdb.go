@@ -9,7 +9,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	fileMangerRepository := infrastructure.NewFileManagerRepository()
 	gtfsScheduleRepository := infrastructure.NewGtfsStaticRepository(options.Dsn)
 	gtfsDbUseCase := usecase.NewGtfsDbUseCase(fileMangerRepository, gtfsScheduleRepository)
-	if err := gtfsDbUseCase.GtfsDbFile(options); err != nil {
+	if _, err := gtfsDbUseCase.GtfsDbFile(options); err != nil {
 		return err
 	}
 	return nil
@@ -19,7 +19,7 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 	fileMangerRepository := infrastructure.NewFileManagerRepository()
 	gtfsScheduleRepository := infrastructure.NewGtfsStaticRepository(options.Dsn)
 	gtfsDbUseCase := usecase.NewGtfsDbUseCase(fileMangerRepository, gtfsScheduleRepository)
-	if err := gtfsDbUseCase.GtfsDbUrl(options); err != nil {
+	if _, err := gtfsDbUseCase.GtfsDbUrl(options); err != nil {
 		return err
 	}
 	return nil

@@ -11,8 +11,8 @@ import (
 )
 
 type GtfsDbUseCase interface {
-	GtfsDbUrl(options CmdOptions) error
-	GtfsDbFile(options CmdOptions) error
+	GtfsDbUrl(options CmdOptions) (digest string, err error)
+	GtfsDbFile(options CmdOptions) (digest string, err error)
 	recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error)
 	recalculateShapesUpdate(options CmdOptions) error
 }
@@ -31,28 +31,28 @@ type CmdOptions struct {
 	Schema          string
 }
 
-func (g gtfsDbUseCase) GtfsDbUrl(options CmdOptions) error {
+func (g gtfsDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
-	if err := os.MkdirAll(tmp, 0755); err != nil {
-		return err
+	if err = os.MkdirAll(tmp, 0755); err != nil {
+		return "", err
 	}
 	// gtfsをダウンロード
 	options.GtfsFile = path.Join(tmp, "gtfs.zip")
-	if err := g.fileManagerRepo.Download(options.GtfsUrl, options.GtfsFile); err != nil {
-		return err
+	if err = g.fileManagerRepo.Download(options.GtfsUrl, options.GtfsFile); err != nil {
+		return "", err
 	}
-	if err := g.GtfsDbFile(options); err != nil {
-		return err
+	if digest, err = g.GtfsDbFile(options); err != nil {
+		return "", err
 	}
-	return nil
+	return digest, nil
 }
 
-func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) error {
+func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
-	if err := os.MkdirAll(tmp, 0755); err != nil {
-		return err
+	if err = os.MkdirAll(tmp, 0755); err != nil {
+		return "", err
 	}
 	// tmpディレクトリの削除
 	defer func(fileManagerRepo repository.FileManagerRepository, path string) {
@@ -61,42 +61,47 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) error {
 	// gtfsを解凍
 	gtfsPath, err := g.fileManagerRepo.UnZip(options.GtfsFile, tmp)
 	if err != nil {
-		return err
+		return "", err
+	}
+	// digestの取得
+	digest, err = util.Sha256(options.GtfsFile)
+	if err != nil {
+		return "", err
 	}
 	// DB接続
-	if err := g.gtfsScheduleRepo.ConnectDatabase(); err != nil {
-		return err
+	if err = g.gtfsScheduleRepo.ConnectDatabase(); err != nil {
+		return "", err
 	}
 	// DB切断
 	defer func(gtfsScheduleRepo repository.GtfsScheduleRepository) {
 		_ = gtfsScheduleRepo.DisConnectDatabase()
 	}(g.gtfsScheduleRepo)
 	// スキーマの移動
-	if err := g.gtfsScheduleRepo.SetSchema(options.Schema); err != nil {
-		return err
+	if err = g.gtfsScheduleRepo.SetSchema(options.Schema); err != nil {
+		return "", err
 	}
 	// マイグレーション
-	if err := g.gtfsScheduleRepo.Migrate(); err != nil {
-		return err
+	if err = g.gtfsScheduleRepo.Migrate(); err != nil {
+		return "", err
 	}
 	// データ挿入
-	if err := g.gtfsScheduleRepo.Create(gtfsPath); err != nil {
-		return err
+	if err = g.gtfsScheduleRepo.Create(gtfsPath); err != nil {
+		return "", err
 	}
 
 	// optionsの実行
 	if options.RecalculateDist {
-		if err := g.recalculateShapesUpdate(options); err != nil {
-			return err
+		if err = g.recalculateShapesUpdate(options); err != nil {
+			return "", err
 		}
 	}
-	return nil
+	return digest, err
 }
 
 func (g gtfsDbUseCase) recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error) {
 	var res []ormstatic.Shape
 
-	slog.Info("shapes shape_dist_traveled の再計算を行います。")
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を行います。")
 
 	// shape_idのスライスを取得
 	shapeIds, err := g.gtfsScheduleRepo.ReadShapeIds()
@@ -125,7 +130,7 @@ func (g gtfsDbUseCase) recalculateShapes(options CmdOptions) ([]ormstatic.Shape,
 			res = append(res, pt)
 		}
 	}
-	slog.Info("shapes shape_dist_traveled の再計算が完了しました。")
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算が完了しました。")
 	return res, nil
 }
 
@@ -135,12 +140,12 @@ func (g gtfsDbUseCase) recalculateShapesUpdate(options CmdOptions) error {
 		return err
 	}
 
-	slog.Info("shapes shape_dist_traveled の更新を行います。")
+	slog.Info("テーブル[shapes] shape_dist_traveled の更新を行います。")
 
 	if err := g.gtfsScheduleRepo.UpdateShapes(shapes); err != nil {
 		return err
 	}
-	slog.Info("shapes shape_dist_traveled の更新が完了しました。")
+	slog.Info("テーブル[shapes] shape_dist_traveled の更新が完了しました。")
 	return nil
 }
 
