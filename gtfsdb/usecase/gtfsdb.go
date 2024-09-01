@@ -13,7 +13,7 @@ import (
 type GtfsDbUseCase interface {
 	GtfsDbUrl(options CmdOptions) (digest string, err error)
 	GtfsDbFile(options CmdOptions) (digest string, err error)
-	recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error)
+	recalculateShapes() ([]ormstatic.Shape, error)
 	recalculateShapesUpdate(options CmdOptions) error
 }
 
@@ -98,7 +98,7 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error)
 	return digest, err
 }
 
-func (g gtfsDbUseCase) recalculateShapes(options CmdOptions) ([]ormstatic.Shape, error) {
+func (g gtfsDbUseCase) recalculateShapes() ([]ormstatic.Shape, error) {
 	var res []ormstatic.Shape
 
 	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を行います。")
@@ -135,7 +135,7 @@ func (g gtfsDbUseCase) recalculateShapes(options CmdOptions) ([]ormstatic.Shape,
 }
 
 func (g gtfsDbUseCase) recalculateShapesUpdate(options CmdOptions) error {
-	shapes, err := g.recalculateShapes(options)
+	shapes, err := g.recalculateShapes()
 	if err != nil {
 		return err
 	}
