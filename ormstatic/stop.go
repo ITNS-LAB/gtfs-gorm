@@ -1,5 +1,7 @@
 package ormstatic
 
+import geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+
 type Stop struct {
 	StopId             *string `gorm:"primaryKey"`
 	StopCode           *string
@@ -15,7 +17,8 @@ type Stop struct {
 	WheelchairBoarding *int `gorm:"default:0"`
 	LevelId            *string
 	PlatformCode       *string
-	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
+	Geom               *geomdatatypes.Geometry `gorm:"index"`
+	StopTimes          []StopTime              `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func (Stop) TableName() string {

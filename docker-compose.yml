@@ -1,0 +1,13 @@
+version: '3'
+services:
+  postgres:
+    container_name: hoge_postgres
+    image: timescale/timescaledb-ha:pg16.2-ts2.14.2-all-oss
+    environment:
+      POSTGRES_DB: hoge
+      POSTGRES_USER: hoge
+      POSTGRES_PASSWORD: hoge
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql

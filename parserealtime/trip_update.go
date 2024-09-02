@@ -10,7 +10,7 @@ import (
 func TripUpdatePbSlice(file string) ([]ormrealtime.TripUpdate, error) {
 	var res []ormrealtime.TripUpdate
 
-	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
+	// gtfs.zip-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return res, err
@@ -103,7 +103,7 @@ func TripUpdatePbMap(file string) (map[string]ormrealtime.TripUpdate, error) {
 	// mapの初期化
 	res := make(map[string]ormrealtime.TripUpdate)
 
-	// gtfs-ormrealtime ファイルをバイナリ形式で読み込む
+	// gtfs.zip-ormrealtime ファイルをバイナリ形式で読み込む
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return res, err

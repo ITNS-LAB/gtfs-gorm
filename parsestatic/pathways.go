@@ -2,8 +2,8 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
-	"github.com/ITNS-LAB/gtfs-gorm/pkg/dataframe"
 )
 
 func ParsePathways(path string) ([]ormstatic.Pathway, error) {
