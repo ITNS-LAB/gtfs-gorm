@@ -129,7 +129,7 @@ func (g *gtfsScheduleRepository) CreateSchema(schema string) error {
 }
 
 func (g *gtfsScheduleRepository) SetSchema(schema string) error {
-	if err := g.Db.Exec(fmt.Sprintf("SET search_path TO %s", schema)).Error; err != nil {
+	if err := g.Db.Exec(fmt.Sprintf("SET search_path TO %s, public", schema)).Error; err != nil {
 		return fmt.Errorf("failed to set search_path: %w", err)
 	}
 	return nil
