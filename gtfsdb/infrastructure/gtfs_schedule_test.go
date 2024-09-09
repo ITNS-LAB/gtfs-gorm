@@ -401,13 +401,13 @@ func Test_gtfsScheduleRepository_ReadShapeIds(t *testing.T) {
 				t.Errorf("Migrate() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			gotShapeIds, err := g.ReadShapeIds()
+			gotShapeIds, err := g.FindShapeIds()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ReadShapeIds() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FindShapeIds() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(gotShapeIds, tt.wantShapeIds) {
-				t.Errorf("ReadShapeIds() gotShapeIds = %v, want %v", gotShapeIds, tt.wantShapeIds)
+				t.Errorf("FindShapeIds() gotShapeIds = %v, want %v", gotShapeIds, tt.wantShapeIds)
 			}
 
 			// 作成したテーブルをDrop
@@ -479,7 +479,7 @@ func Test_gtfsScheduleRepository_ReadShapes(t *testing.T) {
 				t.Errorf("Migrate() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			gotShapes, err := g.ReadShapes(tt.args.shapeId)
+			gotShapes, err := g.FindShapes(tt.args.shapeId)
 			if err != nil {
 				return
 			}
