@@ -9,7 +9,7 @@ type GtfsScheduleRepository interface {
 	Create(gtfsPath string) error
 	CreateSchema(schema string) error
 	SetSchema(schema string) error
-	ReadShapeIds() ([]string, error)
-	ReadShapes(shapeId string) ([]ormstatic.Shape, error)
+	FindShapeIds() ([]string, error)
+	FindShapes(shapeId string) ([]ormstatic.Shape, error)
 	UpdateShapes([]ormstatic.Shape) error
 }

@@ -135,12 +135,12 @@ func (g *gtfsScheduleRepository) SetSchema(schema string) error {
 	return nil
 }
 
-func (g *gtfsScheduleRepository) ReadShapeIds() (shapeIds []string, err error) {
+func (g *gtfsScheduleRepository) FindShapeIds() (shapeIds []string, err error) {
 	g.Db.Table("shapes").Select("shape_id").Distinct("shape_id").Order("shape_id asc").Find(&shapeIds)
 	return shapeIds, nil
 }
 
-func (g *gtfsScheduleRepository) ReadShapes(shapeId string) (shapes []ormstatic.Shape, err error) {
+func (g *gtfsScheduleRepository) FindShapes(shapeId string) (shapes []ormstatic.Shape, err error) {
 	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Find(&shapes)
 	return shapes, nil
 }
