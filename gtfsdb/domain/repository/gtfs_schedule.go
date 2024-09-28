@@ -12,4 +12,6 @@ type GtfsScheduleRepository interface {
 	FindShapeIds() ([]string, error)
 	FindShapes(shapeId string) ([]ormstatic.Shape, error)
 	UpdateShapes([]ormstatic.Shape) error
+	FindTripsByShapeId(shapeId string) ([]ormstatic.Trip, error)
+	UpdateTrips([]ormstatic.Trip) error
 }

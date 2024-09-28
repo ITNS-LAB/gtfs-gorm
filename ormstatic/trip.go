@@ -8,14 +8,14 @@ type Trip struct {
 	TripId               *string `gorm:"primaryKey"`
 	TripHeadsign         *string
 	TripShortName        *string
-	DirectionId          *int                    `gorm:"index"`
-	BlockId              *string                 `gorm:"index"`
-	ShapeId              *string                 `gorm:"index"`
-	WheelchairAccessible *int                    `gorm:"default:0"`
-	BikesAllowed         *int                    `gorm:"default:0"`
-	Geom                 *geomdatatypes.Geometry `gorm:"index"`
-	StopTimes            []StopTime              `gorm:"foreignKey:TripId;references:TripId"`
-	Frequencies          []Frequency             `gorm:"foreignKey:TripId;references:TripId"`
+	DirectionId          *int    `gorm:"index"`
+	BlockId              *string `gorm:"index"`
+	ShapeId              *string `gorm:"index"`
+	WheelchairAccessible *int    `gorm:"default:0"`
+	BikesAllowed         *int    `gorm:"default:0"`
+	Geom                 *geomdatatypes.Geometry
+	StopTimes            []StopTime  `gorm:"foreignKey:TripId;references:TripId"`
+	Frequencies          []Frequency `gorm:"foreignKey:TripId;references:TripId"`
 }
 
 func (Trip) TableName() string {

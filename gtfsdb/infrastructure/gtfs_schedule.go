@@ -141,7 +141,7 @@ func (g *gtfsScheduleRepository) FindShapeIds() (shapeIds []string, err error) {
 }
 
 func (g *gtfsScheduleRepository) FindShapes(shapeId string) (shapes []ormstatic.Shape, err error) {
-	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Find(&shapes)
+	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapes)
 	return shapes, nil
 }
 
@@ -155,6 +155,32 @@ func (g *gtfsScheduleRepository) UpdateShapes(shapes []ormstatic.Shape) error {
 		if result := tx.Model(&ormstatic.Shape{}).
 			Where("shape_id = ? AND shape_pt_sequence = ?", shape.ShapeId, shape.ShapePtSequence).
 			Updates(shape); result.Error != nil {
+			tx.Rollback() // エラーが発生したらロールバック
+			return result.Error
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *gtfsScheduleRepository) FindTripsByShapeId(shapeId string) (trips []ormstatic.Trip, err error) {
+	g.Db.Table("trips").Where("shape_id = ?", shapeId).Find(&trips)
+	return trips, nil
+}
+
+func (g *gtfsScheduleRepository) UpdateTrips(trips []ormstatic.Trip) error {
+	tx := g.Db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, trip := range trips {
+		if result := tx.Model(&ormstatic.Trip{}).
+			Where("trip_id = ?", trip.TripId).
+			Updates(trip); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
 			return result.Error
 		}
