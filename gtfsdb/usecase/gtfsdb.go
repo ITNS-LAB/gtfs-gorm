@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
+	geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
+	"github.com/paulmach/orb"
 	"log/slog"
 	"math"
 	"os"
@@ -15,6 +17,7 @@ type GtfsDbUseCase interface {
 	GtfsDbFile(options CmdOptions) (digest string, err error)
 	recalculateShapes() ([]ormstatic.Shape, error)
 	recalculateShapesUpdate(options CmdOptions) error
+	tripsGeomUpdate() error
 }
 
 type gtfsDbUseCase struct {
@@ -89,6 +92,11 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error)
 		return "", err
 	}
 
+	// tripsにgeomデータを追加
+	if err = g.tripsGeomUpdate(); err != nil {
+		return "", err
+	}
+
 	// optionsの実行
 	if options.RecalculateDist {
 		if err = g.recalculateShapesUpdate(options); err != nil {
@@ -104,7 +112,7 @@ func (g gtfsDbUseCase) recalculateShapes() ([]ormstatic.Shape, error) {
 	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を行います。")
 
 	// shape_idのスライスを取得
-	shapeIds, err := g.gtfsScheduleRepo.ReadShapeIds()
+	shapeIds, err := g.gtfsScheduleRepo.FindShapeIds()
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +120,7 @@ func (g gtfsDbUseCase) recalculateShapes() ([]ormstatic.Shape, error) {
 	// shape_dist_traveledの追加
 	for _, shapeId := range shapeIds {
 		totalDistance := 0.0
-		shapes, err := g.gtfsScheduleRepo.ReadShapes(shapeId)
+		shapes, err := g.gtfsScheduleRepo.FindShapes(shapeId)
 		if err != nil {
 			return nil, err
 		}
@@ -146,6 +154,46 @@ func (g gtfsDbUseCase) recalculateShapesUpdate(options CmdOptions) error {
 		return err
 	}
 	slog.Info("テーブル[shapes] shape_dist_traveled の更新が完了しました。")
+	return nil
+}
+
+func (g gtfsDbUseCase) tripsGeomUpdate() error {
+	slog.Info("テーブル[trips] tripsテーブルのgeomを更新します。")
+	// shape_idの取得
+	shapeIds, err := g.gtfsScheduleRepo.FindShapeIds()
+	if err != nil {
+		return err
+	}
+	for _, shapeId := range shapeIds {
+		// 特定のshape_idのshapesを取得
+		shapes, err := g.gtfsScheduleRepo.FindShapes(shapeId)
+		if err != nil {
+			return err
+		}
+
+		// 特定のshape_idのgeom(LineString)を作成
+		var lineString orb.LineString
+		for _, pt := range shapes {
+			lineString = append(lineString, orb.Point{*pt.ShapePtLon, *pt.ShapePtLat})
+		}
+
+		// 特定のshape_idのtripsを取得
+		trips, err := g.gtfsScheduleRepo.FindTripsByShapeId(shapeId)
+		if err != nil {
+			return err
+		}
+		for i := range trips {
+			geom := geomdatatypes.Geometry{
+				Geom: lineString,
+				Srid: 4326,
+			}
+			trips[i].Geom = &geom
+		}
+		if err := g.gtfsScheduleRepo.UpdateTrips(trips); err != nil {
+			return err
+		}
+	}
+	slog.Info("テーブル[trips] tripsテーブルのgeomを更新が完了しました。")
 	return nil
 }
 
