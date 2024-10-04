@@ -151,7 +151,7 @@ func (g *gtfsScheduleRepository) FindShapeIds() (shapeIds []string, err error) {
 }
 
 func (g *gtfsScheduleRepository) FindShapes(shapeId string) (shapes []ormstatic.Shape, err error) {
-	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Find(&shapes)
+	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapes)
 	return shapes, nil
 }
 
