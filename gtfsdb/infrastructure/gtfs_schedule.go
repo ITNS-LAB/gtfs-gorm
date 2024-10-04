@@ -37,7 +37,7 @@ func (g *gtfsScheduleRepository) DisConnectDatabase() error {
 	return nil
 }
 
-func (g *gtfsScheduleRepository) Migrate() error {
+func (g *gtfsScheduleRepository) Migrate(shapeEx, shapeDetail bool) error {
 	gtfsSchedule := model.GtfsSchedule{}
 	err := g.Db.AutoMigrate(gtfsSchedule.Agency, gtfsSchedule.Routes, gtfsSchedule.Stops, gtfsSchedule.Calendar,
 		gtfsSchedule.CalendarDates, gtfsSchedule.Trips, gtfsSchedule.StopTimes, gtfsSchedule.Shapes,
@@ -46,6 +46,16 @@ func (g *gtfsScheduleRepository) Migrate() error {
 		gtfsSchedule.Attributions)
 	if err != nil {
 		return err
+	}
+	if shapeEx {
+		if err := g.Db.AutoMigrate(gtfsSchedule.ShapesEx); err != nil {
+			return err
+		}
+	}
+	if shapeDetail {
+		if err := g.Db.AutoMigrate(gtfsSchedule.ShapesDetail); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -141,7 +151,7 @@ func (g *gtfsScheduleRepository) FindShapeIds() (shapeIds []string, err error) {
 }
 
 func (g *gtfsScheduleRepository) FindShapes(shapeId string) (shapes []ormstatic.Shape, err error) {
-	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapes)
+	g.Db.Table("shapes").Where("shape_id = ?", shapeId).Find(&shapes)
 	return shapes, nil
 }
 
@@ -188,6 +198,103 @@ func (g *gtfsScheduleRepository) UpdateTrips(trips []ormstatic.Trip) error {
 
 	if err := tx.Commit().Error; err != nil {
 		return err
+	}
+	return nil
+}
+
+func (g *gtfsScheduleRepository) FindTripIds() (tripIds []string, err error) {
+	g.Db.Table("trips").Select("trip_id").Distinct("trip_id").Order("trip_id asc").Find(&tripIds)
+	return tripIds, nil
+}
+
+func (g *gtfsScheduleRepository) FindShapesWithTripsByTripId(tripId string) (shapesEx []ormstatic.ShapeEx, err error) {
+	g.Db.Table("shapes").
+		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id, shapes.geom").
+		Joins("join trips on trips.shape_id = shapes.shape_id").
+		Where("trip_id = ?", tripId).
+		Order("shapes.shape_pt_sequence").
+		Scan(&shapesEx)
+	return shapesEx, nil
+}
+
+func (g *gtfsScheduleRepository) FindStopTimesByTripId(tripId string) (stopTimeWithLocations []model.StopTimeWithLocation, err error) {
+	g.Db.Table("stop_times AS st").
+		Select("st.trip_id, st.stop_id, st.stop_sequence, s.stop_lat, s.stop_lon").
+		Joins("JOIN stops AS s ON s.stop_id = st.stop_id").
+		Where("trip_id = ?", tripId).
+		Order("stop_sequence").
+		Scan(&stopTimeWithLocations)
+	return stopTimeWithLocations, nil
+}
+
+func (g *gtfsScheduleRepository) CreateShapesEx(se []ormstatic.ShapeEx) error {
+	if err := g.Db.CreateInBatches(&se, 1000).Error; err != nil {
+		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
+	}
+	return nil
+}
+
+func (g *gtfsScheduleRepository) FetchShapes() (shapes []ormstatic.Shape, err error) {
+	g.Db.Find(&shapes)
+	return shapes, nil
+}
+
+func (g *gtfsScheduleRepository) UpdateShapesEx(shapesEx []ormstatic.ShapeEx) error {
+	tx := g.Db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, shapeEx := range shapesEx {
+		if result := tx.Model(&ormstatic.ShapeEx{}).
+			Where("trip_id = ? AND shape_id = ? AND shape_pt_sequence = ?", shapeEx.TripId, shapeEx.ShapeId, shapeEx.ShapePtSequence).
+			Updates(shapeEx); result.Error != nil {
+			tx.Rollback() // エラーが発生したらロールバック
+			return result.Error
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *gtfsScheduleRepository) FetchShapesWithTrips() (shapesEx []ormstatic.ShapeEx, err error) {
+	g.Db.Table("shapes").
+		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id, shapes.geom").
+		Joins("join trips on trips.shape_id = shapes.shape_id").
+		Order("trips.trip_id").
+		Order("shapes.shape_pt_sequence").
+		Scan(&shapesEx)
+	return shapesEx, nil
+}
+
+func (g *gtfsScheduleRepository) UpdateStopTimes(stopTimes []ormstatic.StopTime) error {
+	tx := g.Db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, stopTime := range stopTimes {
+		if result := tx.Model(&ormstatic.StopTime{}).
+			Where("trip_id = ? AND stop_id = ? AND stop_sequence = ?", stopTime.TripId, stopTime.StopId, stopTime.StopSequence).
+			Updates(stopTime); result.Error != nil {
+			tx.Rollback() // エラーが発生したらロールバック
+			return result.Error
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *gtfsScheduleRepository) CreateShapeDetail(shapeDetails []ormstatic.ShapeDetail) error {
+	if err := g.Db.CreateInBatches(&shapeDetails, 1000).Error; err != nil {
+		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
 	}
 	return nil
 }

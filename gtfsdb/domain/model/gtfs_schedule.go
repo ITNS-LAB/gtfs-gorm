@@ -1,6 +1,8 @@
 package model
 
-import "github.com/ITNS-LAB/gtfs-gorm/ormstatic"
+import (
+	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
+)
 
 type GtfsSchedule struct {
 	Agency        []ormstatic.Agency
@@ -26,4 +28,14 @@ type GtfsSchedule struct {
 	Translations []ormstatic.Translation
 	FeedInfo     []ormstatic.FeedInfo
 	Attributions []ormstatic.Attribution
+	ShapesEx     []ormstatic.ShapeEx
+	ShapesDetail []ormstatic.ShapeDetail
+}
+
+type StopTimeWithLocation struct {
+	TripId       *string `gorm:"primaryKey"`
+	StopId       *string `gorm:"primaryKey"`
+	StopSequence *int    `gorm:"primaryKey"`
+	StopLat      *float64
+	StopLon      *float64
 }
