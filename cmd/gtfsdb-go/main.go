@@ -16,6 +16,8 @@ func main() {
 	gtfsUrl := flag.String("url", "", "GTFSのURL")
 	gtfsFile := flag.String("file", "", "GTFSのファイルパス")
 	shapesEx := flag.Bool("shapesex", false, "shapes_exテーブルの作成")
+	shapesDetail := flag.Bool("shapesdetail", false, "shapes_detailテーブルの作成")
+	geom := flag.Bool("geom", false, "geomカラムにgeomを格納")
 	recalculateDist := flag.Bool("recal", false, "'shape_dist_traveled'を再計算")
 	dsn := flag.String("dsn", "", "Required: postgresのdsn 例)postgres://hoge:hoge@localhost:5432/hoge")
 	schema := flag.String("schema", "public", "格納先のスキーマ")
@@ -26,16 +28,19 @@ func main() {
 		GtfsUrl:         *gtfsUrl,
 		GtfsFile:        *gtfsFile,
 		ShapesEx:        *shapesEx,
+		ShapesDetail:    *shapesDetail,
+		Geom:            *geom,
 		RecalculateDist: *recalculateDist,
 		Dsn:             *dsn,
 		Schema:          *schema,
 	}
 
+	// helpの出力
 	if len(os.Args) < 2 || containsHelpFlag() {
 		fmt.Println("GTFSをpostgresに格納するアプリケーションです")
 		fmt.Println("Application to store GTFS into postgres")
 		fmt.Println()
-		fmt.Println("Usage: gtfsdb-go-go [OPTIONS]")
+		fmt.Println("Usage: gtfsdb-go [OPTIONS]")
 		flag.PrintDefaults()
 		return
 	}

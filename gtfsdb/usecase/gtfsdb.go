@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
-	geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util/ptr"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/paulmach/orb"
 	"log/slog"
@@ -17,6 +18,8 @@ type GtfsDbUseCase interface {
 	GtfsDbFile(options CmdOptions) (digest string, err error)
 	recalculateShapes() ([]ormstatic.Shape, error)
 	recalculateShapesUpdate(options CmdOptions) error
+	createShapeEx(options CmdOptions) error
+	createShapeDetail() error
 	tripsGeomUpdate() error
 }
 
@@ -29,6 +32,8 @@ type CmdOptions struct {
 	GtfsUrl         string
 	GtfsFile        string
 	ShapesEx        bool
+	ShapesDetail    bool
+	Geom            bool
 	RecalculateDist bool
 	Dsn             string
 	Schema          string
@@ -84,7 +89,7 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error)
 		return "", err
 	}
 	// マイグレーション
-	if err = g.gtfsScheduleRepo.Migrate(); err != nil {
+	if err = g.gtfsScheduleRepo.Migrate(options.ShapesEx, options.ShapesDetail); err != nil {
 		return "", err
 	}
 	// データ挿入
@@ -101,6 +106,22 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error)
 	if options.RecalculateDist {
 		if err = g.recalculateShapesUpdate(options); err != nil {
 			return "", err
+		}
+	}
+
+	if options.Geom {
+		if err = g.tripsGeomUpdate(); err != nil {
+			return "", err
+		}
+	}
+	if options.ShapesEx {
+		if err = g.createShapeEx(options); err != nil {
+			return digest, err
+		}
+	}
+	if options.ShapesDetail {
+		if err = g.createShapeDetail(); err != nil {
+			return digest, err
 		}
 	}
 	return digest, err
@@ -157,6 +178,81 @@ func (g gtfsDbUseCase) recalculateShapesUpdate(options CmdOptions) error {
 	return nil
 }
 
+// shapeExとstop_timesの更新が1つのメソッドで行われているので分割したい
+func (g gtfsDbUseCase) createShapeEx(options CmdOptions) error {
+	tmpShapesEx, err := g.gtfsScheduleRepo.FetchShapesWithTrips()
+	if err != nil {
+		return err
+	}
+
+	if err := g.gtfsScheduleRepo.CreateShapesEx(tmpShapesEx); err != nil {
+		return err
+	}
+	slog.Info("shapes_exテーブルを作成しました。")
+
+	tripIds, err := g.gtfsScheduleRepo.FindTripIds()
+	if err != nil {
+		return err
+	}
+
+	slog.Info("stop_timesテーブルshape_dist_traveledの更新を開始しました。")
+	slog.Info("shape_exテーブルstop_idの更新を開始しました。")
+	for _, tripId := range tripIds {
+		var shapesEx []ormstatic.ShapeEx
+		var stopTimes []ormstatic.StopTime
+
+		shapes, err := g.gtfsScheduleRepo.FindShapesWithTripsByTripId(tripId)
+		if err != nil {
+			return err
+		}
+		stopTimesWithLocations, err := g.gtfsScheduleRepo.FindStopTimesByTripId(tripId)
+		if err != nil {
+			return err
+		}
+
+		shapesLen := len(shapes)
+		tmpIdx := 0
+		for _, stop := range stopTimesWithLocations {
+			minDist := math.MaxFloat64
+			for i := tmpIdx; i < shapesLen; i++ {
+				dist := util.KarneyWgs84(*stop.StopLat, *stop.StopLon, *shapes[i].ShapePtLat, *shapes[i].ShapePtLon)
+				if dist < minDist {
+					minDist = dist
+					tmpIdx = i
+				}
+				if minDist <= 0 {
+					break
+				}
+			}
+
+			stopTimes = append(stopTimes, ormstatic.StopTime{
+				TripId:            shapes[tmpIdx].TripId,
+				StopId:            stop.StopId,
+				StopSequence:      stop.StopSequence,
+				ShapeDistTraveled: shapes[tmpIdx].ShapeDistTraveled,
+			})
+
+			shapesEx = append(shapesEx, ormstatic.ShapeEx{
+				TripId:          shapes[tmpIdx].TripId,
+				ShapeId:         shapes[tmpIdx].ShapeId,
+				ShapePtSequence: shapes[tmpIdx].ShapePtSequence,
+				StopId:          stop.StopId,
+			})
+		}
+
+		if err := g.gtfsScheduleRepo.UpdateShapesEx(shapesEx); err != nil {
+			return err
+		}
+
+		if err := g.gtfsScheduleRepo.UpdateStopTimes(stopTimes); err != nil {
+			return err
+		}
+	}
+	slog.Info("stop_timesテーブルshape_dist_traveledの更新が完了しました。")
+	slog.Info("shape_exテーブルstop_idの更新が完了しました。")
+	return nil
+}
+
 func (g gtfsDbUseCase) tripsGeomUpdate() error {
 	slog.Info("テーブル[trips] tripsテーブルのgeomを更新します。")
 	// shape_idの取得
@@ -195,6 +291,94 @@ func (g gtfsDbUseCase) tripsGeomUpdate() error {
 	}
 	slog.Info("テーブル[trips] tripsテーブルのgeomを更新が完了しました。")
 	return nil
+}
+
+func (g gtfsDbUseCase) createShapeDetail() error {
+	shapeIds, err := g.gtfsScheduleRepo.FindShapeIds()
+	if err != nil {
+		return err
+	}
+
+	interval := 5.0
+
+	for _, shapeId := range shapeIds {
+		shapes, err := g.gtfsScheduleRepo.FindShapes(shapeId)
+		if err != nil {
+			return err
+		}
+
+		shapesDetail, err := g.resampleShapeDetail(shapes, interval)
+		if err != nil {
+			return err
+		}
+
+		if err := g.gtfsScheduleRepo.CreateShapeDetail(shapesDetail); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (g gtfsDbUseCase) resampleShapeDetail(shapes []ormstatic.Shape, interval float64) ([]ormstatic.ShapeDetail, error) {
+	shapesDetail := []ormstatic.ShapeDetail{{
+		ShapeId:               shapes[0].ShapeId,
+		ShapePtLat:            shapes[0].ShapePtLat,
+		ShapePtLon:            shapes[0].ShapePtLon,
+		ShapeDetailPtSequence: shapes[0].ShapePtSequence,
+		ShapeDistTraveled:     shapes[0].ShapeDistTraveled,
+		Geom:                  shapes[0].Geom}}
+
+	// 残り
+	remainder := 0.0
+	shapePtSequenceCounter := *shapes[0].ShapePtSequence
+
+	for i := 1; i < len(shapes); i++ {
+		// 1つ前のshape_pt
+		prevShapePtLat := *shapesDetail[len(shapesDetail)-1].ShapePtLat
+		prevShapePtLon := *shapesDetail[len(shapesDetail)-1].ShapePtLon
+		// 1つ次のshape_pt
+		nextShapePtLat := *shapes[i].ShapePtLat
+		nextShapePtLon := *shapes[i].ShapePtLon
+
+		// prevShapePtとnextShapePtの距離(区間距離)
+		blockDistance := util.KarneyWgs84(prevShapePtLat, prevShapePtLon, nextShapePtLat, nextShapePtLon)
+		blockDistance += remainder
+
+		// 区間距離からshapesを分割する回数を計算
+		repeat := int(blockDistance / interval)
+		remainder = math.Mod(blockDistance, interval)
+
+		// t:媒介変数 dLat,dLon:方向ベクトル
+		t := interval / blockDistance
+		dLat := nextShapePtLat - prevShapePtLat
+		dLon := nextShapePtLon - prevShapePtLon
+
+		for j := 0; j < repeat; j++ {
+			shapePtSequenceCounter++
+			prevLat := *shapesDetail[len(shapesDetail)-1].ShapePtLat
+			prevLon := *shapesDetail[len(shapesDetail)-1].ShapePtLon
+			nextLat := t*dLat + prevLat
+			nextLon := t*dLon + prevLon
+
+			shortDistance := util.KarneyWgs84(prevLat, prevLon, nextLat, nextLon)
+
+			shapeDistTraveled := *shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + shortDistance
+			geomPoint := orb.Point{nextLat, nextLon}
+			shapesDetail = append(shapesDetail, ormstatic.ShapeDetail{
+				ShapeId:               shapes[0].ShapeId,
+				ShapePtLat:            ptr.Ptr(nextLat),
+				ShapePtLon:            ptr.Ptr(nextLon),
+				ShapeDetailPtSequence: ptr.Ptr(shapePtSequenceCounter),
+				ShapeDistTraveled:     ptr.Ptr(math.Round(shapeDistTraveled*100) / 100),
+				Geom:                  &geomdatatypes.Geometry{Geom: geomPoint, Srid: 4326},
+			})
+
+		}
+
+	}
+	return shapesDetail, nil
 }
 
 func NewGtfsDbUseCase(fileMangerRepo repository.FileManagerRepository, gtfsScheduleRepo repository.GtfsScheduleRepository) GtfsDbUseCase {
