@@ -1,4 +1,4 @@
-package dataframe
+package util
 
 import (
 	"gorm.io/datatypes"

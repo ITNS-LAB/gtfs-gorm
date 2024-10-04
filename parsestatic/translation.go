@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,13 +21,13 @@ func ParseTranslations(path string) ([]ormstatic.Translation, error) {
 		}
 
 		translations = append(translations, ormstatic.Translation{
-			Tablename:   dataframe.IsBlank(df.GetElement("table_name")),
-			FieldName:   dataframe.IsBlank(df.GetElement("field_name")),
-			Language:    dataframe.IsBlank(df.GetElement("language")),
-			Translation: dataframe.IsBlank(df.GetElement("translation")),
-			RecordId:    dataframe.IsBlank(df.GetElement("record_id")),
-			RecordSubId: dataframe.IsBlank(df.GetElement("record_sub_id")),
-			FieldValue:  dataframe.IsBlank(df.GetElement("field_value")),
+			Tablename:   util.IsBlank(df.GetElement("table_name")),
+			FieldName:   util.IsBlank(df.GetElement("field_name")),
+			Language:    util.IsBlank(df.GetElement("language")),
+			Translation: util.IsBlank(df.GetElement("translation")),
+			RecordId:    util.IsBlank(df.GetElement("record_id")),
+			RecordSubId: util.IsBlank(df.GetElement("record_sub_id")),
+			FieldValue:  util.IsBlank(df.GetElement("field_value")),
 		})
 	}
 	return translations, nil

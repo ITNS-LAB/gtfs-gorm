@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,9 +21,9 @@ func ParseLevels(path string) ([]ormstatic.Level, error) {
 		}
 
 		levels = append(levels, ormstatic.Level{
-			LevelId:    dataframe.IsBlank(df.GetElement("level_id")),
-			LevelIndex: dataframe.ParseFloat64(df.GetElement("level_index")),
-			LevelName:  dataframe.IsBlank(df.GetElement("level_name")),
+			LevelId:    util.IsBlank(df.GetElement("level_id")),
+			LevelIndex: util.ParseFloat64(df.GetElement("level_index")),
+			LevelName:  util.IsBlank(df.GetElement("level_name")),
 		})
 	}
 	return levels, nil

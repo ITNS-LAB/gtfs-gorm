@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -21,13 +22,13 @@ func ParseFareAttributes(path string) ([]ormstatic.FareAttribute, error) {
 		}
 
 		fareAttributes = append(fareAttributes, ormstatic.FareAttribute{
-			FareId:           dataframe.IsBlank(df.GetElement("fare_id")),
-			Price:            dataframe.ParseFloat64(df.GetElement("price")),
-			CurrencyType:     dataframe.IsBlank(df.GetElement("currency_type")),
-			PaymentMethod:    dataframe.ParseEnum(df.GetElement("payment_method")),
-			Transfers:        dataframe.ParseEnum(df.GetElement("transfers")),
-			AgencyId:         dataframe.IsBlank(df.GetElement("agency_id")),
-			TransferDuration: dataframe.ParseInt(df.GetElement("transfer_duration")),
+			FareId:           util.IsBlank(df.GetElement("fare_id")),
+			Price:            util.ParseFloat64(df.GetElement("price")),
+			CurrencyType:     util.IsBlank(df.GetElement("currency_type")),
+			PaymentMethod:    util.ParseEnum(df.GetElement("payment_method")),
+			Transfers:        util.ParseEnum(df.GetElement("transfers")),
+			AgencyId:         util.IsBlank(df.GetElement("agency_id")),
+			TransferDuration: util.ParseInt(df.GetElement("transfer_duration")),
 		})
 	}
 	return fareAttributes, nil

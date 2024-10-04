@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,10 +21,10 @@ func ParseTransfers(path string) ([]ormstatic.Transfer, error) {
 		}
 
 		transfers = append(transfers, ormstatic.Transfer{
-			FromStopId:      dataframe.IsBlank(df.GetElement("from_stop_id")),
-			ToStopId:        dataframe.IsBlank(df.GetElement("to_stop_id")),
-			TransferType:    dataframe.ParseEnum(df.GetElement("transfer_type")),
-			MinTransferTime: dataframe.ParseInt(df.GetElement("min_transfer_time")),
+			FromStopId:      util.IsBlank(df.GetElement("from_stop_id")),
+			ToStopId:        util.IsBlank(df.GetElement("to_stop_id")),
+			TransferType:    util.ParseEnum(df.GetElement("transfer_type")),
+			MinTransferTime: util.ParseInt(df.GetElement("min_transfer_time")),
 		})
 	}
 	return transfers, nil

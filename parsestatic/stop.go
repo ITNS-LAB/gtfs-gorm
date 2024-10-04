@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/paulmach/orb"
 )
@@ -21,24 +22,24 @@ func ParseStops(path string) ([]ormstatic.Stop, error) {
 			break
 		}
 
-		point := orb.Point{*dataframe.ParseFloat64(df.GetElement("stop_lon")),
-			*dataframe.ParseFloat64(df.GetElement("stop_lat"))}
+		point := orb.Point{*util.ParseFloat64(df.GetElement("stop_lon")),
+			*util.ParseFloat64(df.GetElement("stop_lat"))}
 
 		stops = append(stops, ormstatic.Stop{
-			StopId:             dataframe.IsBlank(df.GetElement("stop_id")),
-			StopCode:           dataframe.IsBlank(df.GetElement("stop_code")),
-			StopName:           dataframe.IsBlank(df.GetElement("stop_name")),
-			StopDesc:           dataframe.IsBlank(df.GetElement("stop_desc")),
-			StopLat:            dataframe.ParseFloat64(df.GetElement("stop_lat")),
-			StopLon:            dataframe.ParseFloat64(df.GetElement("stop_lon")),
-			ZoneId:             dataframe.IsBlank(df.GetElement("zone_id")),
-			StopUrl:            dataframe.IsBlank(df.GetElement("stop_url")),
-			LocationType:       dataframe.ParseEnum(df.GetElement("location_type")),
-			ParentStation:      dataframe.IsBlank(df.GetElement("parent_station")),
-			StopTimezone:       dataframe.IsBlank(df.GetElement("stop_timezone")),
-			WheelchairBoarding: dataframe.ParseEnum(df.GetElement("wheelchair_boarding")),
-			LevelId:            dataframe.IsBlank(df.GetElement("level_id")),
-			PlatformCode:       dataframe.IsBlank(df.GetElement("platform_code")),
+			StopId:             util.IsBlank(df.GetElement("stop_id")),
+			StopCode:           util.IsBlank(df.GetElement("stop_code")),
+			StopName:           util.IsBlank(df.GetElement("stop_name")),
+			StopDesc:           util.IsBlank(df.GetElement("stop_desc")),
+			StopLat:            util.ParseFloat64(df.GetElement("stop_lat")),
+			StopLon:            util.ParseFloat64(df.GetElement("stop_lon")),
+			ZoneId:             util.IsBlank(df.GetElement("zone_id")),
+			StopUrl:            util.IsBlank(df.GetElement("stop_url")),
+			LocationType:       util.ParseEnum(df.GetElement("location_type")),
+			ParentStation:      util.IsBlank(df.GetElement("parent_station")),
+			StopTimezone:       util.IsBlank(df.GetElement("stop_timezone")),
+			WheelchairBoarding: util.ParseEnum(df.GetElement("wheelchair_boarding")),
+			LevelId:            util.IsBlank(df.GetElement("level_id")),
+			PlatformCode:       util.IsBlank(df.GetElement("platform_code")),
 			Geom:               &geomdatatypes.Geometry{Geom: point, Srid: 4326},
 		})
 	}

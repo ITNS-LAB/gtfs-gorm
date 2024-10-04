@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,16 +21,16 @@ func ParseTrips(path string) ([]ormstatic.Trip, error) {
 		}
 
 		trips = append(trips, ormstatic.Trip{
-			RouteId:              dataframe.IsBlank(df.GetElement("route_id")),
-			ServiceId:            dataframe.IsBlank(df.GetElement("service_id")),
-			TripId:               dataframe.IsBlank(df.GetElement("trip_id")),
-			TripHeadsign:         dataframe.IsBlank(df.GetElement("trip_headsign")),
-			TripShortName:        dataframe.IsBlank(df.GetElement("trip_short_name")),
-			DirectionId:          dataframe.ParseEnum(df.GetElement("direction_id")),
-			BlockId:              dataframe.IsBlank(df.GetElement("block_id")),
-			ShapeId:              dataframe.IsBlank(df.GetElement("shape_id")),
-			WheelchairAccessible: dataframe.ParseEnum(df.GetElement("wheelchair_accessible")),
-			BikesAllowed:         dataframe.ParseEnum(df.GetElement("bikes_allowed")),
+			RouteId:              util.IsBlank(df.GetElement("route_id")),
+			ServiceId:            util.IsBlank(df.GetElement("service_id")),
+			TripId:               util.IsBlank(df.GetElement("trip_id")),
+			TripHeadsign:         util.IsBlank(df.GetElement("trip_headsign")),
+			TripShortName:        util.IsBlank(df.GetElement("trip_short_name")),
+			DirectionId:          util.ParseEnum(df.GetElement("direction_id")),
+			BlockId:              util.IsBlank(df.GetElement("block_id")),
+			ShapeId:              util.IsBlank(df.GetElement("shape_id")),
+			WheelchairAccessible: util.ParseEnum(df.GetElement("wheelchair_accessible")),
+			BikesAllowed:         util.ParseEnum(df.GetElement("bikes_allowed")),
 		})
 	}
 	return trips, nil

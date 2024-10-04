@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,18 +21,18 @@ func ParseRoutes(path string) ([]ormstatic.Route, error) {
 		}
 
 		routes = append(routes, ormstatic.Route{
-			RouteId:           dataframe.IsBlank(df.GetElement("route_id")),
-			AgencyId:          dataframe.IsBlank(df.GetElement("agency_id")),
-			RouteShortName:    dataframe.IsBlank(df.GetElement("route_short_name")),
-			RouteLongName:     dataframe.IsBlank(df.GetElement("route_long_name")),
-			RouteDesc:         dataframe.IsBlank(df.GetElement("route_desc")),
-			RouteType:         dataframe.ParseEnum(df.GetElement("route_type")),
-			RouteUrl:          dataframe.IsBlank(df.GetElement("route_url")),
-			RouteColor:        dataframe.IsBlank(df.GetElement("route_color")),
-			RouteTextColor:    dataframe.IsBlank(df.GetElement("route_text_color")),
-			RouteSortOrder:    dataframe.ParseInt(df.GetElement("route_sort_order")),
-			ContinuousPickup:  dataframe.ParseEnum(df.GetElement("continuous_pickup")),
-			ContinuousDropOff: dataframe.ParseEnum(df.GetElement("continuous_drop_off")),
+			RouteId:           util.IsBlank(df.GetElement("route_id")),
+			AgencyId:          util.IsBlank(df.GetElement("agency_id")),
+			RouteShortName:    util.IsBlank(df.GetElement("route_short_name")),
+			RouteLongName:     util.IsBlank(df.GetElement("route_long_name")),
+			RouteDesc:         util.IsBlank(df.GetElement("route_desc")),
+			RouteType:         util.ParseEnum(df.GetElement("route_type")),
+			RouteUrl:          util.IsBlank(df.GetElement("route_url")),
+			RouteColor:        util.IsBlank(df.GetElement("route_color")),
+			RouteTextColor:    util.IsBlank(df.GetElement("route_text_color")),
+			RouteSortOrder:    util.ParseInt(df.GetElement("route_sort_order")),
+			ContinuousPickup:  util.ParseEnum(df.GetElement("continuous_pickup")),
+			ContinuousDropOff: util.ParseEnum(df.GetElement("continuous_drop_off")),
 		})
 	}
 	return routes, nil

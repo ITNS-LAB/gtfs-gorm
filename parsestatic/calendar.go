@@ -3,6 +3,7 @@ package parsestatic
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
@@ -20,16 +21,16 @@ func ParseCalendar(path string) ([]ormstatic.Calendar, error) {
 		}
 
 		calendars = append(calendars, ormstatic.Calendar{
-			ServiceId: dataframe.IsBlank(df.GetElement("service_id")),
-			Monday:    dataframe.ParseEnum(df.GetElement("monday")),
-			Tuesday:   dataframe.ParseEnum(df.GetElement("tuesday")),
-			Wednesday: dataframe.ParseEnum(df.GetElement("wednesday")),
-			Thursday:  dataframe.ParseEnum(df.GetElement("thursday")),
-			Friday:    dataframe.ParseEnum(df.GetElement("friday")),
-			Saturday:  dataframe.ParseEnum(df.GetElement("saturday")),
-			Sunday:    dataframe.ParseEnum(df.GetElement("sunday")),
-			StartDate: dataframe.ParseDate(df.GetElement("start_date")),
-			EndDate:   dataframe.ParseDate(df.GetElement("end_date")),
+			ServiceId: util.IsBlank(df.GetElement("service_id")),
+			Monday:    util.ParseEnum(df.GetElement("monday")),
+			Tuesday:   util.ParseEnum(df.GetElement("tuesday")),
+			Wednesday: util.ParseEnum(df.GetElement("wednesday")),
+			Thursday:  util.ParseEnum(df.GetElement("thursday")),
+			Friday:    util.ParseEnum(df.GetElement("friday")),
+			Saturday:  util.ParseEnum(df.GetElement("saturday")),
+			Sunday:    util.ParseEnum(df.GetElement("sunday")),
+			StartDate: util.ParseDate(df.GetElement("start_date")),
+			EndDate:   util.ParseDate(df.GetElement("end_date")),
 		})
 	}
 	return calendars, nil
