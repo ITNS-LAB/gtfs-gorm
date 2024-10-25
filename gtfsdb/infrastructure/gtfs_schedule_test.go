@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
-	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"gorm.io/gorm"
 	"path/filepath"
@@ -534,13 +534,13 @@ func Test_gtfsScheduleRepository_UpdateShapes(t *testing.T) {
 				Dsn: "host=localhost user=hoge password=hoge dbname=hoge port=5432 sslmode=disable",
 			},
 			args: args{shapes: []ormstatic.Shape{
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7980950000001), ShapePtLon: dataframe.FloatPtr(143.857629523811), ShapePtSequence: dataframe.IntPtr(1), ShapeDistTraveled: dataframe.FloatPtr(0.0)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7980760983335), ShapePtLon: dataframe.FloatPtr(143.858459586498), ShapePtSequence: dataframe.IntPtr(2), ShapeDistTraveled: dataframe.FloatPtr(0.1)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7983846356787), ShapePtLon: dataframe.FloatPtr(143.862844298172), ShapePtSequence: dataframe.IntPtr(3), ShapeDistTraveled: dataframe.FloatPtr(0.5)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7984666666666), ShapePtLon: dataframe.FloatPtr(143.863157142857), ShapePtSequence: dataframe.IntPtr(4), ShapeDistTraveled: dataframe.FloatPtr(0.6)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7984430506168), ShapePtLon: dataframe.FloatPtr(143.863792516436), ShapePtSequence: dataframe.IntPtr(5), ShapeDistTraveled: dataframe.FloatPtr(0.7)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7987545758103), ShapePtLon: dataframe.FloatPtr(143.868738335255), ShapePtSequence: dataframe.IntPtr(6), ShapeDistTraveled: dataframe.FloatPtr(1.0)},
-				{ShapeId: dataframe.StrPtr("106"), ShapePtLat: dataframe.FloatPtr(43.7988766666667), ShapePtLon: dataframe.FloatPtr(143.869138095238), ShapePtSequence: dataframe.IntPtr(7), ShapeDistTraveled: dataframe.FloatPtr(1.1)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7980950000001), ShapePtLon: util.FloatPtr(143.857629523811), ShapePtSequence: util.IntPtr(1), ShapeDistTraveled: util.FloatPtr(0.0)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7980760983335), ShapePtLon: util.FloatPtr(143.858459586498), ShapePtSequence: util.IntPtr(2), ShapeDistTraveled: util.FloatPtr(0.1)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7983846356787), ShapePtLon: util.FloatPtr(143.862844298172), ShapePtSequence: util.IntPtr(3), ShapeDistTraveled: util.FloatPtr(0.5)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7984666666666), ShapePtLon: util.FloatPtr(143.863157142857), ShapePtSequence: util.IntPtr(4), ShapeDistTraveled: util.FloatPtr(0.6)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7984430506168), ShapePtLon: util.FloatPtr(143.863792516436), ShapePtSequence: util.IntPtr(5), ShapeDistTraveled: util.FloatPtr(0.7)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7987545758103), ShapePtLon: util.FloatPtr(143.868738335255), ShapePtSequence: util.IntPtr(6), ShapeDistTraveled: util.FloatPtr(1.0)},
+				{ShapeId: util.StrPtr("106"), ShapePtLat: util.FloatPtr(43.7988766666667), ShapePtLon: util.FloatPtr(143.869138095238), ShapePtSequence: util.IntPtr(7), ShapeDistTraveled: util.FloatPtr(1.1)},
 			}},
 			wantErr: false,
 		},
