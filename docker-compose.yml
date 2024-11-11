@@ -2,7 +2,8 @@ version: '3'
 services:
   postgres:
     container_name: hoge_postgres
-    image: timescale/timescaledb-ha:pg16.2-ts2.14.2-all-oss
+#    image: timescale/timescaledb-ha:pg16.2-ts2.14.2-all-oss
+    image: postgis/postgis:latest
     environment:
       POSTGRES_DB: hoge
       POSTGRES_USER: hoge
@@ -11,3 +12,16 @@ services:
       - '5432:5432'
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+  schemaspy:
+    container_name: schema_spy
+    image: schemaspy/schemaspy:latest
+    environment:
+      -t: pgsql
+      -host: hoge_postgres
+      -db: hoge
+      -u: hoge
+      -p: hoge
+    volumes:
+      - ./schemaspy/output:/output
+    ports:
+      - '8080:8080'
