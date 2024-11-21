@@ -11,7 +11,7 @@ gtfsファイルまたは，URLを指定し実行します．
 ### 使用方法
 ### Step1 build
 以下のコマンドでビルドします．  
-`go build cmd`  
+`go build ./cmd/gtfsdb-go`  
 
 ### Step2 run
 Step1でビルドしたアプリケーションを以下のコマンドで実行します．  
