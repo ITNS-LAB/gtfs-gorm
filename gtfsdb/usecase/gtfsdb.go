@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util/ptr"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/paulmach/orb"
 	"log/slog"
 	"math"
@@ -16,7 +16,7 @@ import (
 type GtfsDbUseCase interface {
 	GtfsDbUrl(options CmdOptions) (digest string, err error)
 	GtfsDbFile(options CmdOptions) (digest string, err error)
-	recalculateShapes() ([]ormstatic.Shape, error)
+	recalculateShapes() ([]gtfsjp.Shape, error)
 	recalculateShapesUpdate(options CmdOptions) error
 	createShapeEx(options CmdOptions) error
 	createShapeDetail() error
@@ -127,8 +127,8 @@ func (g gtfsDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error)
 	return digest, err
 }
 
-func (g gtfsDbUseCase) recalculateShapes() ([]ormstatic.Shape, error) {
-	var res []ormstatic.Shape
+func (g gtfsDbUseCase) recalculateShapes() ([]gtfsjp.Shape, error) {
+	var res []gtfsjp.Shape
 
 	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を行います。")
 
@@ -198,8 +198,8 @@ func (g gtfsDbUseCase) createShapeEx(options CmdOptions) error {
 	slog.Info("stop_timesテーブルshape_dist_traveledの更新を開始しました。")
 	slog.Info("shape_exテーブルstop_idの更新を開始しました。")
 	for _, tripId := range tripIds {
-		var shapesEx []ormstatic.ShapeEx
-		var stopTimes []ormstatic.StopTime
+		var shapesEx []gtfsjp.ShapeEx
+		var stopTimes []gtfsjp.StopTime
 
 		shapes, err := g.gtfsScheduleRepo.FindShapesWithTripsByTripId(tripId)
 		if err != nil {
@@ -225,14 +225,14 @@ func (g gtfsDbUseCase) createShapeEx(options CmdOptions) error {
 				}
 			}
 
-			stopTimes = append(stopTimes, ormstatic.StopTime{
+			stopTimes = append(stopTimes, gtfsjp.StopTime{
 				TripId:            shapes[tmpIdx].TripId,
 				StopId:            stop.StopId,
 				StopSequence:      stop.StopSequence,
 				ShapeDistTraveled: shapes[tmpIdx].ShapeDistTraveled,
 			})
 
-			shapesEx = append(shapesEx, ormstatic.ShapeEx{
+			shapesEx = append(shapesEx, gtfsjp.ShapeEx{
 				TripId:          shapes[tmpIdx].TripId,
 				ShapeId:         shapes[tmpIdx].ShapeId,
 				ShapePtSequence: shapes[tmpIdx].ShapePtSequence,
@@ -321,8 +321,8 @@ func (g gtfsDbUseCase) createShapeDetail() error {
 	return nil
 }
 
-func (g gtfsDbUseCase) resampleShapeDetail(shapes []ormstatic.Shape, interval float64) ([]ormstatic.ShapeDetail, error) {
-	shapesDetail := []ormstatic.ShapeDetail{{
+func (g gtfsDbUseCase) resampleShapeDetail(shapes []gtfsjp.Shape, interval float64) ([]gtfsjp.ShapeDetail, error) {
+	shapesDetail := []gtfsjp.ShapeDetail{{
 		ShapeId:               shapes[0].ShapeId,
 		ShapePtLat:            shapes[0].ShapePtLat,
 		ShapePtLon:            shapes[0].ShapePtLon,
@@ -366,7 +366,7 @@ func (g gtfsDbUseCase) resampleShapeDetail(shapes []ormstatic.Shape, interval fl
 
 			shapeDistTraveled := *shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + shortDistance
 			geomPoint := orb.Point{nextLat, nextLon}
-			shapesDetail = append(shapesDetail, ormstatic.ShapeDetail{
+			shapesDetail = append(shapesDetail, gtfsjp.ShapeDetail{
 				ShapeId:               shapes[0].ShapeId,
 				ShapePtLat:            ptr.Ptr(nextLat),
 				ShapePtLon:            ptr.Ptr(nextLon),

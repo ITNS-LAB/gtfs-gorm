@@ -1,35 +1,35 @@
 package model
 
 import (
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 )
 
 type GtfsSchedule struct {
-	Agency        []ormstatic.Agency
-	Stops         []ormstatic.Stop
-	Routes        []ormstatic.Route
-	Trips         []ormstatic.Trip
-	StopTimes     []ormstatic.StopTime
-	Calendar      []ormstatic.Calendar
-	CalendarDates []ormstatic.CalendarDate
-	FareAttribute []ormstatic.FareAttribute
-	FareRules     []ormstatic.FareRule
+	Agency        []gtfsjp.Agency
+	Stops         []gtfsjp.Stop
+	Routes        []gtfsjp.Route
+	Trips         []gtfsjp.Trip
+	StopTimes     []gtfsjp.StopTime
+	Calendar      []gtfsjp.Calendar
+	CalendarDates []gtfsjp.CalendarDate
+	FareAttribute []gtfsjp.FareAttribute
+	FareRules     []gtfsjp.FareRule
 	// FareMedia
 	// FareProducts
 	// FareLegRules
 	// FareTransferRules
 	// Areas
 	// StopAreas
-	Shapes       []ormstatic.Shape
-	Frequencies  []ormstatic.Frequency
-	Transfers    []ormstatic.Transfer
-	Pathways     []ormstatic.Pathway
-	Levels       []ormstatic.Level
-	Translations []ormstatic.Translation
-	FeedInfo     []ormstatic.FeedInfo
-	Attributions []ormstatic.Attribution
-	ShapesEx     []ormstatic.ShapeEx
-	ShapesDetail []ormstatic.ShapeDetail
+	Shapes       []gtfsjp.Shape
+	Frequencies  []gtfsjp.Frequency
+	Transfers    []gtfsjp.Transfer
+	Pathways     []gtfsjp.Pathway
+	Levels       []gtfsjp.Level
+	Translations []gtfsjp.Translation
+	FeedInfo     []gtfsjp.FeedInfo
+	Attributions []gtfsjp.Attribution
+	ShapesEx     []gtfsjp.ShapeEx
+	ShapesDetail []gtfsjp.ShapeDetail
 }
 
 type StopTimeWithLocation struct {

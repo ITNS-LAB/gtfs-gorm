@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type FareAttribute struct {
 	FareId           *string  `gorm:"primaryKey;index"`

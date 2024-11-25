@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type Level struct {
 	LevelId    *string  `gorm:"primaryKey"`

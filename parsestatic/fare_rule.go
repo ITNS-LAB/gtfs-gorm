@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseFareRules(path string) ([]ormstatic.FareRule, error) {
-	var fareRules []ormstatic.FareRule
+func ParseFareRules(path string) ([]gtfsjp.FareRule, error) {
+	var fareRules []gtfsjp.FareRule
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return fareRules, err
@@ -20,7 +20,7 @@ func ParseFareRules(path string) ([]ormstatic.FareRule, error) {
 			break
 		}
 
-		fareRules = append(fareRules, ormstatic.FareRule{
+		fareRules = append(fareRules, gtfsjp.FareRule{
 			FareId:        util.IsBlank(df.GetElement("fare_id")),
 			RouteId:       util.IsBlank(df.GetElement("route_id")),
 			OriginId:      util.IsBlank(df.GetElement("origin_id")),

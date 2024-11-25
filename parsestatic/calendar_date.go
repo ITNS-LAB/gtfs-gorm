@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseCalendarDates(path string) ([]ormstatic.CalendarDate, error) {
-	var calendarDates []ormstatic.CalendarDate
+func ParseCalendarDates(path string) ([]gtfsjp.CalendarDate, error) {
+	var calendarDates []gtfsjp.CalendarDate
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return calendarDates, err
@@ -20,7 +20,7 @@ func ParseCalendarDates(path string) ([]ormstatic.CalendarDate, error) {
 			break
 		}
 
-		calendarDates = append(calendarDates, ormstatic.CalendarDate{
+		calendarDates = append(calendarDates, gtfsjp.CalendarDate{
 			ServiceId:     util.IsBlank(df.GetElement("service_id")),
 			Date:          util.ParseDate(df.GetElement("date")),
 			ExceptionType: util.ParseEnum(df.GetElement("exception_type")),

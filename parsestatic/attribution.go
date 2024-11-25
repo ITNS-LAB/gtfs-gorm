@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseAttributions(path string) ([]ormstatic.Attribution, error) {
-	var attributions []ormstatic.Attribution
+func ParseAttributions(path string) ([]gtfsjp.Attribution, error) {
+	var attributions []gtfsjp.Attribution
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return attributions, err
@@ -20,7 +20,7 @@ func ParseAttributions(path string) ([]ormstatic.Attribution, error) {
 			break
 		}
 
-		attributions = append(attributions, ormstatic.Attribution{
+		attributions = append(attributions, gtfsjp.Attribution{
 			AttributionId:    util.IsBlank(df.GetElement("attribution_id")),
 			AgencyId:         util.IsBlank(df.GetElement("agency_id")),
 			RouteId:          util.IsBlank(df.GetElement("route_id")),

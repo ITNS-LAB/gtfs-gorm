@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type Pathway struct {
 	PathwayId            *string `gorm:"primaryKey"`

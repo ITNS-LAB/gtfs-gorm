@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 import "gorm.io/datatypes"
 

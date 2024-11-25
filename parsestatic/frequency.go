@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseFrequencies(path string) ([]ormstatic.Frequency, error) {
-	var frequencies []ormstatic.Frequency
+func ParseFrequencies(path string) ([]gtfsjp.Frequency, error) {
+	var frequencies []gtfsjp.Frequency
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return frequencies, err
@@ -20,7 +20,7 @@ func ParseFrequencies(path string) ([]ormstatic.Frequency, error) {
 			break
 		}
 
-		frequencies = append(frequencies, ormstatic.Frequency{
+		frequencies = append(frequencies, gtfsjp.Frequency{
 			TripId:      util.IsBlank(df.GetElement("trip_id")),
 			StartTime:   util.ParseTime(df.GetElement("start_time")),
 			EndTime:     util.ParseTime(df.GetElement("end_time")),

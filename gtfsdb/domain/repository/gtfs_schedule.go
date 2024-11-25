@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 )
 
 type GtfsScheduleRepository interface {
@@ -13,17 +13,17 @@ type GtfsScheduleRepository interface {
 	CreateSchema(schema string) error
 	SetSchema(schema string) error
 	FindShapeIds() ([]string, error)
-	FindShapes(shapeId string) ([]ormstatic.Shape, error)
-	UpdateShapes([]ormstatic.Shape) error
+	FindShapes(shapeId string) ([]gtfsjp.Shape, error)
+	UpdateShapes([]gtfsjp.Shape) error
 	FindTripIds() ([]string, error)
-	FindShapesWithTripsByTripId(tripId string) ([]ormstatic.ShapeEx, error)
+	FindShapesWithTripsByTripId(tripId string) ([]gtfsjp.ShapeEx, error)
 	FindStopTimesByTripId(tripId string) ([]model.StopTimeWithLocation, error)
-	CreateShapesEx([]ormstatic.ShapeEx) error
-	UpdateShapesEx([]ormstatic.ShapeEx) error
-	FetchShapes() ([]ormstatic.Shape, error)
-	FetchShapesWithTrips() ([]ormstatic.ShapeEx, error)
-	UpdateStopTimes([]ormstatic.StopTime) error
-	FindTripsByShapeId(shapeId string) ([]ormstatic.Trip, error)
-	UpdateTrips([]ormstatic.Trip) error
-	CreateShapeDetail([]ormstatic.ShapeDetail) error
+	CreateShapesEx([]gtfsjp.ShapeEx) error
+	UpdateShapesEx([]gtfsjp.ShapeEx) error
+	FetchShapes() ([]gtfsjp.Shape, error)
+	FetchShapesWithTrips() ([]gtfsjp.ShapeEx, error)
+	UpdateStopTimes([]gtfsjp.StopTime) error
+	FindTripsByShapeId(shapeId string) ([]gtfsjp.Trip, error)
+	UpdateTrips([]gtfsjp.Trip) error
+	CreateShapeDetail([]gtfsjp.ShapeDetail) error
 }

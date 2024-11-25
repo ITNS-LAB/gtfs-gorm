@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseTranslations(path string) ([]ormstatic.Translation, error) {
-	var translations []ormstatic.Translation
+func ParseTranslations(path string) ([]gtfsjp.Translation, error) {
+	var translations []gtfsjp.Translation
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return translations, err
@@ -20,7 +20,7 @@ func ParseTranslations(path string) ([]ormstatic.Translation, error) {
 			break
 		}
 
-		translations = append(translations, ormstatic.Translation{
+		translations = append(translations, gtfsjp.Translation{
 			Tablename:   util.IsBlank(df.GetElement("table_name")),
 			FieldName:   util.IsBlank(df.GetElement("field_name")),
 			Language:    util.IsBlank(df.GetElement("language")),

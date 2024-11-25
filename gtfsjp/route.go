@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type Route struct {
 	RouteId           *string `gorm:"primaryKey"`

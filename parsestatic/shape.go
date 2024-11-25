@@ -2,15 +2,15 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/paulmach/orb"
 )
 
-func ParseShapes(path string) ([]ormstatic.Shape, error) {
-	var shapes []ormstatic.Shape
+func ParseShapes(path string) ([]gtfsjp.Shape, error) {
+	var shapes []gtfsjp.Shape
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return shapes, err
@@ -25,7 +25,7 @@ func ParseShapes(path string) ([]ormstatic.Shape, error) {
 		point := orb.Point{*util.ParseFloat64(df.GetElement("shape_pt_lon")),
 			*util.ParseFloat64(df.GetElement("shape_pt_lat"))}
 
-		shapes = append(shapes, ormstatic.Shape{
+		shapes = append(shapes, gtfsjp.Shape{
 			ShapeId:           util.IsBlank(df.GetElement("shape_id")),
 			ShapePtLat:        util.ParseFloat64(df.GetElement("shape_pt_lat")),
 			ShapePtLon:        util.ParseFloat64(df.GetElement("shape_pt_lon")),

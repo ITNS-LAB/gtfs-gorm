@@ -2,15 +2,15 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 	"github.com/paulmach/orb"
 )
 
-func ParseStops(path string) ([]ormstatic.Stop, error) {
-	var stops []ormstatic.Stop
+func ParseStops(path string) ([]gtfsjp.Stop, error) {
+	var stops []gtfsjp.Stop
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return stops, err
@@ -25,7 +25,7 @@ func ParseStops(path string) ([]ormstatic.Stop, error) {
 		point := orb.Point{*util.ParseFloat64(df.GetElement("stop_lon")),
 			*util.ParseFloat64(df.GetElement("stop_lat"))}
 
-		stops = append(stops, ormstatic.Stop{
+		stops = append(stops, gtfsjp.Stop{
 			StopId:             util.IsBlank(df.GetElement("stop_id")),
 			StopCode:           util.IsBlank(df.GetElement("stop_code")),
 			StopName:           util.IsBlank(df.GetElement("stop_name")),

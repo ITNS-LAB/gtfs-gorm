@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParsePathways(path string) ([]ormstatic.Pathway, error) {
-	var pathways []ormstatic.Pathway
+func ParsePathways(path string) ([]gtfsjp.Pathway, error) {
+	var pathways []gtfsjp.Pathway
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return pathways, err
@@ -20,7 +20,7 @@ func ParsePathways(path string) ([]ormstatic.Pathway, error) {
 			break
 		}
 
-		pathways = append(pathways, ormstatic.Pathway{
+		pathways = append(pathways, gtfsjp.Pathway{
 			PathwayId:            util.IsBlank(df.GetElement("pathway_id")),
 			FromStopId:           util.IsBlank(df.GetElement("from_stop_id")),
 			ToStopId:             util.IsBlank(df.GetElement("to_stop_id")),

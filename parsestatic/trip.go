@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseTrips(path string) ([]ormstatic.Trip, error) {
-	var trips []ormstatic.Trip
+func ParseTrips(path string) ([]gtfsjp.Trip, error) {
+	var trips []gtfsjp.Trip
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return trips, err
@@ -20,7 +20,7 @@ func ParseTrips(path string) ([]ormstatic.Trip, error) {
 			break
 		}
 
-		trips = append(trips, ormstatic.Trip{
+		trips = append(trips, gtfsjp.Trip{
 			RouteId:              util.IsBlank(df.GetElement("route_id")),
 			ServiceId:            util.IsBlank(df.GetElement("service_id")),
 			TripId:               util.IsBlank(df.GetElement("trip_id")),

@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type Translation struct {
 	Id int `gorm:"primaryKey;auto_increment"`

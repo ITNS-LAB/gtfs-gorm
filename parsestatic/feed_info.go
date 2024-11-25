@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseFeedInfo(path string) ([]ormstatic.FeedInfo, error) {
-	var feedInfos []ormstatic.FeedInfo
+func ParseFeedInfo(path string) ([]gtfsjp.FeedInfo, error) {
+	var feedInfos []gtfsjp.FeedInfo
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return feedInfos, err
@@ -20,7 +20,7 @@ func ParseFeedInfo(path string) ([]ormstatic.FeedInfo, error) {
 			break
 		}
 
-		feedInfos = append(feedInfos, ormstatic.FeedInfo{
+		feedInfos = append(feedInfos, gtfsjp.FeedInfo{
 			FeedPublisherName: util.IsBlank(df.GetElement("feed_publisher_name")),
 			FeedPublisherUrl:  util.IsBlank(df.GetElement("feed_publisher_url")),
 			FeedLang:          util.IsBlank(df.GetElement("feed_lang")),

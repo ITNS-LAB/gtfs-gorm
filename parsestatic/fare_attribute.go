@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseFareAttributes(path string) ([]ormstatic.FareAttribute, error) {
-	var fareAttributes []ormstatic.FareAttribute
+func ParseFareAttributes(path string) ([]gtfsjp.FareAttribute, error) {
+	var fareAttributes []gtfsjp.FareAttribute
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return fareAttributes, err
@@ -21,7 +21,7 @@ func ParseFareAttributes(path string) ([]ormstatic.FareAttribute, error) {
 			break
 		}
 
-		fareAttributes = append(fareAttributes, ormstatic.FareAttribute{
+		fareAttributes = append(fareAttributes, gtfsjp.FareAttribute{
 			FareId:           util.IsBlank(df.GetElement("fare_id")),
 			Price:            util.ParseFloat64(df.GetElement("price")),
 			CurrencyType:     util.IsBlank(df.GetElement("currency_type")),

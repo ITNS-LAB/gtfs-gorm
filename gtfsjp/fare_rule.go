@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 type FareRule struct {
 	Id              int     `gorm:"primaryKey;auto_increment"`

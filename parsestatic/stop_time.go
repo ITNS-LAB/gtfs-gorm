@@ -2,13 +2,13 @@ package parsestatic
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/dataframe"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"github.com/ITNS-LAB/gtfs-gorm/ormstatic"
 )
 
-func ParseStopTimes(path string) ([]ormstatic.StopTime, error) {
-	var stopTimes []ormstatic.StopTime
+func ParseStopTimes(path string) ([]gtfsjp.StopTime, error) {
+	var stopTimes []gtfsjp.StopTime
 	df, err := dataframe.OpenCsv(path)
 	if err != nil {
 		return stopTimes, err
@@ -20,7 +20,7 @@ func ParseStopTimes(path string) ([]ormstatic.StopTime, error) {
 			break
 		}
 
-		stopTimes = append(stopTimes, ormstatic.StopTime{
+		stopTimes = append(stopTimes, gtfsjp.StopTime{
 			TripId:            util.IsBlank(df.GetElement("trip_id")),
 			ArrivalTime:       util.ParseTime(df.GetElement("arrival_time")),
 			DepartureTime:     util.ParseTime(df.GetElement("departure_time")),

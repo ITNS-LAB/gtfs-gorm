@@ -1,4 +1,4 @@
-package ormstatic
+package gtfsjp
 
 import geomdatatypes "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 
