@@ -2,7 +2,7 @@ package gtfsjp
 
 import (
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/internal/csvutil"
+	"github.com/ITNS-LAB/gtfs-gorm/pkg/csvutil"
 )
 
 type Translation struct {
