@@ -1,4 +1,4 @@
-package geomdatatypes
+package gormdatatypes
 
 import (
 	"encoding/hex"

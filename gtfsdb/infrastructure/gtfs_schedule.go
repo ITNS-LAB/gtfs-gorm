@@ -5,7 +5,6 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
-	"github.com/ITNS-LAB/gtfs-gorm/parsestatic"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log/slog"
@@ -38,29 +37,27 @@ func (g *gtfsScheduleRepository) DisConnectDatabase() error {
 }
 
 func (g *gtfsScheduleRepository) Migrate(shapeEx, shapeDetail bool) error {
-	gtfsSchedule := model.GtfsSchedule{}
-	err := g.Db.AutoMigrate(gtfsSchedule.Agency, gtfsSchedule.Routes, gtfsSchedule.Stops, gtfsSchedule.Calendar,
-		gtfsSchedule.CalendarDates, gtfsSchedule.Trips, gtfsSchedule.StopTimes, gtfsSchedule.Shapes,
-		gtfsSchedule.Frequencies, gtfsSchedule.Transfers, gtfsSchedule.FeedInfo, gtfsSchedule.FareAttribute,
-		gtfsSchedule.FareRules, gtfsSchedule.Levels, gtfsSchedule.Pathways, gtfsSchedule.Translations,
-		gtfsSchedule.Attributions)
+	gtfsJp := model.GtfsJp{}
+	err := g.Db.AutoMigrate(gtfsJp.Agency, gtfsJp.AgencyJp, gtfsJp.Routes, gtfsJp.Stops, gtfsJp.Calendar,
+		gtfsJp.CalendarDates, gtfsJp.Trips, gtfsJp.StopTimes, gtfsJp.Shapes, gtfsJp.Frequencies, gtfsJp.Transfers,
+		gtfsJp.FeedInfo, gtfsJp.FareAttribute, gtfsJp.FareRules, gtfsJp.Translations, gtfsJp.OfficeJp, gtfsJp.PatternJp)
 	if err != nil {
 		return err
 	}
 	if shapeEx {
-		if err := g.Db.AutoMigrate(gtfsSchedule.ShapesEx); err != nil {
+		if err := g.Db.AutoMigrate(gtfsJp.ShapesEx); err != nil {
 			return err
 		}
 	}
 	if shapeDetail {
-		if err := g.Db.AutoMigrate(gtfsSchedule.ShapesDetail); err != nil {
+		if err := g.Db.AutoMigrate(gtfsJp.ShapesDetail); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func createGtfsSchedule[T any](filePath string, parser func(string) ([]T, error), db *gorm.DB) error {
+func createGtfsJp[T any](filePath string, parser func(string) ([]T, error), db *gorm.DB) error {
 	// ファイルのパース
 	data, err := parser(filePath)
 	if err != nil {
@@ -77,55 +74,55 @@ func createGtfsSchedule[T any](filePath string, parser func(string) ([]T, error)
 }
 
 func (g *gtfsScheduleRepository) Create(gtfsPath string) error {
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "agency.txt"), parsestatic.ParseAgency, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgency, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "calendar.txt"), parsestatic.ParseCalendar, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "agency_jp.txt"), gtfsjp.ParseAgencyJp, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "calendar_dates.txt"), parsestatic.ParseCalendarDates, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar.txt"), gtfsjp.ParseCalendar, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "routes.txt"), parsestatic.ParseRoutes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar_dates.txt"), gtfsjp.ParseCalendarDates, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stops.txt"), parsestatic.ParseStops, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "routes.txt"), gtfsjp.ParseRoutes, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "shapes.txt"), parsestatic.ParseShapes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "stops.txt"), gtfsjp.ParseStops, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "trips.txt"), parsestatic.ParseTrips, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "shapes.txt"), gtfsjp.ParseShapes, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_times.txt"), parsestatic.ParseStopTimes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "trips.txt"), gtfsjp.ParseTrips, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "transfers.txt"), parsestatic.ParseTransfers, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "stop_times.txt"), gtfsjp.ParseStopTimes, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "frequencies.txt"), parsestatic.ParseFrequencies, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "transfers.txt"), gtfsjp.ParseTransfers, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_attributes.txt"), parsestatic.ParseFareAttributes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "frequencies.txt"), gtfsjp.ParseFrequencies, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_rules.txt"), parsestatic.ParseFareRules, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsjp.ParseFareAttributes, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "pathways.txt"), parsestatic.ParsePathways, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsjp.ParseFareRules, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "levels.txt"), parsestatic.ParseLevels, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "feed_info.txt"), gtfsjp.ParseFeedInfo, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "feed_info.txt"), parsestatic.ParseFeedInfo, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "translations.txt"), gtfsjp.ParseTranslations, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "translations.txt"), parsestatic.ParseTranslations, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "office_jp.txt"), gtfsjp.ParseOfficeJp, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "attributions.txt"), parsestatic.ParseAttributions, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "pattern_jp.txt"), gtfsjp.ParsePatternJp, g.Db); err != nil {
 		return err
 	}
 	return nil
