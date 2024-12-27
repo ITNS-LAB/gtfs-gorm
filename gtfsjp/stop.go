@@ -8,21 +8,23 @@ import (
 )
 
 type Stop struct {
-	StopId             string `gorm:"primaryKey"`
-	StopCode           *string
-	StopName           string `gorm:"not null"`
-	StopDesc           *string
-	StopLat            float64 `gorm:"not null"`
-	StopLon            float64 `gorm:"not null"`
-	ZoneId             *string `gorm:"unique"`
-	StopUrl            *string
-	LocationType       *int `gorm:"default:0"`
-	ParentStation      *string
-	StopTimezone       *string
-	WheelchairBoarding *int `gorm:"default:0"`
-	LevelId            *string
-	PlatformCode       *string
-	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
+	StopId                string `gorm:"primaryKey"`
+	StopCode              *string
+	StopName              string `gorm:"not null"`
+	StopDesc              *string
+	StopLat               float64 `gorm:"not null"`
+	StopLon               float64 `gorm:"not null"`
+	ZoneId                *string `gorm:"unique"`
+	StopUrl               *string
+	LocationType          *int `gorm:"default:0"`
+	ParentStation         *string
+	StopTimezone          *string
+	WheelchairBoarding    *int `gorm:"default:0"`
+	LevelId               *string
+	PlatformCode          *string
+	StopTimes             []StopTime `gorm:"foreignKey:StopId;references:StopId"`
+	FareRuleOriginId      []FareRule `gorm:"foreignKey:OriginId;references:ZoneId"`
+	FareRuleDestinationId []FareRule `gorm:"foreignKey:DestinationId;references:ZoneId"`
 }
 
 func (Stop) TableName() string {
@@ -132,26 +134,28 @@ func ParseStops(path string) ([]Stop, error) {
 }
 
 type StopGeom struct {
-	StopId             string `gorm:"primaryKey"`
-	StopCode           *string
-	StopName           string `gorm:"not null"`
-	StopDesc           *string
-	StopLat            float64 `gorm:"not null"`
-	StopLon            float64 `gorm:"not null"`
-	ZoneId             *string `gorm:"unique"`
-	StopUrl            *string
-	LocationType       *int `gorm:"default:0"`
-	ParentStation      *string
-	StopTimezone       *string
-	WheelchairBoarding *int `gorm:"default:0"`
-	LevelId            *string
-	PlatformCode       *string
-	Geom               gormdatatypes.Geometry `gorm:"index"`
-	StopTimes          []StopTime             `gorm:"foreignKey:StopId;references:StopId"`
+	StopId                string `gorm:"primaryKey"`
+	StopCode              *string
+	StopName              string `gorm:"not null"`
+	StopDesc              *string
+	StopLat               float64 `gorm:"not null"`
+	StopLon               float64 `gorm:"not null"`
+	ZoneId                *string `gorm:"unique"`
+	StopUrl               *string
+	LocationType          *int `gorm:"default:0"`
+	ParentStation         *string
+	StopTimezone          *string
+	WheelchairBoarding    *int `gorm:"default:0"`
+	LevelId               *string
+	PlatformCode          *string
+	Geom                  gormdatatypes.Geometry `gorm:"index"`
+	StopTimes             []StopTimeGeom         `gorm:"foreignKey:StopId;references:StopId"`
+	FareRuleOriginId      []FareRuleGeom         `gorm:"foreignKey:OriginId;references:ZoneId"`
+	FareRuleDestinationId []FareRuleGeom         `gorm:"foreignKey:DestinationId;references:ZoneId"`
 }
 
 func (StopGeom) TableName() string {
-	return "stops_geom"
+	return "stops"
 }
 
 func ParseStopsGeom(path string) ([]StopGeom, error) {

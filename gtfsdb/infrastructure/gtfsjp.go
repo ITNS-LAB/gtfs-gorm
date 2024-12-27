@@ -30,18 +30,63 @@ type gtfsJpRepository struct {
 	Db *gorm.DB
 }
 
-func (g gtfsJpRepository) Migrate() error {
+func (g gtfsJpRepository) MigrateGtfsJp() error {
 	gtfsJp := model.GtfsJp{}
-	err := g.Db.AutoMigrate(gtfsJp.Agency, gtfsJp.AgencyJp, gtfsJp.Routes, gtfsJp.Stops, gtfsJp.Calendar,
-		gtfsJp.CalendarDates, gtfsJp.Trips, gtfsJp.StopTimes, gtfsJp.Shapes, gtfsJp.Frequencies, gtfsJp.Transfers,
-		gtfsJp.FeedInfo, gtfsJp.FareAttribute, gtfsJp.FareRules, gtfsJp.Translations, gtfsJp.OfficeJp, gtfsJp.PatternJp)
-	if err != nil {
+	if err := g.Db.AutoMigrate(gtfsJp.Agency); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.AgencyJp); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Routes); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Stops); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Calendar); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.CalendarDates); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Trips); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.StopTimes); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Shapes); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Frequencies); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Transfers); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FeedInfo); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FareAttribute); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FareRules); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Translations); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.OfficeJp); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.PatternJp); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g gtfsJpRepository) Create(gtfsPath string) error {
+func (g gtfsJpRepository) CreateGtfsJp(gtfsPath string) error {
 	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgency, g.Db); err != nil {
 		return err
 	}
@@ -104,31 +149,77 @@ type gtfsJpGeomRepository struct {
 	Db *gorm.DB
 }
 
-func (g gtfsJpGeomRepository) Migrate() error {
+func (g gtfsJpGeomRepository) MigrateGtfsJpGeom() error {
 	gtfsJp := model.GtfsJpGeom{}
-	err := g.Db.AutoMigrate(gtfsJp.Agency, gtfsJp.AgencyJp, gtfsJp.Routes, gtfsJp.StopsGeom, gtfsJp.Calendar,
-		gtfsJp.CalendarDates, gtfsJp.TripsGeom, gtfsJp.StopTimes, gtfsJp.ShapesGeom, gtfsJp.Frequencies, gtfsJp.Transfers,
-		gtfsJp.FeedInfo, gtfsJp.FareAttribute, gtfsJp.FareRules, gtfsJp.Translations, gtfsJp.OfficeJp, gtfsJp.PatternJp)
-	if err != nil {
-		return err
+	if err := g.Db.AutoMigrate(gtfsJp.Agency); err != nil {
+		return nil
 	}
+	if err := g.Db.AutoMigrate(gtfsJp.AgencyJp); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Routes); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Stops); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Calendar); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.CalendarDates); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Trips); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.StopTimes); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Shapes); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Frequencies); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Transfers); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FeedInfo); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FareAttribute); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.FareRules); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.Translations); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.OfficeJp); err != nil {
+		return nil
+	}
+	if err := g.Db.AutoMigrate(gtfsJp.PatternJp); err != nil {
+		return nil
+	}
+
 	return nil
 }
 
-func (g gtfsJpGeomRepository) Create(gtfsPath string) error {
-	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgency, g.Db); err != nil {
+func (g gtfsJpGeomRepository) CreateGtfsJpGeom(gtfsPath string) error {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgencyGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "agency_jp.txt"), gtfsjp.ParseAgencyJp, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "agency_jp.txt"), gtfsjp.ParseAgencyJpGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar.txt"), gtfsjp.ParseCalendar, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar.txt"), gtfsjp.ParseCalendarGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar_dates.txt"), gtfsjp.ParseCalendarDates, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar_dates.txt"), gtfsjp.ParseCalendarDatesGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "routes.txt"), gtfsjp.ParseRoutes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "routes.txt"), gtfsjp.ParseRoutesGeom, g.Db); err != nil {
 		return err
 	}
 	if err := createGtfsJp(filepath.Join(gtfsPath, "stops.txt"), gtfsjp.ParseStopsGeom, g.Db); err != nil {
@@ -140,19 +231,19 @@ func (g gtfsJpGeomRepository) Create(gtfsPath string) error {
 	if err := createGtfsJp(filepath.Join(gtfsPath, "trips.txt"), gtfsjp.ParseTripsGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "stop_times.txt"), gtfsjp.ParseStopTimes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "stop_times.txt"), gtfsjp.ParseStopTimesGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "transfers.txt"), gtfsjp.ParseTransfers, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "transfers.txt"), gtfsjp.ParseTransfersGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "frequencies.txt"), gtfsjp.ParseFrequencies, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "frequencies.txt"), gtfsjp.ParseFrequenciesGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsjp.ParseFareAttributes, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsjp.ParseFareAttributesGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsjp.ParseFareRules, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsjp.ParseFareRulesGeom, g.Db); err != nil {
 		return err
 	}
 	if err := createGtfsJp(filepath.Join(gtfsPath, "feed_info.txt"), gtfsjp.ParseFeedInfo, g.Db); err != nil {
@@ -161,10 +252,10 @@ func (g gtfsJpGeomRepository) Create(gtfsPath string) error {
 	if err := createGtfsJp(filepath.Join(gtfsPath, "translations.txt"), gtfsjp.ParseTranslations, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "office_jp.txt"), gtfsjp.ParseOfficeJp, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "office_jp.txt"), gtfsjp.ParseOfficeJpGeom, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "pattern_jp.txt"), gtfsjp.ParsePatternJp, g.Db); err != nil {
+	if err := createGtfsJp(filepath.Join(gtfsPath, "pattern_jp.txt"), gtfsjp.ParsePatternJpGeom, g.Db); err != nil {
 		return err
 	}
 	return nil
@@ -313,7 +404,7 @@ type shapeExRepository struct {
 	Db *gorm.DB
 }
 
-func (s shapeExRepository) Migrate() error {
+func (s shapeExRepository) MigrateShapesEx() error {
 	if err := s.Db.AutoMigrate(&model.ShapeEx{}); err != nil {
 		return err
 	}
@@ -356,12 +447,12 @@ type shapeDetailRepository struct {
 	Db *gorm.DB
 }
 
-func (s shapeDetailRepository) Migrate() error {
+func (s shapeDetailRepository) MigrateShapesDetail() error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (s shapeDetailRepository) CreateShapeDetail(details []model.ShapeDetail) error {
+func (s shapeDetailRepository) CreateShapesDetail(details []model.ShapeDetail) error {
 	//TODO implement me
 	panic("implement me")
 }

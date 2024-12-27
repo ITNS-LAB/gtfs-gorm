@@ -51,3 +51,49 @@ func ParseCalendarDates(path string) ([]CalendarDate, error) {
 
 	return calendarDates, nil
 }
+
+type CalendarDateGeom struct {
+	ServiceId     string         `gorm:"primaryKey"`
+	Date          datatypes.Date `gorm:"primaryKey"`
+	ExceptionType int            `gorm:"not null"`
+}
+
+func (CalendarDateGeom) TableName() string {
+	return "calendar_dates"
+}
+
+func ParseCalendarDatesGeom(path string) ([]CalendarDateGeom, error) {
+	// CSV を開く
+	df, err := csvutil.OpenCSV(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open calendar_dates CSV: %w", err)
+	}
+
+	// データを解析して CalendarDate 構造体のスライスを作成
+	var calendarDates []CalendarDateGeom
+	for i := 0; i < len(df.Records); i++ {
+		serviceId, err := df.GetString(i, "service_id")
+		if err != nil {
+			return nil, fmt.Errorf("failed to get 'service_id' at row %d: %w", i, err)
+		}
+
+		date, err := df.GetDate(i, "date")
+		if err != nil {
+			return nil, fmt.Errorf("failed to get 'date' at row %d: %w", i, err)
+		}
+
+		exceptionType, err := df.GetInt(i, "exception_type")
+		if err != nil {
+			return nil, fmt.Errorf("failed to get 'exception_type' at row %d: %w", i, err)
+		}
+
+		// CalendarDate 構造体を作成しリストに追加
+		calendarDates = append(calendarDates, CalendarDateGeom{
+			ServiceId:     serviceId,
+			Date:          date,
+			ExceptionType: exceptionType,
+		})
+	}
+
+	return calendarDates, nil
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/csvutil"
+	"github.com/paulmach/orb"
 )
 
 type Trip struct {
@@ -147,12 +148,12 @@ type TripGeom struct {
 	JpOfficeId           *string
 	JpPatternId          *string
 	Geom                 gormdatatypes.Geometry
-	StopTimes            []StopTime  `gorm:"foreignKey:TripId;references:TripId"`
-	Frequencies          []Frequency `gorm:"foreignKey:TripId;references:TripId"`
+	StopTimes            []StopTimeGeom  `gorm:"foreignKey:TripId;references:TripId"`
+	Frequencies          []FrequencyGeom `gorm:"foreignKey:TripId;references:TripId"`
 }
 
 func (TripGeom) TableName() string {
-	return "trips_geom"
+	return "trips"
 }
 
 func ParseTripsGeom(path string) ([]TripGeom, error) {
@@ -251,6 +252,7 @@ func ParseTripsGeom(path string) ([]TripGeom, error) {
 			JpTripDescSymbol:     jpTripDescSymbol,
 			JpOfficeId:           jpOfficeId,
 			JpPatternId:          jpPatternId,
+			Geom:                 gormdatatypes.Geometry{Geom: orb.LineString{}, Srid: 4236},
 		})
 	}
 

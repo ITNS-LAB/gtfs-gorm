@@ -77,7 +77,7 @@ type ShapeGeom struct {
 }
 
 func (ShapeGeom) TableName() string {
-	return "shapes_geom"
+	return "shapes"
 }
 
 func ParseShapesGeom(path string) ([]ShapeGeom, error) {

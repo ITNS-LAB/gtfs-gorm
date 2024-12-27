@@ -5,13 +5,13 @@ import (
 )
 
 type GtfsJpRepository interface {
-	Migrate() error
-	Create(gtfsPath string) error
+	MigrateGtfsJp() error
+	CreateGtfsJp(gtfsPath string) error
 }
 
 type GtfsJpGeomRepository interface {
-	Migrate() error
-	Create(gtfsPath string) error
+	MigrateGtfsJpGeom() error
+	CreateGtfsJpGeom(gtfsPath string) error
 }
 
 type TripRepository interface {
@@ -42,12 +42,12 @@ type ShapeGeomRepository interface {
 }
 
 type ShapeExRepository interface {
-	Migrate() error
+	MigrateShapesEx() error
 	CreateShapesEx([]model.ShapeEx) error
 	UpdateShapesEx([]model.ShapeEx) error
 }
 
 type ShapeDetailRepository interface {
-	Migrate() error
-	CreateShapeDetail([]model.ShapeDetail) error
+	MigrateShapesDetail() error
+	CreateShapesDetail([]model.ShapeDetail) error
 }

@@ -25,21 +25,21 @@ type GtfsJp struct {
 }
 
 type GtfsJpGeom struct {
-	Agency        []gtfsjp.Agency
-	AgencyJp      []gtfsjp.AgencyJp
-	StopsGeom     []gtfsjp.StopGeom
-	Routes        []gtfsjp.Route
-	TripsGeom     []gtfsjp.TripGeom
-	OfficeJp      []gtfsjp.OfficeJp
-	PatternJp     []gtfsjp.PatternJp
-	StopTimes     []gtfsjp.StopTime
-	Calendar      []gtfsjp.Calendar
-	CalendarDates []gtfsjp.CalendarDate
-	FareAttribute []gtfsjp.FareAttribute
-	FareRules     []gtfsjp.FareRule
-	ShapesGeom    []gtfsjp.ShapeGeom
-	Frequencies   []gtfsjp.Frequency
-	Transfers     []gtfsjp.Transfer
+	Agency        []gtfsjp.AgencyGeom
+	AgencyJp      []gtfsjp.AgencyJpGeom
+	Stops         []gtfsjp.StopGeom
+	Routes        []gtfsjp.RouteGeom
+	Trips         []gtfsjp.TripGeom
+	OfficeJp      []gtfsjp.OfficeJpGeom
+	PatternJp     []gtfsjp.PatternJpGeom
+	StopTimes     []gtfsjp.StopTimeGeom
+	Calendar      []gtfsjp.CalendarGeom
+	CalendarDates []gtfsjp.CalendarDateGeom
+	FareAttribute []gtfsjp.FareAttributeGeom
+	FareRules     []gtfsjp.FareRuleGeom
+	Shapes        []gtfsjp.ShapeGeom
+	Frequencies   []gtfsjp.FrequencyGeom
+	Transfers     []gtfsjp.TransferGeom
 	FeedInfo      []gtfsjp.FeedInfo
 	Translations  []gtfsjp.Translation
 }
