@@ -1,16 +1,20 @@
 package usecase
 
 import (
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
-	"gorm.io/gorm"
+	"log/slog"
+	"math"
 	"os"
 	"path"
 )
 
 type GtfsJpDbUseCase interface {
-	GtfsDbUrl(db *gorm.DB, options CmdOptions) (digest string, err error)
-	GtfsDbFile(db *gorm.DB, options CmdOptions) (digest string, err error)
+	GtfsDbUrl(options CmdOptions) (digest string, err error)
+	GtfsDbFile(options CmdOptions) (digest string, err error)
+	recalculateShapes() error
+	recalculateShapesGeom() error
 }
 
 type gtfsJpDbUseCase struct {
@@ -25,7 +29,7 @@ type gtfsJpDbUseCase struct {
 	shapeDetailRepo repository.ShapeDetailRepository
 }
 
-func (g gtfsJpDbUseCase) GtfsDbUrl(db *gorm.DB, options CmdOptions) (digest string, err error) {
+func (g gtfsJpDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err = os.MkdirAll(tmp, 0755); err != nil {
@@ -36,13 +40,13 @@ func (g gtfsJpDbUseCase) GtfsDbUrl(db *gorm.DB, options CmdOptions) (digest stri
 	if err = g.fileManagerRepo.Download(options.GtfsUrl, options.GtfsFile); err != nil {
 		return "", err
 	}
-	if digest, err = g.GtfsDbFile(db, options); err != nil {
+	if digest, err = g.GtfsDbFile(options); err != nil {
 		return "", err
 	}
 	return digest, nil
 }
 
-func (g gtfsJpDbUseCase) GtfsDbFile(db *gorm.DB, options CmdOptions) (digest string, err error) {
+func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err = os.MkdirAll(tmp, 0755); err != nil {
@@ -68,25 +72,42 @@ func (g gtfsJpDbUseCase) GtfsDbFile(db *gorm.DB, options CmdOptions) (digest str
 
 	// マイグレーション, データ挿入
 	if options.Geom {
-		if err = g.gtfsJpGeomRepo.Migrate(); err != nil {
+		if err = g.gtfsJpGeomRepo.MigrateGtfsJpGeom(); err != nil {
 			return "", err
 		}
-		if err = g.gtfsJpGeomRepo.Create(gtfsPath); err != nil {
+		if err = g.gtfsJpGeomRepo.CreateGtfsJpGeom(gtfsPath); err != nil {
 			return "", err
 		}
-		//if options.ShapesEx {
-		//	if err = g.shapeExRepo.Migrate(); err != nil {
-		//		return "", err
-		//	}
-		//
-		//}
+		if options.RecalculateDist {
+			if err := g.recalculateShapesGeom(); err != nil {
+				return "", err
+			}
+		}
+		if options.ShapesEx {
+			if err = g.shapeExRepo.MigrateShapesEx(); err != nil {
+				return "", err
+			}
+			// ビジネスロジック
+			// shapesの取得
+			//shapes, err := g.shapeGeomRepo.FetchShapesGeom()
+			//if err != nil {
+			//	return "", err
+			//}
+			//fmt.Println(shapes)
+		}
 	} else {
-		if err = g.gtfsJpRepo.Migrate(); err != nil {
+		if err = g.gtfsJpRepo.MigrateGtfsJp(); err != nil {
 			return "", err
 		}
-		if err = g.gtfsJpRepo.Create(gtfsPath); err != nil {
+		if err = g.gtfsJpRepo.CreateGtfsJp(gtfsPath); err != nil {
 			return "", err
 		}
+		if options.RecalculateDist {
+			if err := g.recalculateShapes(); err != nil {
+				return "", err
+			}
+		}
+
 	}
 
 	if options.ShapesDetail {
@@ -94,6 +115,88 @@ func (g gtfsJpDbUseCase) GtfsDbFile(db *gorm.DB, options CmdOptions) (digest str
 	}
 
 	return digest, err
+}
+
+func (g gtfsJpDbUseCase) recalculateShapes() error {
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を実行します")
+
+	// shape_idのスライスを取得
+	shapeIds, err := g.shapeRepo.FindShapeIds()
+	if err != nil {
+		return err
+	}
+
+	for _, shapeId := range shapeIds {
+		var recalculateShapes []model.Shape
+		totalDistance := 0.0
+		shapes, err := g.shapeRepo.FindShapes(shapeId)
+		if err != nil {
+			return err
+		}
+
+		// 距離の再計算
+		for i, pt := range shapes {
+			if i == 0 {
+				distTraveled := math.Floor(totalDistance)
+				pt.ShapeDistTraveled = &distTraveled
+				recalculateShapes = append(recalculateShapes, pt)
+				continue
+			}
+			// 2点間の距離を計算
+			totalDistance += util.KarneyWgs84(shapes[i-1].ShapePtLat, shapes[i-1].ShapePtLon, pt.ShapePtLat, pt.ShapePtLon)
+			distTraveled := math.Floor(totalDistance)
+			pt.ShapeDistTraveled = &distTraveled
+			recalculateShapes = append(recalculateShapes, pt)
+		}
+
+		// 再計算したデータをDBに格納
+		if err := g.shapeRepo.UpdateShapes(recalculateShapes); err != nil {
+			return err
+		}
+	}
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算完了")
+	return nil
+}
+
+func (g gtfsJpDbUseCase) recalculateShapesGeom() error {
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を実行します")
+
+	// shape_idのスライスを取得
+	shapeIds, err := g.shapeGeomRepo.FindShapeGeomIds()
+	if err != nil {
+		return err
+	}
+
+	for _, shapeId := range shapeIds {
+		var recalculateShapes []model.ShapeGeom
+		totalDistance := 0.0
+		shapes, err := g.shapeGeomRepo.FindShapesGeom(shapeId)
+		if err != nil {
+			return err
+		}
+
+		// 距離の再計算
+		for i, pt := range shapes {
+			if i == 0 {
+				distTraveled := math.Floor(totalDistance)
+				pt.ShapeDistTraveled = &distTraveled
+				recalculateShapes = append(recalculateShapes, pt)
+				continue
+			}
+			// 2点間の距離を計算
+			totalDistance += util.KarneyWgs84(shapes[i-1].ShapePtLat, shapes[i-1].ShapePtLon, pt.ShapePtLat, pt.ShapePtLon)
+			distTraveled := math.Floor(totalDistance)
+			pt.ShapeDistTraveled = &distTraveled
+			recalculateShapes = append(recalculateShapes, pt)
+		}
+
+		// 再計算したデータをDBに格納
+		if err := g.shapeGeomRepo.UpdateShapesGeom(recalculateShapes); err != nil {
+			return err
+		}
+	}
+	slog.Info("テーブル[shapes] shape_dist_traveled の再計算完了")
+	return nil
 }
 
 func NewGtfsJpDbUseCase(fileManagerRepository repository.FileManagerRepository,

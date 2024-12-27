@@ -36,7 +36,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 		shapeDetailRepository,
 	)
 
-	if _, err := gtfsJpDBuseCase.GtfsDbFile(db, options); err != nil {
+	if _, err := gtfsJpDBuseCase.GtfsDbFile(options); err != nil {
 		return err
 	}
 
@@ -72,7 +72,7 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 		shapeDetailRepository,
 	)
 
-	if _, err := gtfsJpDBuseCase.GtfsDbUrl(db, options); err != nil {
+	if _, err := gtfsJpDBuseCase.GtfsDbUrl(options); err != nil {
 		return err
 	}
 

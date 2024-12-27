@@ -361,7 +361,7 @@ type shapeGeomRepository struct {
 }
 
 func (s shapeGeomRepository) FindShapeGeomIds() (shapeIds []string, err error) {
-	s.Db.Table("shapes_geom").Select("shape_id").Distinct("shape_id").Order("shape_id").Find(&shapeIds)
+	s.Db.Table("shapes").Select("shape_id").Distinct("shape_id").Order("shape_id").Find(&shapeIds)
 	return shapeIds, nil
 }
 
