@@ -51,3 +51,8 @@ type ShapeDetailRepository interface {
 	MigrateShapesDetail() error
 	CreateShapesDetail([]model.ShapeDetail) error
 }
+
+type ShapeDetailGeomRepository interface {
+	MigrateShapesDetailGeom() error
+	CreateShapesDetailGeom([]model.ShapeDetailGeom) error
+}

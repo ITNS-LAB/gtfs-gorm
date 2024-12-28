@@ -366,7 +366,9 @@ func (s shapeGeomRepository) FindShapeGeomIds() (shapeIds []string, err error) {
 }
 
 func (s shapeGeomRepository) FindShapesGeom(shapeId string) (shapesGeom []model.ShapeGeom, err error) {
-	s.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapesGeom)
+	if err := s.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapesGeom).Error; err != nil {
+		return shapesGeom, err
+	}
 	return shapesGeom, nil
 }
 
@@ -448,15 +450,41 @@ type shapeDetailRepository struct {
 }
 
 func (s shapeDetailRepository) MigrateShapesDetail() error {
-	//TODO implement me
-	panic("implement me")
+	if err := s.Db.AutoMigrate(&model.ShapeDetail{}); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (s shapeDetailRepository) CreateShapesDetail(details []model.ShapeDetail) error {
-	//TODO implement me
-	panic("implement me")
+func (s shapeDetailRepository) CreateShapesDetail(shapesDetails []model.ShapeDetail) error {
+	if err := s.Db.CreateInBatches(&shapesDetails, 1000).Error; err != nil {
+		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
+	}
+	return nil
 }
 
 func NewShapeDetailRepository(db *gorm.DB) repository.ShapeDetailRepository {
 	return shapeDetailRepository{Db: db}
+}
+
+type shapeDetailGeomRepository struct {
+	Db *gorm.DB
+}
+
+func (s shapeDetailGeomRepository) MigrateShapesDetailGeom() error {
+	if err := s.Db.AutoMigrate(&model.ShapeDetailGeom{}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s shapeDetailGeomRepository) CreateShapesDetailGeom(shapesDetailGeom []model.ShapeDetailGeom) error {
+	if err := s.Db.CreateInBatches(&shapesDetailGeom, 1000).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewShapeDetailGeomRepository(db *gorm.DB) repository.ShapeDetailGeomRepository {
+	return shapeDetailGeomRepository{Db: db}
 }
