@@ -15,7 +15,7 @@ type PatternJp struct {
 }
 
 func (PatternJp) TableName() string {
-	return "Pattern_jp"
+	return "pattern_jp"
 }
 
 func ParsePatternJp(path string) ([]PatternJp, error) {
@@ -75,7 +75,7 @@ type PatternJpGeom struct {
 }
 
 func (PatternJpGeom) TableName() string {
-	return "Pattern_jp"
+	return "pattern_jp"
 }
 
 func ParsePatternJpGeom(path string) ([]PatternJpGeom, error) {
