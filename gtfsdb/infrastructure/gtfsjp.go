@@ -274,6 +274,11 @@ func (t tripRepository) FindTripIds() (tripIds []string, err error) {
 	return tripIds, nil
 }
 
+func (t tripRepository) FindShapeIdByTripId(tripId string) (string, error) {
+	t.Db.Table("trips").Select("shape_id").Where("trip_id = ?", tripId).Find(&tripId)
+	return tripId, nil
+}
+
 func NewTripRepository(db *gorm.DB) repository.TripRepository {
 	return tripRepository{Db: db}
 }
@@ -321,7 +326,7 @@ func (s shapeRepository) FindShapeIds() (shapeIds []string, err error) {
 	return shapeIds, nil
 }
 
-func (s shapeRepository) FindShapes(shapeId string) (shapes []model.Shape, err error) {
+func (s shapeRepository) FindShapesByShapeId(shapeId string) (shapes []model.Shape, err error) {
 	s.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapes)
 	return shapes, nil
 }
@@ -347,7 +352,7 @@ func (s shapeRepository) UpdateShapes(shapes []model.Shape) error {
 	return nil
 }
 
-func (s shapeRepository) FetchShapes() (shapes []model.Shape, err error) {
+func (s shapeRepository) FindShapes() (shapes []model.Shape, err error) {
 	s.Db.Find(&shapes)
 	return shapes, nil
 }
@@ -365,7 +370,7 @@ func (s shapeGeomRepository) FindShapeGeomIds() (shapeIds []string, err error) {
 	return shapeIds, nil
 }
 
-func (s shapeGeomRepository) FindShapesGeom(shapeId string) (shapesGeom []model.ShapeGeom, err error) {
+func (s shapeGeomRepository) FindShapesGeomByShapeId(shapeId string) (shapesGeom []model.ShapeGeom, err error) {
 	if err := s.Db.Table("shapes").Where("shape_id = ?", shapeId).Order("shape_pt_sequence asc").Find(&shapesGeom).Error; err != nil {
 		return shapesGeom, err
 	}
@@ -393,7 +398,7 @@ func (s shapeGeomRepository) UpdateShapesGeom(shapesGeom []model.ShapeGeom) erro
 	return nil
 }
 
-func (s shapeGeomRepository) FetchShapesGeom() (shapesGeom []model.ShapeGeom, err error) {
+func (s shapeGeomRepository) FindShapesGeom() (shapesGeom []model.ShapeGeom, err error) {
 	s.Db.Find(&shapesGeom)
 	return shapesGeom, nil
 }
@@ -413,8 +418,8 @@ func (s shapeExRepository) MigrateShapesEx() error {
 	return nil
 }
 
-func (s shapeExRepository) CreateShapesEx(shapeEx []model.ShapeEx) error {
-	if err := s.Db.CreateInBatches(&shapeEx, 1000).Error; err != nil {
+func (s shapeExRepository) CreateShapesEx(shapesEx []model.ShapeEx) error {
+	if err := s.Db.CreateInBatches(&shapesEx, 1000).Error; err != nil {
 		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
 	}
 	return nil
@@ -428,7 +433,7 @@ func (s shapeExRepository) UpdateShapesEx(shapeEx []model.ShapeEx) error {
 
 	for _, shapeEx := range shapeEx {
 		if result := tx.Model(&model.ShapeEx{}).
-			Where("trip_id = ? AND shape_id ? AND shape_pt_sequence = ?", shapeEx.TripId, shapeEx.ShapeId, shapeEx.ShapePtSequence).
+			Where("trip_id = ? AND shape_id = ? AND shape_pt_sequence = ?", shapeEx.TripId, shapeEx.ShapeId, shapeEx.ShapePtSequence).
 			Updates(shapeEx); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
 			return result.Error
@@ -441,8 +446,127 @@ func (s shapeExRepository) UpdateShapesEx(shapeEx []model.ShapeEx) error {
 	return nil
 }
 
+func (s shapeExRepository) FindShapesExByTripsAndShapes() ([]model.ShapeEx, error) {
+	var shapesEx []model.ShapeEx
+	if err := s.Db.Table("shapes").
+		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id").
+		Joins("join trips on trips.shape_id = shapes.shape_id").
+		Order("trips.trip_id").
+		Order("shapes.shape_pt_sequence").
+		Scan(&shapesEx).Error; err != nil {
+		return shapesEx, err
+	}
+	return shapesEx, nil
+}
+
+func (s shapeExRepository) FindShapesExByTripId(tripId string) ([]model.ShapeEx, error) {
+	var shapesEx []model.ShapeEx
+	if err := s.Db.Table("shapes_ex").
+		Select("trip_id, shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, shape_dist_traveled, stop_id").
+		Where("trip_id = ?", tripId).
+		Order("shape_pt_sequence").
+		Scan(&shapesEx).Error; err != nil {
+		return shapesEx, err
+	}
+	return shapesEx, nil
+}
+
+func (s shapeExRepository) FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error) {
+	var tWSL []model.TripWithStopLocation
+	if err := s.Db.Table("stop_times").
+		Select("stop_times.trip_id, stop_times.stop_id, stop_times.stop_sequence, stops.stop_lat, stops.stop_lon").
+		Joins("join stops on stop_times.stop_id = stops.stop_id").
+		Where("trip_id = ?", tripId).
+		Order("stop_sequence").
+		Scan(&tWSL).Error; err != nil {
+		return tWSL, err
+	}
+	return tWSL, nil
+}
+
 func NewShapeExRepository(db *gorm.DB) repository.ShapeExRepository {
 	return shapeExRepository{Db: db}
+}
+
+type shapeExGeomRepository struct {
+	Db *gorm.DB
+}
+
+func (s shapeExGeomRepository) MigrateShapesExGeom() error {
+	if err := s.Db.AutoMigrate(&model.ShapeExGeom{}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s shapeExGeomRepository) CreateShapesExGeom(shapesExGeom []model.ShapeExGeom) error {
+	if err := s.Db.CreateInBatches(&shapesExGeom, 1000).Error; err != nil {
+		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
+	}
+	return nil
+}
+
+func (s shapeExGeomRepository) UpdateShapesExGeom(shapesExGeom []model.ShapeExGeom) error {
+	tx := s.Db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, shapeEx := range shapesExGeom {
+		if result := tx.Model(&model.ShapeEx{}).
+			Where("trip_id = ? AND shape_id = ? AND shape_pt_sequence = ?", shapeEx.TripId, shapeEx.ShapeId, shapeEx.ShapePtSequence).
+			Updates(shapeEx); result.Error != nil {
+			tx.Rollback() // エラーが発生したらロールバック
+			return result.Error
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s shapeExGeomRepository) FindShapesExGeomByTripsAndShapes() ([]model.ShapeExGeom, error) {
+	var shapesExGeom []model.ShapeExGeom
+	if err := s.Db.Table("shapes").
+		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id, shapes.geom").
+		Joins("join trips on trips.shape_id = shapes.shape_id").
+		Order("trips.trip_id").
+		Order("shapes.shape_pt_sequence").
+		Scan(&shapesExGeom).Error; err != nil {
+		return shapesExGeom, err
+	}
+	return shapesExGeom, nil
+}
+
+func (s shapeExGeomRepository) FindShapesExGeomByTripId(tripId string) ([]model.ShapeExGeom, error) {
+	var shapesExGeom []model.ShapeExGeom
+	if err := s.Db.Table("shapes_ex").
+		Select("trip_id, shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, shape_dist_traveled, stop_id").
+		Where("trip_id = ?", tripId).
+		Order("shape_pt_sequence").
+		Scan(&shapesExGeom).Error; err != nil {
+		return shapesExGeom, err
+	}
+	return shapesExGeom, nil
+}
+
+func (s shapeExGeomRepository) FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error) {
+	var tWSL []model.TripWithStopLocation
+	if err := s.Db.Table("stop_times").
+		Select("stop_times.trip_id, stop_times.stop_id, stop_times.stop_sequence, stops.stop_lat, stops.stop_lon").
+		Joins("join stops on stop_times.stop_id = stops.stop_id").
+		Where("trip_id = ?", tripId).
+		Order("stop_sequence").
+		Scan(&tWSL).Error; err != nil {
+		return tWSL, err
+	}
+	return tWSL, nil
+}
+
+func NewShapeExGeomRepository(db *gorm.DB) repository.ShapeExGeomRepository {
+	return shapeExGeomRepository{Db: db}
 }
 
 type shapeDetailRepository struct {
@@ -487,4 +611,24 @@ func (s shapeDetailGeomRepository) CreateShapesDetailGeom(shapesDetailGeom []mod
 
 func NewShapeDetailGeomRepository(db *gorm.DB) repository.ShapeDetailGeomRepository {
 	return shapeDetailGeomRepository{Db: db}
+}
+
+type stopTimesRepository struct {
+	Db *gorm.DB
+}
+
+func (s stopTimesRepository) FindStopTimesByTripId(tripId string) ([]model.StopTime, error) {
+	var stopTimes []model.StopTime
+	if err := s.Db.Table("stop_times").
+		Select("trip_id, arrival_time, departure_time, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, continuous_pickup, continuous_drop_off, shape_dist_traveled, timepoint").
+		Where("trip_id = ?", tripId).
+		Order("stop_sequence").
+		Scan(&stopTimes).Error; err != nil {
+		return stopTimes, err
+	}
+	return stopTimes, nil
+}
+
+func NewStopTimesRepository(db *gorm.DB) repository.StopTimeRepository {
+	return stopTimesRepository{Db: db}
 }

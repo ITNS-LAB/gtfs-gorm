@@ -26,8 +26,10 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	shapeRepository := infrastructure.NewShapeRepository(db)
 	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
 	shapeExRepository := infrastructure.NewShapeExRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
 	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
@@ -37,8 +39,10 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 		shapeRepository,
 		shapeGeomRepository,
 		shapeExRepository,
+		shapeExGeomRepository,
 		shapeDetailRepository,
 		shapeDetailGeomRepository,
+		stopTimeRepository,
 	)
 
 	if _, err := gtfsJpDBuseCase.GtfsDbFile(options); err != nil {
@@ -66,8 +70,10 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 	shapeRepository := infrastructure.NewShapeRepository(db)
 	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
 	shapeExRepository := infrastructure.NewShapeExRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
 	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
@@ -77,8 +83,10 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 		shapeRepository,
 		shapeGeomRepository,
 		shapeExRepository,
+		shapeExGeomRepository,
 		shapeDetailRepository,
 		shapeDetailGeomRepository,
+		stopTimeRepository,
 	)
 
 	if _, err := gtfsJpDBuseCase.GtfsDbUrl(options); err != nil {

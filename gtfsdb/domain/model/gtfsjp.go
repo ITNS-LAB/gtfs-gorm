@@ -64,6 +64,10 @@ type ShapeEx struct {
 	gtfsjp.ShapeEx
 }
 
+type ShapeExGeom struct {
+	gtfsjp.ShapeExGeom
+}
+
 type ShapeDetail struct {
 	gtfsjp.ShapeDetail
 }
@@ -74,4 +78,12 @@ type ShapeDetailGeom struct {
 
 type StopTime struct {
 	gtfsjp.StopTime
+}
+
+type TripWithStopLocation struct {
+	TripId       string
+	StopId       string
+	StopSequence int
+	StopLat      float64
+	StopLon      float64
 }

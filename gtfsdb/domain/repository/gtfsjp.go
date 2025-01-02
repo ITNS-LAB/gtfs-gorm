@@ -16,6 +16,7 @@ type GtfsJpGeomRepository interface {
 
 type TripRepository interface {
 	FindTripIds() ([]string, error)
+	FindShapeIdByTripId(tripId string) (string, error)
 }
 
 type TripGeomRepository interface {
@@ -23,28 +24,36 @@ type TripGeomRepository interface {
 	UpdateTripsGeom([]model.TripGeom) error
 }
 
-//type StopTimeRepository interface {
-//	UpdateStopTimes([]model.StopTime)
-//}
-
 type ShapeRepository interface {
 	FindShapeIds() ([]string, error)
-	FindShapes(shapeId string) ([]model.Shape, error)
+	FindShapesByShapeId(shapeId string) ([]model.Shape, error)
 	UpdateShapes([]model.Shape) error
-	FetchShapes() ([]model.Shape, error)
+	FindShapes() ([]model.Shape, error)
 }
 
 type ShapeGeomRepository interface {
 	FindShapeGeomIds() ([]string, error)
-	FindShapesGeom(shapeId string) ([]model.ShapeGeom, error)
+	FindShapesGeomByShapeId(shapeId string) ([]model.ShapeGeom, error)
 	UpdateShapesGeom([]model.ShapeGeom) error
-	FetchShapesGeom() ([]model.ShapeGeom, error)
+	FindShapesGeom() ([]model.ShapeGeom, error)
 }
 
 type ShapeExRepository interface {
 	MigrateShapesEx() error
 	CreateShapesEx([]model.ShapeEx) error
 	UpdateShapesEx([]model.ShapeEx) error
+	FindShapesExByTripsAndShapes() ([]model.ShapeEx, error)
+	FindShapesExByTripId(tripId string) ([]model.ShapeEx, error)
+	FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error)
+}
+
+type ShapeExGeomRepository interface {
+	MigrateShapesExGeom() error
+	CreateShapesExGeom([]model.ShapeExGeom) error
+	UpdateShapesExGeom([]model.ShapeExGeom) error
+	FindShapesExGeomByTripsAndShapes() ([]model.ShapeExGeom, error)
+	FindShapesExGeomByTripId(tripId string) ([]model.ShapeExGeom, error)
+	FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error)
 }
 
 type ShapeDetailRepository interface {
@@ -55,4 +64,8 @@ type ShapeDetailRepository interface {
 type ShapeDetailGeomRepository interface {
 	MigrateShapesDetailGeom() error
 	CreateShapesDetailGeom([]model.ShapeDetailGeom) error
+}
+
+type StopTimeRepository interface {
+	FindStopTimesByTripId(tripId string) ([]model.StopTime, error)
 }

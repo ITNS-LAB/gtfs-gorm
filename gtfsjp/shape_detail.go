@@ -1,6 +1,8 @@
 package gtfsjp
 
-import "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+import (
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+)
 
 type ShapeDetail struct {
 	ShapeId               string  `gorm:"primaryKey"`

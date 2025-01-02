@@ -1,6 +1,9 @@
 package gtfsjp
 
-import "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+import (
+	"database/sql"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+)
 
 type ShapeEx struct {
 	TripId            string  `gorm:"primaryKey"`
@@ -9,7 +12,7 @@ type ShapeEx struct {
 	ShapePtLon        float64 `gorm:"not null"`
 	ShapePtSequence   int     `gorm:"primaryKey"`
 	ShapeDistTraveled float64
-	StopId            string
+	StopId            sql.NullString
 	Stop              Stop `gorm:"foreignKey:StopId"`
 }
 
@@ -24,7 +27,7 @@ type ShapeExGeom struct {
 	ShapePtLon        float64 `gorm:"not null"`
 	ShapePtSequence   int     `gorm:"primaryKey"`
 	ShapeDistTraveled float64
-	StopId            string
+	StopId            sql.NullString
 	Geom              gormdatatypes.Geometry `gorm:"index"`
 	Stop              Stop                   `gorm:"foreignKey:StopId"`
 }
