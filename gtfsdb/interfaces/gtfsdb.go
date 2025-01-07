@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/infrastructure"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/usecase"
 	"gorm.io/driver/postgres"
@@ -10,7 +11,7 @@ import (
 
 func GtfsDbFile(options usecase.CmdOptions) error {
 	// db接続
-	db, err := gorm.Open(postgres.Open(options.Dsn), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
@@ -54,7 +55,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 
 func GtfsDbUrl(options usecase.CmdOptions) error {
 	// db接続
-	db, err := gorm.Open(postgres.Open(options.Dsn), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
