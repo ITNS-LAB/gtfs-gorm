@@ -1,2 +1,0 @@
-﻿feed_publisher_name,feed_publisher_url,feed_contact_url,feed_contact_email,feed_lang,feed_start_date,feed_end_date,feed_version
-北海道北見バス株式会社,https://www.h-kitamibus.co.jp/,https://www.h-kitamibus.co.jp/,sonosujiya@gmail.com,ja,20240703,20250331,20240401_2024年04月01日（夏ダイヤ） その筋屋 1.722
