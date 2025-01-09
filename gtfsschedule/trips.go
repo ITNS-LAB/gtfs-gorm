@@ -9,6 +9,6 @@ type Trips struct {
 	DirectionId          *int    `gorm:"index"`
 	BlockId              *string `gorm:"index"`
 	ShapeId              *string `gorm:"index"`
-	WheelchairAccessible *int    `gorm:"default:0"`
-	BikesAllowed         *int    `gorm:"default:0"`
+	WheelchairAccessible *int
+	BikesAllowed         *int
 }

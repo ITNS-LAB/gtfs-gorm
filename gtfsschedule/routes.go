@@ -6,12 +6,12 @@ type Route struct {
 	RouteShortName    *string
 	RouteLongName     *string
 	RouteDesc         *string
-	RouteType         string `gorm:"not null"`
+	RouteType         int `gorm:"not null"`
 	RouteUrl          *string
 	RouteColor        *string
 	RouteTextColor    *string
 	RouteSortOrder    *string
-	ContinuousPickup  *string
-	ContinuousDropOff *string
+	ContinuousPickup  *int
+	ContinuousDropOff *int
 	NetworkId         *string
 }

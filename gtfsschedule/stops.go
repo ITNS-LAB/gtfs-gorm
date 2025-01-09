@@ -10,10 +10,10 @@ type Stop struct {
 	StopLon            float64 `gorm:"not null"`
 	ZoneId             *string
 	StopUrl            *string
-	LocationType       *string
-	ParentStation      int `gorm:"not null"`
+	LocationType       *int
+	ParentStation      *string `gorm:"not null"`
 	StopTimezone       *string
-	WheelchairBoarding *string
+	WheelchairBoarding *int
 	LevelId            *string
 	PlatformCode       *string
 }

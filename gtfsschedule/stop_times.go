@@ -11,14 +11,14 @@ type StopTimes struct {
 	LocationId               *string
 	StopSequence             int `gorm:"primaryKey"`
 	StopHeadsign             *string
-	StartPickupDropOffWindow *string
-	EndPickupDropOffWindow   *string
-	PickupType               *string
-	DropOffType              *string
-	ContinuousPickup         *string
-	ContinuousDropOff        *string
-	ShapeDistTraveled        *string
-	Timepoint                *string
+	StartPickupDropOffWindow *datatypes.Time
+	EndPickupDropOffWindow   *datatypes.Time
+	PickupType               *int
+	DropOffType              *int
+	ContinuousPickup         *int
+	ContinuousDropOff        *int
+	ShapeDistTraveled        *float64
+	Timepoint                *int
 	PickupBookingRuleId      *string
 	DropOffBookingRuleid     *string
 }
