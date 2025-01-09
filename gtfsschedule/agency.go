@@ -1,12 +1,12 @@
 package gtfsschedule
 
 type Agency struct {
-	agencyID       string `gorm:"primary_key"`
-	agencyName     string `gorm:"not null"`
-	agencyUrl      string `gorm:"not null"`
-	agencyTimezone string `gorm:"not null"`
-	agencyLang     *string
-	agencyPhone    *string
-	agencyFareUrl  *string
-	agencyEmail    *string
+	AgencyID       string `gorm:"primary_key"`
+	AgencyName     string `gorm:"not null"`
+	AgencyUrl      string `gorm:"not null"`
+	AgencyTimezone string `gorm:"not null"`
+	AgencyLang     *string
+	AgencyPhone    *string
+	AgencyFareUrl  *string
+	AgencyEmail    *string
 }

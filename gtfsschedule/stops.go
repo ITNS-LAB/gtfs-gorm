@@ -1,19 +1,19 @@
 package gtfsschedule
 
 type Stop struct {
-	stopId             string `gorm:"primary_key"`
-	stopCode           *string
-	stopName           string `gorm:"not null"`
-	ttsStopName        *string
-	stopDesc           *string
-	stopLat            float64 `gorm:"not null"`
-	stopLon            float64 `gorm:"not null"`
-	zoneId             *string
-	stopUrl            *string
-	locationType       *string
-	parentStation      int `gorm:"not null"`
-	stopTimezone       *string
-	wheelchairBoarding *string
-	levelId            *string
-	platformCode       *string
+	StopId             string `gorm:"primary_key"`
+	StopCode           *string
+	StopName           string `gorm:"not null"`
+	TtsStopName        *string
+	StopDesc           *string
+	StopLat            float64 `gorm:"not null"`
+	StopLon            float64 `gorm:"not null"`
+	ZoneId             *string
+	StopUrl            *string
+	LocationType       *string
+	ParentStation      int `gorm:"not null"`
+	StopTimezone       *string
+	WheelchairBoarding *string
+	LevelId            *string
+	PlatformCode       *string
 }

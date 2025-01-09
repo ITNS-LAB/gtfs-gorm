@@ -1,17 +1,17 @@
 package gtfsschedule
 
 type Route struct {
-	routeId           string `gorm:"primary_key"`
-	agencyId          *string
-	routeShortName    *string
-	routeLongName     *string
-	routeDesc         *string
-	routeType         string `gorm:"not null"`
-	routeUrl          *string
-	routeColor        *string
-	routeTextColor    *string
-	routeSortOrder    *string
-	continuousPickup  *string
-	continuousDropOff *string
-	networkId         *string
+	RouteId           string `gorm:"primary_key"`
+	AgencyId          *string
+	RouteShortName    *string
+	RouteLongName     *string
+	RouteDesc         *string
+	RouteType         string `gorm:"not null"`
+	RouteUrl          *string
+	RouteColor        *string
+	RouteTextColor    *string
+	RouteSortOrder    *string
+	ContinuousPickup  *string
+	ContinuousDropOff *string
+	NetworkId         *string
 }
