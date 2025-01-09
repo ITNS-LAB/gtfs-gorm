@@ -3,7 +3,7 @@ package gtfsschedule
 type Stop struct {
 	stopId             string `gorm:"primary_key"`
 	stopCode           *string
-	stopName           *string
+	stopName           string `gorm:"not null"`
 	ttsStopName        *string
 	stopDesc           *string
 	stopLat            float64 `gorm:"not null"`
