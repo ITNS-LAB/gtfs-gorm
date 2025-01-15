@@ -5,6 +5,6 @@ type FareAttributes struct {
 	Price         int    `gorm:"not null"`
 	CurrencyType  string `gorm:"not null"`
 	PaymentMethod int    `gorm:"not null"`
-	Transfers     *int   `gorm:"not null"`
-	AgencyID      int
+	Transfers     int    `gorm:"not null"`
+	AgencyID      *int
 }
