@@ -9,4 +9,7 @@ type Agency struct {
 	AgencyPhone    *string
 	AgencyFareUrl  *string
 	AgencyEmail    *string
+	Route          []Route          `gorm:"foreignKey:AgencyID;references:AgencyID "`
+	FareAttributes []FareAttributes `gorm:"foreignKey:AgencyID;references:AgencyID "`
+	Attribution    []Attribution    `gorm:"foreignKey:AgencyID;references:AgencyID "`
 }

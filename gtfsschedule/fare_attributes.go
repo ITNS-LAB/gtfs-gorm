@@ -7,4 +7,5 @@ type FareAttributes struct {
 	PaymentMethod int    `gorm:"not null"`
 	Transfers     int    `gorm:"not null"`
 	AgencyID      *int
+	FareRules     []FareRules `gorm:"foreignKey:FareID;references:FareID "`
 }

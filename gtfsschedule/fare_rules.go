@@ -5,4 +5,5 @@ type FareRules struct {
 	RouteID       *string
 	OriginID      *string
 	DestinationID *string
+	ContainsId    *string
 }

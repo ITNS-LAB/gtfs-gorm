@@ -6,4 +6,5 @@ type Shape struct {
 	ShapePtLon        float64 `gorm:"not null"`
 	ShapePtSequence   int     `gorm:"not null"`
 	ShapeDistTraveled *float64
+	Trips             []Trips `gorm:"foreignKey:ShapeID;references:ShapeID"`
 }
