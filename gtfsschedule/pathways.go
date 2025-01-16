@@ -56,7 +56,7 @@ func ParsePathway(path string) ([]Pathway, error) {
 		}
 
 		// Parse optional fields with pointers
-		length, err := df.GetFloat64Ptr(i, "length")
+		length, err := df.GetFloatPtr(i, "length")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'length' at row %d: %w", i, err)
 		}
@@ -71,12 +71,12 @@ func ParsePathway(path string) ([]Pathway, error) {
 			return nil, fmt.Errorf("failed to get 'stair_count' at row %d: %w", i, err)
 		}
 
-		maxSlope, err := df.GetFloat64Ptr(i, "max_slope")
+		maxSlope, err := df.GetFloatPtr(i, "max_slope")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'max_slope' at row %d: %w", i, err)
 		}
 
-		minWidth, err := df.GetFloat64Ptr(i, "min_width")
+		minWidth, err := df.GetFloatPtr(i, "min_width")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'min_width' at row %d: %w", i, err)
 		}
