@@ -5,7 +5,7 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/csvutil"
 )
 
-type FareLeg struct {
+type FareLegRules struct {
 	LegGroupID                     *string
 	NetworkID                      *string
 	FromAreaID                     *string
@@ -18,7 +18,7 @@ type FareLeg struct {
 	FareTransferRuleToLegGroupID   []FareTransferRule `gorm:"foreignKey:LegGroupID;references:ToLegGroupID "`
 }
 
-func ParseFareLeg(path string) ([]FareLeg, error) {
+func ParseFareLeg(path string) ([]FareLegRules, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
 	if err != nil {
@@ -26,7 +26,7 @@ func ParseFareLeg(path string) ([]FareLeg, error) {
 	}
 
 	// データを解析してFareLeg構造体のスライスを作成
-	var fareLegs []FareLeg
+	var fareLegs []FareLegRules
 	for i := 0; i < len(df.Records); i++ {
 		legGroupID, err := df.GetStringPtr(i, "leg_group_id")
 		if err != nil {
@@ -69,7 +69,7 @@ func ParseFareLeg(path string) ([]FareLeg, error) {
 		}
 
 		// FareLeg 構造体を作成しリストに追加
-		fareLegs = append(fareLegs, FareLeg{
+		fareLegs = append(fareLegs, FareLegRules{
 			LegGroupID:           legGroupID,
 			NetworkID:            networkID,
 			FromAreaID:           fromAreaID,
