@@ -18,9 +18,9 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 		return err
 	}
 
-	// DI注入
+	// DI
 	fileManagerRepository := infrastructure.NewFileManagerRepository()
-	gtfsJpRepository := infrastructure.NewGtfsScheduleRepository(db)
+	gtfsScheduleRepository := infrastructure.NewGtfsScheduleRepository(db)
 	//gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
 	tripRepository := infrastructure.NewTripRepository(db)
 	//tripGeomRepository := infrastructure.NewTripGeomRepository(db)
@@ -34,7 +34,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 
 	gtfsScheduleDBuseCase := usecase.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
-		gtfsJpRepository,
+		gtfsScheduleRepository,
 		//gtfsJpGeomRepository,
 		tripRepository,
 		//tripGeomRepository,

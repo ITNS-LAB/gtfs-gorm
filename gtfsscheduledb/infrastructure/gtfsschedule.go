@@ -126,7 +126,6 @@ func (g gtfsScheduleRepository) MigrateGtfsSchedule() error {
 	return nil
 }
 
-// gtfsscheduleどうりに書き換える
 // Gtfsのファイルごとにパースと挿入
 func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "agency.txt"), gtfsschedule.ParseAgency, g.Db); err != nil {
@@ -431,7 +430,7 @@ func (s shapeRepository) UpdateShapes(shapes []model.Shape) error {
 
 	for _, shape := range shapes {
 		if result := tx.Model(&model.Shape{}).
-			Where("shape_id = ? AND shape_pt_sequence = ?", shape.ShapeId, shape.ShapePtSequence).
+			Where("shape_id = ? AND shape_pt_sequence = ?", shape.ShapeID, shape.ShapePtSequence).
 			Updates(shape); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
 			return result.Error

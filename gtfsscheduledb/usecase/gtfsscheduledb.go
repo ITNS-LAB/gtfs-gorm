@@ -14,7 +14,7 @@ import (
 	"sync"
 )
 
-type GtfsJpDbUseCase interface {
+type GtfsScheduleDbUseCase interface {
 	GtfsDbUrl(options CmdOptions) (digest string, err error)
 	GtfsDbFile(options CmdOptions) (digest string, err error)
 	recalculateShapes() error
@@ -696,7 +696,7 @@ func NewGtfsScheduleDbUseCase(
 	//shapeExGeomRepository 	repository.ShapeExGeomRepository,
 	shapeDetailRepository repository.ShapeDetailRepository,
 	//shapeDetailGeomRepository repository.ShapeDetailGeomRepository,
-	stopTimeRepository repository.StopTimeRepository) GtfsJpDbUseCase {
+	stopTimeRepository repository.StopTimeRepository) GtfsScheduleDbUseCase {
 	return gtfsScheduleDbUseCase{
 		fileManagerRepo:  fileManagerRepository,
 		gtfsScheduleRepo: gtfsScheduleRepository,
