@@ -1,4 +1,4 @@
-package gtfsscheduledb
+package main
 
 import (
 	"flag"

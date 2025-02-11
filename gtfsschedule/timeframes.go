@@ -7,12 +7,12 @@ import (
 )
 
 type TimeFrame struct {
-	TimeframeGroupId            int `gorm:"primary_key"`
-	StartTime                   *datatypes.Time
-	EndTime                     *datatypes.Time
-	ServiceId                   int       `gorm:"not null"`
-	FareLegFromTimeframeGroupID []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:FromTimeframeGroupID "`
-	FareLegToTimeframeGroupID   []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:ToTimeframeGroupID "`
+	TimeframeGroupId int `gorm:"primary_key"`
+	StartTime        *datatypes.Time
+	EndTime          *datatypes.Time
+	ServiceId        int `gorm:"not null"`
+	//FareLegFromTimeframeGroupID []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:FromTimeframeGroupID "`
+	//FareLegToTimeframeGroupID   []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:ToTimeframeGroupID "`
 }
 
 func ParseTimeFrame(path string) ([]TimeFrame, error) {

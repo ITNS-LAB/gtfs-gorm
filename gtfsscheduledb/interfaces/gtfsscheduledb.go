@@ -10,8 +10,8 @@ import (
 )
 
 func GtfsDbFile(options usecase.CmdOptions) error {
-	// db接続
-	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
+	// db接続	"%s?search_path=%s"の?を&に変更している
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s&search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
