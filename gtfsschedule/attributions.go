@@ -6,10 +6,10 @@ import (
 )
 
 type Attribution struct {
-	AttributionID    *string
-	AgencyID         *string
-	RouteID          *string
-	TripID           *string
+	AttributionId    *string
+	AgencyId         *string
+	RouteId          *string
+	TripId           *string
 	OrganizationName string `gorm:"not null"`
 	IsProducer       *int
 	IsOperator       *int
@@ -60,10 +60,10 @@ func ParseAttribution(path string) ([]Attribution, error) {
 
 		// Attribution 構造体を作成しリストに追加
 		attributions = append(attributions, Attribution{
-			AttributionID:    attributionID,
-			AgencyID:         agencyID,
-			RouteID:          routeID,
-			TripID:           tripID,
+			AttributionId:    attributionID,
+			AgencyId:         agencyID,
+			RouteId:          routeID,
+			TripId:           tripID,
 			OrganizationName: organizationName,
 			IsProducer:       isProducer,
 			IsOperator:       isOperator,

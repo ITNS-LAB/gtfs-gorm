@@ -18,8 +18,8 @@ type Trips struct {
 	BikesAllowed         *int
 	StopTimes            []StopTimes   `gorm:"foreignKey:TripId;references:TripId "`
 	Frequencies          []Frequencies `gorm:"foreignKey:TripId;references:TripId"`
-	TransferFromTripID   []Transfer    `gorm:"foreignKey:TripId ;references:FromTripID "`
-	TransferToTripID     []Transfer    `gorm:"foreignKey:TripId ;references:ToTripID "`
+	TransferFromTripID   []Transfer    `gorm:"foreignKey:FromTripId ;references:TripId"`
+	TransferToTripID     []Transfer    `gorm:"foreignKey:ToTripId ;references:TripId "`
 	Attribution          []Attribution `gorm:"foreignKey:TripId ;references:TripId  "`
 }
 

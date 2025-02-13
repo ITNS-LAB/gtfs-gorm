@@ -6,12 +6,12 @@ import (
 )
 
 type Transfer struct {
-	FromStopID      string
+	FromStopId      string
 	ToStopID        string
-	FromRouteID     *string
-	ToRouteID       *string
-	FromTripID      *string
-	ToTripID        *string
+	FromRouteId     *string
+	ToRouteId       *string
+	FromTripId      *string
+	ToTripId        *string
 	TransferType    int `gorm:"not null"` // 接続タイプを示します (0, 1, 2, 3, 4, 5)
 	MinTransferTime *int
 }
@@ -74,12 +74,12 @@ func ParseTransfer(path string) ([]Transfer, error) {
 
 		// Transfer 構造体を作成しリストに追加
 		transfers = append(transfers, Transfer{
-			FromStopID:      fromStopID,
+			FromStopId:      fromStopID,
 			ToStopID:        toStopID,
-			FromRouteID:     fromRouteID,
-			ToRouteID:       toRouteID,
-			FromTripID:      fromTripID,
-			ToTripID:        toTripID,
+			FromRouteId:     fromRouteID,
+			ToRouteId:       toRouteID,
+			FromTripId:      fromTripID,
+			ToTripId:        toTripID,
 			TransferType:    transferType,
 			MinTransferTime: minTransferTime,
 		})
