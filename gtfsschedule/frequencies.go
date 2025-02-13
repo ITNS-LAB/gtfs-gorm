@@ -6,7 +6,7 @@ import (
 )
 
 type Frequencies struct {
-	TripID      string `gorm:"primary_key"`
+	TripId      string `gorm:"primary_key"`
 	StartTime   string `gorm:"not null"`
 	EndTime     string `gorm:"not null"`
 	HeadwaySecs int    `gorm:"not null"`
@@ -50,7 +50,7 @@ func ParseFrequencies(path string) ([]Frequencies, error) {
 
 		// Create Frequencies struct and append to the list
 		frequencies = append(frequencies, Frequencies{
-			TripID:      tripID,
+			TripId:      tripID,
 			StartTime:   startTime,
 			EndTime:     endTime,
 			HeadwaySecs: headwaySecs,

@@ -17,7 +17,7 @@ type Trips struct {
 	WheelchairAccessible *int
 	BikesAllowed         *int
 	StopTimes            []StopTimes   `gorm:"foreignKey:TripId;references:TripId "`
-	Frequencies          []Frequencies `gorm:"foreignKey:TripId;references:TripID "`
+	Frequencies          []Frequencies `gorm:"foreignKey:TripId;references:TripId"`
 	TransferFromTripID   []Transfer    `gorm:"foreignKey:TripId ;references:FromTripID "`
 	TransferToTripID     []Transfer    `gorm:"foreignKey:TripId ;references:ToTripID "`
 	Attribution          []Attribution `gorm:"foreignKey:TripId ;references:TripId  "`
