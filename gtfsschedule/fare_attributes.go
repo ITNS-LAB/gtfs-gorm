@@ -6,8 +6,8 @@ import (
 )
 
 type FareAttributes struct {
-	AgencyID         *int
-	FareID           int     `gorm:"primary_key"`
+	AgencyId         *int
+	FareId           int     `gorm:"primary_key"`
 	Price            float64 `gorm:"not null"`
 	CurrencyType     string  `gorm:"not null"`
 	PaymentMethod    int     `gorm:"not null"`
@@ -63,12 +63,12 @@ func ParseFareAttributes(path string) ([]FareAttributes, error) {
 
 		// FareAttributes 構造体を作成しリストに追加
 		fareAttributes = append(fareAttributes, FareAttributes{
-			FareID:           fareID,
+			FareId:           fareID,
 			Price:            price,
 			CurrencyType:     currencyType,
 			PaymentMethod:    paymentMethod,
 			Transfers:        transfers,
-			AgencyID:         agencyID,
+			AgencyId:         agencyID,
 			TransferDuration: transferDuration,
 		})
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 type Agency struct {
-	AgencyID       string `gorm:"primary_key"`
+	AgencyId       string `gorm:"primary_key"`
 	AgencyName     string `gorm:"not null"`
 	AgencyUrl      string `gorm:"not null"`
 	AgencyTimezone string `gorm:"not null"`
@@ -14,9 +14,9 @@ type Agency struct {
 	AgencyPhone    *string
 	AgencyFareUrl  *string
 	AgencyEmail    *string
-	Route          []Route          `gorm:"foreignKey:AgencyID;references:AgencyID "`
-	FareAttributes []FareAttributes `gorm:"foreignKey:AgencyID;references:AgencyID "`
-	Attribution    []Attribution    `gorm:"foreignKey:AgencyID;references:AgencyID "`
+	Route          []Route          `gorm:"foreignKey:AgencyId;references:AgencyId "`
+	FareAttributes []FareAttributes `gorm:"foreignKey:AgencyId;references:AgencyId "`
+	Attribution    []Attribution    `gorm:"foreignKey:AgencyId;references:AgencyId "`
 }
 
 func ParseAgency(path string) ([]Agency, error) {
@@ -71,7 +71,7 @@ func ParseAgency(path string) ([]Agency, error) {
 
 		//Agency 構造体を作成しリストに追加
 		agencies = append(agencies, Agency{
-			AgencyID:       agencyId,
+			AgencyId:       agencyId,
 			AgencyName:     agencyName,
 			AgencyUrl:      agencyUrl,
 			AgencyTimezone: agencyTimezone,
