@@ -6,10 +6,10 @@ import (
 )
 
 type FareLegJoinRules struct {
-	FromNetworkID string `gorm:"primary_key"`
-	ToNetworkID   string `gorm:"not null"`
-	FromStopID    *string
-	ToStopID      *string
+	FromNetworkId string `gorm:"primary_key"`
+	ToNetworkId   string `gorm:"not null"`
+	FromStopId    *string
+	ToStopId      *string
 }
 
 func ParseFareLegJoinRules(path string) ([]FareLegJoinRules, error) {
@@ -44,10 +44,10 @@ func ParseFareLegJoinRules(path string) ([]FareLegJoinRules, error) {
 
 		// FareLegJoinRules 構造体を作成しリストに追加
 		fareLegJoinRules = append(fareLegJoinRules, FareLegJoinRules{
-			FromNetworkID: fromNetworkID,
-			ToNetworkID:   toNetworkID,
-			FromStopID:    fromStopID,
-			ToStopID:      toStopID,
+			FromNetworkId: fromNetworkID,
+			ToNetworkId:   toNetworkID,
+			FromStopId:    fromStopID,
+			ToStopId:      toStopID,
 		})
 	}
 

@@ -22,11 +22,11 @@ type Route struct {
 	Trips             []Trips     `gorm:"foreignKey:RouteId;references:RouteId "`
 	FareRules         []FareRules `gorm:"foreignKey:RouteId;references:RouteId "`
 	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId "`
-	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:NetworkId;references:FromNetworkID "`
-	FareLegJoinRulesToStopID      FareLegJoinRules `gorm:"foreignKey:NetworkId;references:ToStopID "`
-	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:RouteId;references:RouteID "`
-	TransferFromRouteID           []Transfer       `gorm:"foreignKey:RouteId;references:FromRouteID "`
-	TransferToRouteID             []Transfer       `gorm:"foreignKey:RouteId;references:ToRouteID "`
+	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:FromNetworkId;references:NetworkId "`
+	FareLegJoinRulesToStopID      FareLegJoinRules `gorm:"foreignKey:ToStopId;references:NetworkId "`
+	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:RouteId;references:RouteId "`
+	TransferFromRouteID           []Transfer       `gorm:"foreignKey:FromRouteId;references:RouteId "`
+	TransferToRouteID             []Transfer       `gorm:"foreignKey:ToRouteId;references:RouteId "`
 	Attribution                   []Attribution    `gorm:"foreignKey:RouteId;references:RouteId "`
 }
 

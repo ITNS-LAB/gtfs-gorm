@@ -6,10 +6,10 @@ import (
 )
 
 type FareRules struct {
-	FareID        int `gorm:"primary_key"`
-	RouteID       *string
-	OriginID      *string
-	DestinationID *string
+	FareId        int `gorm:"primary_key"`
+	RouteId       *string
+	OriginId      *string
+	DestinationId *string
 	ContainsId    *string
 }
 
@@ -50,10 +50,10 @@ func ParseFareRules(path string) ([]FareRules, error) {
 
 		// FareRules 構造体を作成しリストに追加
 		fareRules = append(fareRules, FareRules{
-			FareID:        fareID,
-			RouteID:       routeID,
-			OriginID:      originID,
-			DestinationID: destinationID,
+			FareId:        fareID,
+			RouteId:       routeID,
+			OriginId:      originID,
+			DestinationId: destinationID,
 			ContainsId:    containsId,
 		})
 	}

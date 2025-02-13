@@ -6,8 +6,8 @@ import (
 )
 
 type RouteNetwork struct {
-	NetworkID string `gorm:"primary_key"` // networks.network_id を参照する外部 ID
-	RouteID   string `gorm:"not null"`
+	NetworkId string `gorm:"primary_key"` // networks.network_id を参照する外部 ID
+	RouteId   string `gorm:"not null"`
 }
 
 func ParseRouteNetwork(path string) ([]RouteNetwork, error) {
@@ -32,8 +32,8 @@ func ParseRouteNetwork(path string) ([]RouteNetwork, error) {
 
 		// Create the RouteNetwork struct and append to the list
 		routeNetworks = append(routeNetworks, RouteNetwork{
-			NetworkID: networkID,
-			RouteID:   routeID,
+			NetworkId: networkID,
+			RouteId:   routeID,
 		})
 	}
 

@@ -7,7 +7,7 @@ import (
 
 type Transfer struct {
 	FromStopId      string
-	ToStopID        string
+	ToStopId        string
 	FromRouteId     *string
 	ToRouteId       *string
 	FromTripId      *string
@@ -75,7 +75,7 @@ func ParseTransfer(path string) ([]Transfer, error) {
 		// Transfer 構造体を作成しリストに追加
 		transfers = append(transfers, Transfer{
 			FromStopId:      fromStopID,
-			ToStopID:        toStopID,
+			ToStopId:        toStopID,
 			FromRouteId:     fromRouteID,
 			ToRouteId:       toRouteID,
 			FromTripId:      fromTripID,
