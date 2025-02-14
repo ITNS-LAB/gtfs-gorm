@@ -13,7 +13,7 @@ type FareAttributes struct {
 	PaymentMethod    int     `gorm:"not null"`
 	Transfers        int     `gorm:"not null"`
 	TransferDuration *int
-	FareRules        []FareRules `gorm:"foreignKey:FareID;references:FareID "`
+	FareRules        []FareRules `gorm:"foreignKey:FareId;references:FareId "`
 }
 
 func ParseFareAttributes(path string) ([]FareAttributes, error) {

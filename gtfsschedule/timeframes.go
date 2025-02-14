@@ -10,7 +10,7 @@ type TimeFrame struct {
 	TimeframeGroupId int `gorm:"primary_key"`
 	StartTime        *datatypes.Time
 	EndTime          *datatypes.Time
-	ServiceId        int `gorm:"not null"`
+	ServiceId        string `gorm:"not null"`
 	//FareLegFromTimeframeGroupID []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:FromTimeframeGroupID "`
 	//FareLegToTimeframeGroupID   []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:ToTimeframeGroupID "`
 }
@@ -41,7 +41,7 @@ func ParseTimeFrame(path string) ([]TimeFrame, error) {
 			return nil, fmt.Errorf("failed to get 'end_time' at row %d: %w", i, err)
 		}
 
-		serviceId, err := df.GetInt(i, "service_id")
+		serviceId, err := df.GetString(i, "service_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'service_id' at row %d: %w", i, err)
 		}

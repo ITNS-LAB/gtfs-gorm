@@ -7,7 +7,7 @@ import (
 )
 
 type CalendarDates struct {
-	ServiceID     string         `gorm:"primary_key"`
+	ServiceId     string         `gorm:"primary_key"`
 	Date          datatypes.Date `gorm:"not null"`
 	ExceptionType int            `gorm:"not null"`
 	Trips         []Trips        `gorm:"foreignKey:ServiceId;references:ServiceId"`
@@ -41,7 +41,7 @@ func ParseCalendarDates(path string) ([]CalendarDates, error) {
 
 		// CalendarDates 構造体を作成しリストに追加
 		calendarDates = append(calendarDates, CalendarDates{
-			ServiceID:     serviceID,
+			ServiceId:     serviceID,
 			Date:          date,
 			ExceptionType: exceptionType,
 		})

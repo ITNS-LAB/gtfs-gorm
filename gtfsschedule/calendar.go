@@ -19,7 +19,7 @@ type Calendar struct {
 	EndDate     datatypes.Date `gorm:"not null"`
 	Trips       []Trips        `gorm:"foreignKey:ServiceId;references:ServiceId"`
 	TimeFrame   []TimeFrame    `gorm:"foreignKey:ServiceId;references:ServiceId"`
-	BookingRule []BookingRule  `gorm:"foreignKey:ServiceId;references:PriorNoticeServiceID"`
+	BookingRule []BookingRule  `gorm:"foreignKey:PriorNoticeServiceId;references:ServiceId"`
 }
 
 func ParseCalendar(path string) ([]Calendar, error) {

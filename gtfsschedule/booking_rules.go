@@ -6,7 +6,7 @@ import (
 )
 
 type BookingRule struct {
-	BookingRuleID                 string      `gorm:"primaryKey"` // ルールの一意の識別子
+	BookingRuleId                 string      `gorm:"primaryKey"` // ルールの一意の識別子
 	BookingType                   int         `gorm:"not null"`   // 予約タイプ
 	PriorNoticeDurationMin        *int        // 最小通知時間（分）
 	PriorNoticeDurationMax        *int        // 最大通知時間（分）
@@ -14,15 +14,15 @@ type BookingRule struct {
 	PriorNoticeLastTime           *string     // 便前日の予約リクエストを行う最終時間
 	PriorNoticeStartDay           *int        // 予約リクエストを行う便前の最も早い日
 	PriorNoticeStartTime          *string     // 最も早い日の最も早い時間
-	PriorNoticeServiceID          *string     // サービス ID
+	PriorNoticeServiceId          *string     // サービス ID
 	Message                       *string     // 通知メッセージ
 	PickupMessage                 *string     // ピックアップメッセージ
 	DropOffMessage                *string     // ドロップオフメッセージ
 	PhoneNumber                   *string     // 予約のための電話番号
 	InfoURL                       *string     // 予約ルールに関する情報の URL
 	BookingURL                    *string     // 予約リクエスト用の URL
-	StopTimesPickupBookingRuleId  []StopTimes `gorm:"foreignKey:BookingRuleID;references:PickupBookingRuleId "`
-	StopTimesDropOffBookingRuleid []StopTimes `gorm:"foreignKey:BookingRuleID;references:DropOffBookingRuleid "`
+	StopTimesPickupBookingRuleId  []StopTimes `gorm:"foreignKey:PickupBookingRuleId;references:BookingRuleId "`
+	StopTimesDropOffBookingRuleid []StopTimes `gorm:"foreignKey:DropOffBookingRuleid;references:BookingRuleId "`
 }
 
 func ParseBookingRule(path string) ([]BookingRule, error) {
@@ -112,7 +112,7 @@ func ParseBookingRule(path string) ([]BookingRule, error) {
 
 		// BookingRule 構造体を作成しリストに追加
 		bookingRules = append(bookingRules, BookingRule{
-			BookingRuleID:          bookingRuleID,
+			BookingRuleId:          bookingRuleID,
 			BookingType:            bookingType,
 			PriorNoticeDurationMin: priorNoticeDurationMin,
 			PriorNoticeDurationMax: priorNoticeDurationMax,
@@ -120,7 +120,7 @@ func ParseBookingRule(path string) ([]BookingRule, error) {
 			PriorNoticeLastTime:    priorNoticeLastTime,
 			PriorNoticeStartDay:    priorNoticeStartDay,
 			PriorNoticeStartTime:   priorNoticeStartTime,
-			PriorNoticeServiceID:   priorNoticeServiceID,
+			PriorNoticeServiceId:   priorNoticeServiceID,
 			Message:                message,
 			PickupMessage:          pickupMessage,
 			DropOffMessage:         dropOffMessage,
