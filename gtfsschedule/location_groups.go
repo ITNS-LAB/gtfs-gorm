@@ -6,7 +6,7 @@ import (
 )
 
 type LocationGroup struct {
-	LocationGroupID   string `gorm:"primaryKey"`
+	LocationGroupId   string `gorm:"primaryKey"`
 	LocationGroupName *string
 	StopTimes         []StopTimes         `gorm:"foreignKey:LocationGroupId;references:LocationGroupId "`
 	LocationGroupStop []LocationGroupStop `gorm:"foreignKey:LocationGroupId;references:LocationGroupId "`
@@ -34,7 +34,7 @@ func ParseLocationGroup(path string) ([]LocationGroup, error) {
 
 		// Create LocationGroup struct and append to the list
 		locationGroups = append(locationGroups, LocationGroup{
-			LocationGroupID:   locationGroupID,
+			LocationGroupId:   locationGroupID,
 			LocationGroupName: locationGroupName,
 		})
 	}

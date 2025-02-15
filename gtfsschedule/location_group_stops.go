@@ -6,8 +6,8 @@ import (
 )
 
 type LocationGroupStop struct {
-	LocationGroupID string `gorm:"not null"`
-	StopID          string `gorm:"not null"`
+	LocationGroupId string `gorm:"not null"`
+	StopId          string `gorm:"not null"`
 }
 
 func ParseLocationGroupStop(path string) ([]LocationGroupStop, error) {
@@ -32,8 +32,8 @@ func ParseLocationGroupStop(path string) ([]LocationGroupStop, error) {
 
 		// Create LocationGroupStop struct and append to the list
 		locationGroupStops = append(locationGroupStops, LocationGroupStop{
-			LocationGroupID: locationGroupID,
-			StopID:          stopID,
+			LocationGroupId: locationGroupID,
+			StopId:          stopID,
 		})
 	}
 

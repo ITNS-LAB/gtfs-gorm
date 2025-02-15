@@ -13,7 +13,7 @@ type Stop struct {
 	StopDesc                   *string
 	StopLat                    float64 `gorm:"not null"`
 	StopLon                    float64 `gorm:"not null"`
-	ZoneId                     *string
+	ZoneId                     string  `gorm:"index;unique"`
 	StopUrl                    *string
 	LocationType               *int
 	ParentStation              *int
@@ -22,16 +22,16 @@ type Stop struct {
 	LevelId                    *string
 	PlatformCode               *string
 	StopTimes                  []StopTimes         `gorm:"foreignKey:StopId;references:StopId"`
-	FareRulesOriginID          FareRules           `gorm:"foreignKey:ZoneId;references:OriginID"`
-	FareRulesDestinationID     FareRules           `gorm:"foreignKey:ZoneId;references:DestinationID"`
-	FareRulesContainsId        FareRules           `gorm:"foreignKey:ZoneId;references:ContainsId"`
-	FareLegJoinRulesFromStopID FareLegJoinRules    `gorm:"foreignKey:StopId;references:FromStopID "`
-	FareLegJoinRulesToStopID   FareLegJoinRules    `gorm:"foreignKey:StopId;references:ToStopID "`
+	FareRulesOriginID          FareRules           `gorm:"foreignKey:OriginId;references:ZoneId"`
+	FareRulesDestinationID     FareRules           `gorm:"foreignKey:DestinationId;references:ZoneId"`
+	FareRulesContainsId        FareRules           `gorm:"foreignKey:ContainsId;references:ZoneId"`
+	FareLegJoinRulesFromStopID FareLegJoinRules    `gorm:"foreignKey:FromStopId;references:StopId"`
+	FareLegJoinRulesToStopID   FareLegJoinRules    `gorm:"foreignKey:ToStopId;references:StopId"`
 	StopArea                   []StopArea          `gorm:"foreignKey:StopId;references:StopId "`
-	TransferFromStopID         []Transfer          `gorm:"foreignKey:StopId;references:FromStopID "`
-	TransferToStopID           []Transfer          `gorm:"foreignKey:StopId;references:ToStopID "`
-	PathwayFromStopID          []Pathway           `gorm:"foreignKey:StopId;references:FromStopID "`
-	PathwayToStopID            []Pathway           `gorm:"foreignKey:StopId;references:ToStopID "`
+	TransferFromStopID         []Transfer          `gorm:"foreignKey:FromStopId;references:StopId"`
+	TransferToStopID           []Transfer          `gorm:"foreignKey:ToStopId;references:StopId"`
+	PathwayFromStopID          []Pathway           `gorm:"foreignKey:FromStopId;references:StopId"`
+	PathwayToStopID            []Pathway           `gorm:"foreignKey:ToStopId;references:StopId"`
 	LocationGroupStop          []LocationGroupStop `gorm:"foreignKey:StopId;references:StopId "`
 }
 
@@ -80,7 +80,7 @@ func ParseStop(path string) ([]Stop, error) {
 			return nil, fmt.Errorf("failed to get 'stop_lon' at row %d: %w", i, err)
 		}
 
-		zoneId, err := df.GetStringPtr(i, "zone_id")
+		zoneId, err := df.GetString(i, "zone_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'zone_id' at row %d: %w", i, err)
 		}

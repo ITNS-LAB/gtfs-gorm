@@ -6,12 +6,12 @@ import (
 )
 
 type Network struct {
-	NetworkID   string `gorm:"primary_key"` // ユニーク ID: networks.txt 内で一意
+	NetworkId   string `gorm:"primary_key"` // ユニーク ID: networks.txt 内で一意
 	NetworkName string `gorm:"not null"`    // ネットワークの名前
 	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId "`
-	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:NetworkId;references:FromNetworkID "`
-	FareLegJoinRulesToNetworkID   FareLegJoinRules `gorm:"foreignKey:NetworkId;references:ToNetworkID "`
-	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:NetworkId;references:NetworkID "`
+	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:FromNetworkId;references:NetworkId"`
+	FareLegJoinRulesToNetworkID   FareLegJoinRules `gorm:"foreignKey:ToNetworkId;references:NetworkId"`
+	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:NetworkId;references:NetworkId"`
 }
 
 func ParseNetwork(path string) ([]Network, error) {
@@ -36,7 +36,7 @@ func ParseNetwork(path string) ([]Network, error) {
 
 		// Create the Network struct and append to the list
 		networks = append(networks, Network{
-			NetworkID:   networkID,
+			NetworkId:   networkID,
 			NetworkName: networkName,
 		})
 	}

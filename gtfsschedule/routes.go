@@ -6,7 +6,7 @@ import (
 )
 
 type Route struct {
-	RouteId           string `gorm:"primary_key"`
+	RouteId           string `gorm:"primaryKey"`
 	AgencyId          *string
 	RouteShortName    *string
 	RouteLongName     *string
@@ -18,16 +18,16 @@ type Route struct {
 	RouteSortOrder    *string
 	ContinuousPickup  *int
 	ContinuousDropOff *int
-	NetworkId         *string
-	Trips             []Trips     `gorm:"foreignKey:RouteId;references:RouteId "`
-	FareRules         []FareRules `gorm:"foreignKey:RouteId;references:RouteId "`
-	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId "`
-	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:FromNetworkId;references:NetworkId "`
-	FareLegJoinRulesToStopID      FareLegJoinRules `gorm:"foreignKey:ToStopId;references:NetworkId "`
-	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:RouteId;references:RouteId "`
-	TransferFromRouteID           []Transfer       `gorm:"foreignKey:FromRouteId;references:RouteId "`
-	TransferToRouteID             []Transfer       `gorm:"foreignKey:ToRouteId;references:RouteId "`
-	Attribution                   []Attribution    `gorm:"foreignKey:RouteId;references:RouteId "`
+	NetworkId         string      `gorm:"index;unique"`
+	Trips             []Trips     `gorm:"foreignKey:RouteId;references:RouteId"`
+	FareRules         []FareRules `gorm:"foreignKey:RouteId;references:RouteId"`
+	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId"`
+	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:FromNetworkId;references:NetworkId"`
+	FareLegJoinRulesToStopID      FareLegJoinRules `gorm:"foreignKey:ToStopId;references:NetworkId"`
+	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:RouteId;references:RouteId"`
+	TransferFromRouteID           []Transfer       `gorm:"foreignKey:FromRouteId;references:RouteId"`
+	TransferToRouteID             []Transfer       `gorm:"foreignKey:ToRouteId;references:RouteId"`
+	Attribution                   []Attribution    `gorm:"foreignKey:RouteId;references:RouteId"`
 }
 
 func ParseRoutes(path string) ([]Route, error) {
@@ -100,7 +100,7 @@ func ParseRoutes(path string) ([]Route, error) {
 			return nil, fmt.Errorf("failed to get 'continuous_drop_off' at row %d: %w", i, err)
 		}
 
-		networkId, err := df.GetStringPtr(i, "network_id")
+		networkId, err := df.GetString(i, "network_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'network_id' at row %d: %w", i, err)
 		}

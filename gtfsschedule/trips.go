@@ -13,7 +13,7 @@ type Trips struct {
 	TripShortName        *string
 	DirectionId          *int    `gorm:"index"`
 	BlockId              *string `gorm:"index"`
-	ShapeId              *string `gorm:"index"`
+	ShapeId              string  `gorm:"index"`
 	WheelchairAccessible *int
 	BikesAllowed         *int
 	StopTimes            []StopTimes   `gorm:"foreignKey:TripId;references:TripId "`
@@ -68,7 +68,7 @@ func ParseTrips(path string) ([]Trips, error) {
 			return nil, fmt.Errorf("failed to get 'block_id' at row %d: %w", i, err)
 		}
 
-		shapeId, err := df.GetStringPtr(i, "shape_id")
+		shapeId, err := df.GetString(i, "shape_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'shape_id' at row %d: %w", i, err)
 		}

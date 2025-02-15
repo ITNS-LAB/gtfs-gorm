@@ -6,8 +6,8 @@ import (
 )
 
 type StopArea struct {
-	AreaID string `gorm:"primary_key"`
-	StopID string `gorm:"not null"`
+	AreaId string `gorm:"primary_key"`
+	StopId string `gorm:"not null"`
 }
 
 func ParseStopArea(path string) ([]StopArea, error) {
@@ -32,8 +32,8 @@ func ParseStopArea(path string) ([]StopArea, error) {
 
 		// Create the StopArea struct and append to the list
 		stopAreas = append(stopAreas, StopArea{
-			AreaID: areaID,
-			StopID: stopID,
+			AreaId: areaID,
+			StopId: stopID,
 		})
 	}
 

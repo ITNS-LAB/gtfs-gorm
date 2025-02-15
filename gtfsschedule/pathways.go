@@ -6,9 +6,9 @@ import (
 )
 
 type Pathway struct {
-	PathwayID            string `gorm:"primaryKey"`
-	FromStopID           string `gorm:"not null"`
-	ToStopID             string `gorm:"not null"`
+	PathwayId            string `gorm:"primaryKey"`
+	FromStopId           string `gorm:"not null"`
+	ToStopId             string `gorm:"not null"`
 	PathwayMode          int    `gorm:"not null"`
 	IsBidirectional      int    `gorm:"not null"`
 	Length               *float64
@@ -93,9 +93,9 @@ func ParsePathway(path string) ([]Pathway, error) {
 
 		// Create the Pathway struct and append to the list
 		pathways = append(pathways, Pathway{
-			PathwayID:            pathwayID,
-			FromStopID:           fromStopID,
-			ToStopID:             toStopID,
+			PathwayId:            pathwayID,
+			FromStopId:           fromStopID,
+			ToStopId:             toStopID,
 			PathwayMode:          pathwayMode,
 			IsBidirectional:      isBidirectional,
 			Length:               length,

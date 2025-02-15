@@ -6,7 +6,7 @@ import (
 )
 
 type FareLegRules struct {
-	LegGroupID                     *string
+	LegGroupID                     string `gorm:"unique"`
 	NetworkID                      *string
 	FromAreaID                     *string
 	ToAreaID                       *string
@@ -14,8 +14,8 @@ type FareLegRules struct {
 	ToTimeframeGroupID             *string
 	FareProductID                  string `gorm:"not null"`
 	RulePriority                   *int
-	FareTransferRuleFromLegGroupID []FareTransferRule `gorm:"foreignKey:LegGroupID;references:FromLegGroupID "`
-	FareTransferRuleToLegGroupID   []FareTransferRule `gorm:"foreignKey:LegGroupID;references:ToLegGroupID "`
+	FareTransferRuleFromLegGroupID []FareTransferRule `gorm:"foreignKey:FromLegGroupID;references:LegGroupID"`
+	FareTransferRuleToLegGroupID   []FareTransferRule `gorm:"foreignKey:ToLegGroupID;references:LegGroupID"`
 }
 
 func ParseFareLeg(path string) ([]FareLegRules, error) {
@@ -28,7 +28,7 @@ func ParseFareLeg(path string) ([]FareLegRules, error) {
 	// データを解析してFareLeg構造体のスライスを作成
 	var fareLegs []FareLegRules
 	for i := 0; i < len(df.Records); i++ {
-		legGroupID, err := df.GetStringPtr(i, "leg_group_id")
+		legGroupID, err := df.GetString(i, "leg_group_id")
 		if err != nil {
 			// optional field, so it's okay if this is nil
 		}

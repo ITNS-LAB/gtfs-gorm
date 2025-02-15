@@ -6,11 +6,11 @@ import (
 )
 
 type Areas struct {
-	AreaID   string `gorm:"primary_key"`
+	AreaId   string `gorm:"primary_key"`
 	AreaName *string
-	//FareLegFromAreaID []FareLeg  `gorm:"foreignKey:AreaID;references:FromAreaID "`
-	//FareLegToAreaID   []FareLeg  `gorm:"foreignKey:AreaID;references:ToAreaID "`
-	StopArea []StopArea `gorm:"foreignKey:AreaID;references:AreaID "`
+	//FareLegFromAreaID []FareLeg  `gorm:"foreignKey:FromAreaId;references:AreaId"`
+	//FareLegToAreaID   []FareLeg  `gorm:"foreignKey:ToAreaId;references:AreaId"`
+	StopArea []StopArea `gorm:"foreignKey:AreaId;references:AreaId"`
 }
 
 func ParseAreas(path string) ([]Areas, error) {
@@ -36,7 +36,7 @@ func ParseAreas(path string) ([]Areas, error) {
 
 		//Agency 構造体を作成しリストに追加
 		areass = append(areass, Areas{
-			AreaID:   areaID,
+			AreaId:   areaID,
 			AreaName: areaName,
 		})
 	}

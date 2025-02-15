@@ -6,12 +6,12 @@ import (
 )
 
 type Shape struct {
-	ShapeID           string  `gorm:"primary_key"`
+	ShapeId           string  `gorm:"primaryKey"`
 	ShapePtLat        float64 `gorm:"not null"`
 	ShapePtLon        float64 `gorm:"not null"`
 	ShapePtSequence   int     `gorm:"not null"`
 	ShapeDistTraveled *float64
-	Trips             []Trips `gorm:"foreignKey:ShapeID;references:ShapeID"`
+	Trips             []Trips `gorm:"foreignKey:ShapeId;references:ShapeId"`
 }
 
 func ParseShapes(path string) ([]Shape, error) {
@@ -24,7 +24,7 @@ func ParseShapes(path string) ([]Shape, error) {
 	// データを解析してShape構造体のスライスを作成
 	var shapes []Shape
 	for i := 0; i < len(df.Records); i++ {
-		shapeID, err := df.GetString(i, "shape_id")
+		shapeId, err := df.GetString(i, "shape_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'shape_id' at row %d: %w", i, err)
 		}
@@ -51,7 +51,7 @@ func ParseShapes(path string) ([]Shape, error) {
 
 		// Shape構造体を作成しリストに追加
 		shapes = append(shapes, Shape{
-			ShapeID:           shapeID,
+			ShapeId:           shapeId,
 			ShapePtLat:        shapePtLat,
 			ShapePtLon:        shapePtLon,
 			ShapePtSequence:   shapePtSequence,

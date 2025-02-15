@@ -6,10 +6,10 @@ import (
 )
 
 type Levels struct {
-	LevelID    string  `gorm:"primaryKey"`
+	LevelId    string  `gorm:"primaryKey"`
 	LevelIndex float64 `gorm:"not null"`
 	LevelName  *string
-	Stop       []Stop `gorm:"foreignKey:LevelID;references:LevelId "`
+	Stop       []Stop `gorm:"foreignKey:LevelId;references:LevelId "`
 }
 
 func ParseLevels(path string) ([]Levels, error) {
@@ -39,7 +39,7 @@ func ParseLevels(path string) ([]Levels, error) {
 
 		// Create Levels struct and append to the list
 		levels = append(levels, Levels{
-			LevelID:    levelID,
+			LevelId:    levelID,
 			LevelIndex: levelIndex,
 			LevelName:  levelName,
 		})
