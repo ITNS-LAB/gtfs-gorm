@@ -6,7 +6,7 @@ import (
 )
 
 type Areas struct {
-	AreaId   string `gorm:"primary_key"`
+	AreaId   string `gorm:"primaryKey"`
 	AreaName *string
 	//FareLegFromAreaID []FareLeg  `gorm:"foreignKey:FromAreaId;references:AreaId"`
 	//FareLegToAreaID   []FareLeg  `gorm:"foreignKey:ToAreaId;references:AreaId"`

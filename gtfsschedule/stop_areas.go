@@ -6,7 +6,7 @@ import (
 )
 
 type StopArea struct {
-	AreaId string `gorm:"primary_key"`
+	AreaId string `gorm:"primaryKey"`
 	StopId string `gorm:"not null"`
 }
 

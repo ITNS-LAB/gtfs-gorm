@@ -6,14 +6,14 @@ import (
 )
 
 type FareAttributes struct {
-	AgencyId         *int
-	FareId           int     `gorm:"primary_key"`
+	FareId           string  `gorm:"primaryKey"`
 	Price            float64 `gorm:"not null"`
 	CurrencyType     string  `gorm:"not null"`
 	PaymentMethod    int     `gorm:"not null"`
 	Transfers        int     `gorm:"not null"`
+	AgencyId         *string
 	TransferDuration *int
-	FareRules        []FareRules `gorm:"foreignKey:FareId;references:FareId "`
+	FareRules        []FareRules `gorm:"foreignKey:FareId;references:FareId"`
 }
 
 func ParseFareAttributes(path string) ([]FareAttributes, error) {
@@ -26,12 +26,7 @@ func ParseFareAttributes(path string) ([]FareAttributes, error) {
 	// データを解析して FareAttributes 構造体のスライスを作成
 	var fareAttributes []FareAttributes
 	for i := 0; i < len(df.Records); i++ {
-		agencyID, err := df.GetIntPtr(i, "agency_id")
-		if err != nil {
-			return nil, fmt.Errorf("failed to get 'agency_id' at row %d: %w", i, err)
-		}
-
-		fareID, err := df.GetInt(i, "fare_id")
+		fareID, err := df.GetString(i, "fare_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'fare_id' at row %d: %w", i, err)
 		}
@@ -54,6 +49,11 @@ func ParseFareAttributes(path string) ([]FareAttributes, error) {
 		transfers, err := df.GetInt(i, "transfers")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'transfers' at row %d: %w", i, err)
+		}
+
+		agencyID, err := df.GetStringPtr(i, "agency_id")
+		if err != nil {
+			return nil, fmt.Errorf("failed to get 'agency_id' at row %d: %w", i, err)
 		}
 
 		transferDuration, err := df.GetIntPtr(i, "transferDuration")

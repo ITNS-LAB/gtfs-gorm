@@ -6,7 +6,7 @@ import (
 )
 
 type Agency struct {
-	AgencyId       string `gorm:"primary_key"`
+	AgencyId       string `gorm:"primaryKey"`
 	AgencyName     string `gorm:"not null"`
 	AgencyUrl      string `gorm:"not null"`
 	AgencyTimezone string `gorm:"not null"`
@@ -14,9 +14,9 @@ type Agency struct {
 	AgencyPhone    *string
 	AgencyFareUrl  *string
 	AgencyEmail    *string
-	Route          []Route          `gorm:"foreignKey:AgencyId;references:AgencyId "`
-	FareAttributes []FareAttributes `gorm:"foreignKey:AgencyId;references:AgencyId "`
-	Attribution    []Attribution    `gorm:"foreignKey:AgencyId;references:AgencyId "`
+	Route          []Route          `gorm:"foreignKey:AgencyId;references:AgencyId"`
+	FareAttributes []FareAttributes `gorm:"foreignKey:AgencyId;references:AgencyId"`
+	Attribution    []Attribution    `gorm:"foreignKey:AgencyId;references:AgencyId"`
 }
 
 func ParseAgency(path string) ([]Agency, error) {

@@ -6,10 +6,10 @@ import (
 )
 
 type FareMedia struct {
-	FareMediaID   string `gorm:"primary_key"`
+	FareMediaID   string `gorm:"primaryKey"`
 	FareMediaName *string
 	FareMediaType int           `gorm:"not null"`
-	FareProduct   []FareProduct `gorm:"foreignKey:FareMediaID;references:FareMediaID "`
+	FareProduct   []FareProduct `gorm:"foreignKey:FareMediaID;references:FareMediaID"`
 }
 
 func ParseFareMedia(path string) ([]FareMedia, error) {

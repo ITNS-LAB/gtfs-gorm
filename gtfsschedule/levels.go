@@ -9,7 +9,7 @@ type Levels struct {
 	LevelId    string  `gorm:"primaryKey"`
 	LevelIndex float64 `gorm:"not null"`
 	LevelName  *string
-	Stop       []Stop `gorm:"foreignKey:LevelId;references:LevelId "`
+	Stop       []Stop `gorm:"foreignKey:LevelId;references:LevelId"`
 }
 
 func ParseLevels(path string) ([]Levels, error) {

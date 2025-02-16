@@ -149,6 +149,10 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsschedule.ParseFareAttributes, g.Db); err != nil {
 		return err
 	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsschedule.ParseFareRules, g.Db); err != nil {
+		return err
+	}
+
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_leg_join_rules.txt"), gtfsschedule.ParseFareLegJoinRules, g.Db); err != nil {
 		return err
 	}
@@ -159,9 +163,6 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 		return err
 	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_products.txt"), gtfsschedule.ParseFareProduct, g.Db); err != nil {
-		return err
-	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsschedule.ParseFareRules, g.Db); err != nil {
 		return err
 	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_transfer_rules.txt"), gtfsschedule.ParseFareTransferRule, g.Db); err != nil {
@@ -206,6 +207,9 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_areas.txt"), gtfsschedule.ParseStopArea, g.Db); err != nil {
 		return err
 	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "trips.txt"), gtfsschedule.ParseTrips, g.Db); err != nil {
+		return err
+	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_times.txt"), gtfsschedule.ParseStopTimes, g.Db); err != nil {
 		return err
 	}
@@ -219,9 +223,6 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 		return err
 	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "translations.txt"), gtfsschedule.ParseTranslation, g.Db); err != nil {
-		return err
-	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "trips.txt"), gtfsschedule.ParseTrips, g.Db); err != nil {
 		return err
 	}
 
@@ -430,7 +431,7 @@ func (s shapeRepository) UpdateShapes(shapes []model.Shape) error {
 
 	for _, shape := range shapes {
 		if result := tx.Model(&model.Shape{}).
-			Where("shape_id = ? AND shape_pt_sequence = ?", shape.ShapeID, shape.ShapePtSequence).
+			Where("shape_id = ? AND shape_pt_sequence = ?", shape.ShapeId, shape.ShapePtSequence).
 			Updates(shape); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
 			return result.Error

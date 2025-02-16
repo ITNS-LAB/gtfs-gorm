@@ -6,7 +6,7 @@ import (
 )
 
 type Stop struct {
-	StopId                     string `gorm:"primary_key"`
+	StopId                     string `gorm:"primaryKey"`
 	StopCode                   *string
 	StopName                   string `gorm:"not null"`
 	TtsStopName                *string
@@ -27,12 +27,12 @@ type Stop struct {
 	FareRulesContainsId        FareRules           `gorm:"foreignKey:ContainsId;references:ZoneId"`
 	FareLegJoinRulesFromStopID FareLegJoinRules    `gorm:"foreignKey:FromStopId;references:StopId"`
 	FareLegJoinRulesToStopID   FareLegJoinRules    `gorm:"foreignKey:ToStopId;references:StopId"`
-	StopArea                   []StopArea          `gorm:"foreignKey:StopId;references:StopId "`
+	StopArea                   []StopArea          `gorm:"foreignKey:StopId;references:StopId"`
 	TransferFromStopID         []Transfer          `gorm:"foreignKey:FromStopId;references:StopId"`
 	TransferToStopID           []Transfer          `gorm:"foreignKey:ToStopId;references:StopId"`
 	PathwayFromStopID          []Pathway           `gorm:"foreignKey:FromStopId;references:StopId"`
 	PathwayToStopID            []Pathway           `gorm:"foreignKey:ToStopId;references:StopId"`
-	LocationGroupStop          []LocationGroupStop `gorm:"foreignKey:StopId;references:StopId "`
+	LocationGroupStop          []LocationGroupStop `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func ParseStop(path string) ([]Stop, error) {

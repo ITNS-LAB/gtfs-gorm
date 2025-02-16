@@ -9,9 +9,9 @@ type Shape struct {
 	ShapeId           string  `gorm:"primaryKey"`
 	ShapePtLat        float64 `gorm:"not null"`
 	ShapePtLon        float64 `gorm:"not null"`
-	ShapePtSequence   int     `gorm:"not null"`
+	ShapePtSequence   int     `gorm:"primaryKey"`
 	ShapeDistTraveled *float64
-	Trips             []Trips `gorm:"foreignKey:ShapeId;references:ShapeId"`
+	//Trips             []Trips `gorm:"foreignKey:ShapeId;references:ShapeId"`
 }
 
 func ParseShapes(path string) ([]Shape, error) {
@@ -46,7 +46,7 @@ func ParseShapes(path string) ([]Shape, error) {
 
 		shapeDistTraveled, err := df.GetFloatPtr(i, "shape_dist_traveled")
 		if err != nil {
-			shapeDistTraveled = nil // データがない場合、nilを設定
+			return nil, fmt.Errorf("failed to get 'shape_dist_traveled' at row %d: %w", i, err)
 		}
 
 		// Shape構造体を作成しリストに追加

@@ -6,7 +6,7 @@ import (
 )
 
 type FareLegJoinRules struct {
-	FromNetworkId string `gorm:"primary_key"`
+	FromNetworkId string `gorm:"primaryKey"`
 	ToNetworkId   string `gorm:"not null"`
 	FromStopId    *string
 	ToStopId      *string

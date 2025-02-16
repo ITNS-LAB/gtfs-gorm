@@ -8,7 +8,7 @@ import (
 type Network struct {
 	NetworkId   string `gorm:"primary_key"` // ユニーク ID: networks.txt 内で一意
 	NetworkName string `gorm:"not null"`    // ネットワークの名前
-	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId "`
+	//FareLeg                       FareLeg          `gorm:"foreignKey:NetworkId;references:NetworkId"`
 	FareLegJoinRulesFromNetworkID FareLegJoinRules `gorm:"foreignKey:FromNetworkId;references:NetworkId"`
 	FareLegJoinRulesToNetworkID   FareLegJoinRules `gorm:"foreignKey:ToNetworkId;references:NetworkId"`
 	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:NetworkId;references:NetworkId"`

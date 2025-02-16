@@ -6,7 +6,7 @@ import (
 )
 
 type Frequencies struct {
-	TripId      string `gorm:"primary_key"`
+	TripId      string `gorm:"primaryKey"`
 	StartTime   string `gorm:"not null"`
 	EndTime     string `gorm:"not null"`
 	HeadwaySecs int    `gorm:"not null"`

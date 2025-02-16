@@ -7,7 +7,7 @@ import (
 )
 
 type StopTimes struct {
-	TripId                   string         `gorm:"primary_key"`
+	TripId                   string         `gorm:"primaryKey"`
 	ArrivalTime              datatypes.Time `gorm:"index;not null"`
 	DepartureTime            datatypes.Time `gorm:"index;not null"`
 	StopId                   string

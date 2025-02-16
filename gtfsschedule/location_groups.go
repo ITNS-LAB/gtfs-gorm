@@ -8,8 +8,8 @@ import (
 type LocationGroup struct {
 	LocationGroupId   string `gorm:"primaryKey"`
 	LocationGroupName *string
-	StopTimes         []StopTimes         `gorm:"foreignKey:LocationGroupId;references:LocationGroupId "`
-	LocationGroupStop []LocationGroupStop `gorm:"foreignKey:LocationGroupId;references:LocationGroupId "`
+	StopTimes         []StopTimes         `gorm:"foreignKey:LocationGroupId;references:LocationGroupId"`
+	LocationGroupStop []LocationGroupStop `gorm:"foreignKey:LocationGroupId;references:LocationGroupId"`
 }
 
 func ParseLocationGroup(path string) ([]LocationGroup, error) {

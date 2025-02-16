@@ -7,11 +7,9 @@ import (
 )
 
 type CalendarDates struct {
-	ServiceId     string         `gorm:"primary_key"`
-	Date          datatypes.Date `gorm:"not null"`
+	ServiceId     string         `gorm:"primaryKey"`
+	Date          datatypes.Date `gorm:"primaryKey"`
 	ExceptionType int            `gorm:"not null"`
-	Trips         []Trips        `gorm:"foreignKey:ServiceId;references:ServiceId"`
-	TimeFrame     []TimeFrame    `gorm:"foreignKey:ServiceId;references:ServiceId"`
 }
 
 func ParseCalendarDates(path string) ([]CalendarDates, error) {

@@ -6,7 +6,8 @@ import (
 )
 
 type FareRules struct {
-	FareId        int `gorm:"primary_key"`
+	Id            int    `gorm:"primaryKey;autoIncrement"`
+	FareId        string `gorm:"index;not null"`
 	RouteId       *string
 	OriginId      *string
 	DestinationId *string
@@ -23,7 +24,7 @@ func ParseFareRules(path string) ([]FareRules, error) {
 	// データを解析して FareRules 構造体のスライスを作成
 	var fareRules []FareRules
 	for i := 0; i < len(df.Records); i++ {
-		fareID, err := df.GetInt(i, "fare_id")
+		fareID, err := df.GetString(i, "fare_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'fare_id' at row %d: %w", i, err)
 		}

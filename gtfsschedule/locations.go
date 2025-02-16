@@ -10,7 +10,7 @@ type Feature struct {
 	ID         string      `json:"id"`         // 場所を識別
 	Properties Properties  `json:"properties"` // 場所のプロパティ
 	Geometry   Geometry    `json:"geometry"`   // 場所のジオメトリ
-	StopTimes  []StopTimes `gorm:"foreignKey:LocationId;references:LocationId "`
+	StopTimes  []StopTimes `gorm:"foreignKey:LocationId;references:LocationId"`
 }
 
 type Properties struct {

@@ -16,11 +16,11 @@ type Trips struct {
 	ShapeId              string  `gorm:"index"`
 	WheelchairAccessible *int
 	BikesAllowed         *int
-	StopTimes            []StopTimes   `gorm:"foreignKey:TripId;references:TripId "`
+	StopTimes            []StopTimes   `gorm:"foreignKey:TripId;references:TripId"`
 	Frequencies          []Frequencies `gorm:"foreignKey:TripId;references:TripId"`
 	TransferFromTripID   []Transfer    `gorm:"foreignKey:FromTripId ;references:TripId"`
-	TransferToTripID     []Transfer    `gorm:"foreignKey:ToTripId ;references:TripId "`
-	Attribution          []Attribution `gorm:"foreignKey:TripId ;references:TripId  "`
+	TransferToTripID     []Transfer    `gorm:"foreignKey:ToTripId ;references:TripId"`
+	Attribution          []Attribution `gorm:"foreignKey:TripId ;references:TripId"`
 }
 
 func ParseTrips(path string) ([]Trips, error) {

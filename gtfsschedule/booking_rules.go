@@ -21,7 +21,7 @@ type BookingRule struct {
 	PhoneNumber                   *string     // 予約のための電話番号
 	InfoURL                       *string     // 予約ルールに関する情報の URL
 	BookingURL                    *string     // 予約リクエスト用の URL
-	StopTimesPickupBookingRuleId  []StopTimes `gorm:"foreignKey:PickupBookingRuleId;references:BookingRuleId "`
+	StopTimesPickupBookingRuleId  []StopTimes `gorm:"foreignKey:PickupBookingRuleId;references:BookingRuleId"`
 	StopTimesDropOffBookingRuleid []StopTimes `gorm:"foreignKey:DropOffBookingRuleid;references:BookingRuleId "`
 }
 
