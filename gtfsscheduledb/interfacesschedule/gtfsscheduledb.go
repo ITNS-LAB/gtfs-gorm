@@ -1,15 +1,15 @@
-package interfaces
+package interfacesschedule
 
 import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/infrastructure"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecase"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecaseschedule"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-func GtfsDbFile(options usecase.CmdOptions) error {
+func GtfsDbFile(options usecaseschedule.CmdOptions) error {
 	// db接続	"%s?search_path=%s"の?を&に変更している
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s&search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
@@ -32,7 +32,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	//shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 
-	gtfsScheduleDBuseCase := usecase.NewGtfsScheduleDbUseCase(
+	gtfsScheduleDBuseCase := usecaseschedule.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
 		gtfsScheduleRepository,
 		//gtfsJpGeomRepository,
@@ -54,7 +54,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	return nil
 }
 
-func GtfsDbUrl(options usecase.CmdOptions) error {
+func GtfsDbUrl(options usecaseschedule.CmdOptions) error {
 	// db接続
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
@@ -77,7 +77,7 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 	//shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 
-	gtfsScheduleDBuseCase := usecase.NewGtfsScheduleDbUseCase(
+	gtfsScheduleDBuseCase := usecaseschedule.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
 		//gtfsJpGeomRepository,

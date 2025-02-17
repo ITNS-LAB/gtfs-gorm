@@ -1,4 +1,4 @@
-package usecase
+package usecaseschedule
 
 import (
 	"database/sql"

@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/interfaces"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecase"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/interfaces"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/usecase"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/interfacesschedule"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecaseschedule"
 	"github.com/m-mizutani/clog"
 	"log/slog"
 	"os"
@@ -13,6 +15,7 @@ import (
 func main() {
 	slogInit()
 
+	gtfsType := flag.String("type", "", "GTFSのタイプ")
 	gtfsUrl := flag.String("url", "", "GTFSのURL")
 	gtfsFile := flag.String("file", "", "GTFSのファイルパス")
 	shapesEx := flag.Bool("shapesex", false, "shapes_exテーブルの作成")
@@ -24,7 +27,19 @@ func main() {
 
 	// 引数読み込み
 	flag.Parse()
+
 	options := usecase.CmdOptions{
+		GtfsUrl:         *gtfsUrl,
+		GtfsFile:        *gtfsFile,
+		ShapesEx:        *shapesEx,
+		ShapesDetail:    *shapesDetail,
+		Geom:            *geom,
+		RecalculateDist: *recalculateDist,
+		Dsn:             *dsn,
+		Schema:          *schema,
+	}
+
+	optionsSchedule := usecaseschedule.CmdOptions{
 		GtfsUrl:         *gtfsUrl,
 		GtfsFile:        *gtfsFile,
 		ShapesEx:        *shapesEx,
@@ -46,13 +61,16 @@ func main() {
 	}
 
 	// 引数チェック
-	if options.Dsn == "" {
+	if *dsn == "" {
 		fmt.Println("dsnは必須オプションです。")
 		return
 	}
-	if options.GtfsUrl == "" && options.GtfsFile == "" {
+	if *gtfsUrl == "" && *gtfsFile == "" {
 		fmt.Println("'url' または 'file' のどちらかのオプションが必要です。")
 		return
+	}
+	if *gtfsType == "" {
+		fmt.Println("gtfstypeは必須オプションです。")
 	}
 
 	// ロゴ表示
@@ -60,14 +78,27 @@ func main() {
 	fmt.Println("")
 
 	// ロジック
-	if *gtfsFile != "" {
-		if err := interfaces.GtfsDbFile(options); err != nil {
-			slog.Error("処理中にエラーが発生したため終了します。", err)
-			return
+	if *gtfsType == "jp" {
+		if *gtfsFile != "" {
+			if err := interfaces.GtfsDbFile(options); err != nil {
+				slog.Error("処理中にエラーが発生したため終了します。", err)
+				return
+			}
+		} else {
+			if err := interfaces.GtfsDbUrl(options); err != nil {
+				slog.Error("処理中にエラーが発生したため終了します。", err)
+			}
 		}
-	} else {
-		if err := interfaces.GtfsDbUrl(options); err != nil {
-			slog.Error("処理中にエラーが発生したため終了します。", err)
+	} else if *gtfsType == "schedule" {
+		if *gtfsFile != "" {
+			if err := interfacesschedule.GtfsDbFile(optionsSchedule); err != nil {
+				slog.Error("処理中にエラーが発生したため終了します。", err)
+				return
+			}
+		} else {
+			if err := interfacesschedule.GtfsDbUrl(optionsSchedule); err != nil {
+				slog.Error("処理中にエラーが発生したため終了します。", err)
+			}
 		}
 	}
 
