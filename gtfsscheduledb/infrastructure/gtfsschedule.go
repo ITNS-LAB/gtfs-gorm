@@ -149,6 +149,9 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsschedule.ParseFareAttributes, g.Db); err != nil {
 		return err
 	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "routes.txt"), gtfsschedule.ParseRoutes, g.Db); err != nil {
+		return err
+	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsschedule.ParseFareRules, g.Db); err != nil {
 		return err
 	}
@@ -198,9 +201,6 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "route_networks.txt"), gtfsschedule.ParseRouteNetwork, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "routes.txt"), gtfsschedule.ParseRoutes, g.Db); err != nil {
-		return err
-	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "shapes.txt"), gtfsschedule.ParseShapes, g.Db); err != nil {
 		return err
 	}
@@ -210,10 +210,10 @@ func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "trips.txt"), gtfsschedule.ParseTrips, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_times.txt"), gtfsschedule.ParseStopTimes, g.Db); err != nil {
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stops.txt"), gtfsschedule.ParseStop, g.Db); err != nil {
 		return err
 	}
-	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stops.txt"), gtfsschedule.ParseStop, g.Db); err != nil {
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_times.txt"), gtfsschedule.ParseStopTimes, g.Db); err != nil {
 		return err
 	}
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "timeframes.txt"), gtfsschedule.ParseTimeFrame, g.Db); err != nil {

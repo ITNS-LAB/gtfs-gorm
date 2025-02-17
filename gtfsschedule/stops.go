@@ -13,7 +13,7 @@ type Stop struct {
 	StopDesc                   *string
 	StopLat                    float64 `gorm:"not null"`
 	StopLon                    float64 `gorm:"not null"`
-	ZoneId                     string  `gorm:"index;unique"`
+	ZoneId                     *string
 	StopUrl                    *string
 	LocationType               *int
 	ParentStation              *int
@@ -80,7 +80,7 @@ func ParseStop(path string) ([]Stop, error) {
 			return nil, fmt.Errorf("failed to get 'stop_lon' at row %d: %w", i, err)
 		}
 
-		zoneId, err := df.GetString(i, "zone_id")
+		zoneId, err := df.GetStringPtr(i, "zone_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'zone_id' at row %d: %w", i, err)
 		}
