@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/interfaces"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/usecase"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/interfacesschedule"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecaseschedule"
+	interfacesS "github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/interfacesschedule"
+	usecaseS "github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/usecaseschedule"
 	"github.com/m-mizutani/clog"
 	"log/slog"
 	"os"
@@ -40,7 +40,7 @@ func main() {
 		Schema:          *schema,
 	}
 
-	optionsSchedule := usecaseschedule.CmdOptions{
+	optionsSchedule := usecaseS.CmdOptions{
 		GtfsUrl:         *gtfsUrl,
 		GtfsFile:        *gtfsFile,
 		ShapesEx:        *shapesEx,
@@ -92,12 +92,12 @@ func main() {
 		}
 	} else if *gtfsType == "schedule" {
 		if *gtfsFile != "" {
-			if err := interfacesschedule.GtfsDbFile(optionsSchedule); err != nil {
+			if err := interfacesS.GtfsDbFile(optionsSchedule); err != nil {
 				slog.Error("処理中にエラーが発生したため終了します。", err)
 				return
 			}
 		} else {
-			if err := interfacesschedule.GtfsDbUrl(optionsSchedule); err != nil {
+			if err := interfacesS.GtfsDbUrl(optionsSchedule); err != nil {
 				slog.Error("処理中にエラーが発生したため終了します。", err)
 			}
 		}
