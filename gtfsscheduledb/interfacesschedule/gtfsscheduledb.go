@@ -21,29 +21,29 @@ func GtfsDbFile(options usecaseschedule.CmdOptions) error {
 	// DI
 	fileManagerRepository := infrastructure.NewFileManagerRepository()
 	gtfsScheduleRepository := infrastructure.NewGtfsScheduleRepository(db)
-	//gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	gtfsScheduleGeomRepository := infrastructure.NewGtfsScheduleGeomRepository(db)
 	tripRepository := infrastructure.NewTripRepository(db)
-	//tripGeomRepository := infrastructure.NewTripGeomRepository(db)
+	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
 	shapeRepository := infrastructure.NewShapeRepository(db)
-	//shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
+	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
 	shapeExRepository := infrastructure.NewShapeExRepository(db)
-	//shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
-	//shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 
 	gtfsScheduleDBuseCase := usecaseschedule.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
 		gtfsScheduleRepository,
-		//gtfsJpGeomRepository,
+		gtfsScheduleGeomRepository,
 		tripRepository,
-		//tripGeomRepository,
+		tripGeomRepository,
 		shapeRepository,
-		//shapeGeomRepository,
+		shapeGeomRepository,
 		shapeExRepository,
-		//shapeExGeomRepository,
+		shapeExGeomRepository,
 		shapeDetailRepository,
-		//shapeDetailGeomRepository,
+		shapeDetailGeomRepository,
 		stopTimeRepository,
 	)
 
@@ -66,29 +66,28 @@ func GtfsDbUrl(options usecaseschedule.CmdOptions) error {
 	// DI注入
 	fileManagerRepository := infrastructure.NewFileManagerRepository()
 	gtfsJpRepository := infrastructure.NewGtfsScheduleRepository(db)
-	//gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	gtfsScheduleGeomRepository := infrastructure.NewGtfsScheduleGeomRepository(db)
 	tripRepository := infrastructure.NewTripRepository(db)
-	//tripGeomRepository := infrastructure.NewTripGeomRepository(db)
+	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
 	shapeRepository := infrastructure.NewShapeRepository(db)
-	//shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
+	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
 	shapeExRepository := infrastructure.NewShapeExRepository(db)
-	//shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
-	//shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
-
 	gtfsScheduleDBuseCase := usecaseschedule.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
-		//gtfsJpGeomRepository,
+		gtfsScheduleGeomRepository,
 		tripRepository,
-		//tripGeomRepository,
+		tripGeomRepository,
 		shapeRepository,
-		//shapeGeomRepository,
+		shapeGeomRepository,
 		shapeExRepository,
-		//shapeExGeomRepository,
+		shapeExGeomRepository,
 		shapeDetailRepository,
-		//shapeDetailGeomRepository,
+		shapeDetailGeomRepository,
 		stopTimeRepository,
 	)
 

@@ -2,7 +2,9 @@ package gtfsschedule
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/csvutil"
+	"github.com/paulmach/orb"
 )
 
 type Shape struct {
@@ -68,6 +70,7 @@ type ShapeGeom struct {
 	ShapePtLon        float64 `gorm:"not null"`
 	ShapePtSequence   int     `gorm:"primaryKey"`
 	ShapeDistTraveled *float64
+	Geom              gormdatatypes.Geometry `gorm:"index"`
 	//Trips             []TripsGeom `gorm:"foreignKey:ShapeId;references:ShapeId"`
 }
 
@@ -106,6 +109,11 @@ func ParseShapesGeom(path string) ([]ShapeGeom, error) {
 			return nil, fmt.Errorf("failed to get 'shape_dist_traveled' at row %d: %w", i, err)
 		}
 
+		geom := gormdatatypes.Geometry{
+			Geom: orb.Point{shapePtLon, shapePtLat},
+			Srid: 4326,
+		}
+
 		// Shape構造体を作成しリストに追加
 		shapes = append(shapes, ShapeGeom{
 			ShapeId:           shapeId,
@@ -113,6 +121,7 @@ func ParseShapesGeom(path string) ([]ShapeGeom, error) {
 			ShapePtLon:        shapePtLon,
 			ShapePtSequence:   shapePtSequence,
 			ShapeDistTraveled: shapeDistTraveled,
+			Geom:              geom,
 		})
 	}
 

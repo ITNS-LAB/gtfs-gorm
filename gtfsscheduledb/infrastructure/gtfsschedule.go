@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsschedule"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/model"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/repository"
@@ -126,7 +127,6 @@ func (g gtfsScheduleRepository) MigrateGtfsSchedule() error {
 	return nil
 }
 
-// Gtfsのファイルごとにパースと挿入
 func (g gtfsScheduleRepository) CreateGtfsSchedule(gtfsPath string) error {
 	if err := createGtfsSchedule(filepath.Join(gtfsPath, "agency.txt"), gtfsschedule.ParseAgency, g.Db); err != nil {
 		return err
@@ -233,127 +233,207 @@ func NewGtfsScheduleRepository(db *gorm.DB) repository.GtfsScheduleRepository {
 	return gtfsScheduleRepository{Db: db}
 }
 
-/*
-type gtfsJpGeomRepository struct {
+type gtfsScheduleGeomRepository struct {
 	Db *gorm.DB
 }
 
-func (g gtfsJpGeomRepository) MigrateGtfsJpGeom() error {
-	gtfsJp := model.GtfsJpGeom{}
-	if err := g.Db.AutoMigrate(gtfsJp.Agency); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.AgencyJp); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Routes); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Stops); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Calendar); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.CalendarDates); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Trips); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.StopTimes); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Shapes); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Frequencies); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Transfers); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.FeedInfo); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.FareAttribute); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.FareRules); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.Translations); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.OfficeJp); err != nil {
-		return nil
-	}
-	if err := g.Db.AutoMigrate(gtfsJp.PatternJp); err != nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (g gtfsJpGeomRepository) CreateGtfsJpGeom(gtfsPath string) error {
-	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgencyGeom, g.Db); err != nil {
+func (g gtfsScheduleGeomRepository) MigrateGtfsScheduleGeom() error {
+	gtfsSchedule := model.GtfsSheduleGeom{}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Agency); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "agency_jp.txt"), gtfsjp.ParseAgencyJpGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.Areas); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar.txt"), gtfsjp.ParseCalendarGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.Attributions); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "calendar_dates.txt"), gtfsjp.ParseCalendarDatesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.BookingRules); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "routes.txt"), gtfsjp.ParseRoutesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.Calendar); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "stops.txt"), gtfsjp.ParseStopsGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.CalendarDates); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "shapes.txt"), gtfsjp.ParseShapesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareAttributes); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "trips.txt"), gtfsjp.ParseTripsGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareLegJoinRules); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "stop_times.txt"), gtfsjp.ParseStopTimesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareLegRules); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "transfers.txt"), gtfsjp.ParseTransfersGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareMedia); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "frequencies.txt"), gtfsjp.ParseFrequenciesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareProduct); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsjp.ParseFareAttributesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareRules); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsjp.ParseFareRulesGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FareTransferRule); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "feed_info.txt"), gtfsjp.ParseFeedInfo, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.FeedInfo); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "translations.txt"), gtfsjp.ParseTranslations, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.Frequencies); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "office_jp.txt"), gtfsjp.ParseOfficeJpGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.Levels); err != nil {
 		return err
 	}
-	if err := createGtfsJp(filepath.Join(gtfsPath, "pattern_jp.txt"), gtfsjp.ParsePatternJpGeom, g.Db); err != nil {
+	if err := g.Db.AutoMigrate(gtfsSchedule.LocationGroupStop); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.LocationGroup); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Network); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Pathway); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.RouteNetwork); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Route); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Shape); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.StopArea); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.StopTimes); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Stop); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.TimeFrame); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Transfer); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Translation); err != nil {
+		return err
+	}
+	if err := g.Db.AutoMigrate(gtfsSchedule.Trips); err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewGtfsJpGeomRepository(db *gorm.DB) repository.GtfsJpGeomRepository {
-	return gtfsJpGeomRepository{Db: db}
+func (g gtfsScheduleGeomRepository) CreateGtfsScheduleGeom(gtfsPath string) error {
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "agency.txt"), gtfsschedule.ParseAgencyGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "areas.txt"), gtfsschedule.ParseAreasGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "attributions.txt"), gtfsschedule.ParseAttributionGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "booking_rules.txt"), gtfsschedule.ParseBookingRuleGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "calendar.txt"), gtfsschedule.ParseCalendarGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "calendar_dates.txt"), gtfsschedule.ParseCalendarDatesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_attributes.txt"), gtfsschedule.ParseFareAttributesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "routes.txt"), gtfsschedule.ParseRoutesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_rules.txt"), gtfsschedule.ParseFareRulesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_leg_join_rules.txt"), gtfsschedule.ParseFareLegJoinRulesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_leg_rules.txt"), gtfsschedule.ParseFareLegGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_media.txt"), gtfsschedule.ParseFareMediaGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_products.txt"), gtfsschedule.ParseFareProductGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "fare_transfer_rules.txt"), gtfsschedule.ParseFareTransferRuleGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "feed_info.txt"), gtfsschedule.ParseFeedInfoGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "frequencies.txt"), gtfsschedule.ParseFrequenciesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "levels.txt"), gtfsschedule.ParseLevelsGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "location_group_stops.txt"), gtfsschedule.ParseLocationGroupStopGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "location_groups.txt"), gtfsschedule.ParseLocationGroupGeom, g.Db); err != nil {
+		return err
+	}
+	/*
+		if err := createGtfsSchedule(filepath.Join(gtfsPath, "locations.txt"), gtfsschedule.ParseFrequenciesGeom, g.Db); err != nil {
+			return err
+		}
+	*/
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "networks.txt"), gtfsschedule.ParseNetworkGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "pathways.txt"), gtfsschedule.ParsePathwayGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "route_networks.txt"), gtfsschedule.ParseRouteNetworkGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "shapes.txt"), gtfsschedule.ParseShapesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_areas.txt"), gtfsschedule.ParseStopAreaGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "trips.txt"), gtfsschedule.ParseTripsGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stops.txt"), gtfsschedule.ParseStopGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "stop_times.txt"), gtfsschedule.ParseStopTimesGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "timeframes.txt"), gtfsschedule.ParseTimeFrameGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "transfer.txt"), gtfsschedule.ParseTransferGeom, g.Db); err != nil {
+		return err
+	}
+	if err := createGtfsSchedule(filepath.Join(gtfsPath, "translations.txt"), gtfsschedule.ParseTranslationGeom, g.Db); err != nil {
+		return err
+	}
+	return nil
 }
-*/
+
+func NewGtfsScheduleGeomRepository(db *gorm.DB) repository.GtfsScheduleGeomRepository {
+	return gtfsScheduleGeomRepository{Db: db}
+}
 
 type tripRepository struct {
 	Db *gorm.DB
@@ -373,7 +453,6 @@ func NewTripRepository(db *gorm.DB) repository.TripRepository {
 	return tripRepository{Db: db}
 }
 
-/*
 type tripGeomRepository struct {
 	Db *gorm.DB
 }
@@ -407,7 +486,6 @@ func (t tripGeomRepository) UpdateTripsGeom(tripsGeom []model.TripGeom) error {
 func NewTripGeomRepository(db *gorm.DB) repository.TripGeomRepository {
 	return tripGeomRepository{Db: db}
 }
-*/
 
 type shapeRepository struct {
 	Db *gorm.DB
@@ -453,7 +531,6 @@ func NewShapeRepository(db *gorm.DB) repository.ShapeRepository {
 	return shapeRepository{Db: db}
 }
 
-/*
 type shapeGeomRepository struct {
 	Db *gorm.DB
 }
@@ -499,7 +576,6 @@ func (s shapeGeomRepository) FindShapesGeom() (shapesGeom []model.ShapeGeom, err
 func NewShapeGeomRepository(db *gorm.DB) repository.ShapeGeomRepository {
 	return shapeGeomRepository{Db: db}
 }
-*/
 
 type shapeExRepository struct {
 	Db *gorm.DB
@@ -582,7 +658,6 @@ func NewShapeExRepository(db *gorm.DB) repository.ShapeExRepository {
 	return shapeExRepository{Db: db}
 }
 
-/*
 type shapeExGeomRepository struct {
 	Db *gorm.DB
 }
@@ -663,7 +738,6 @@ func (s shapeExGeomRepository) FindTripWithStopLocationByTripId(tripId string) (
 func NewShapeExGeomRepository(db *gorm.DB) repository.ShapeExGeomRepository {
 	return shapeExGeomRepository{Db: db}
 }
-*/
 
 type shapeDetailRepository struct {
 	Db *gorm.DB
@@ -687,7 +761,6 @@ func NewShapeDetailRepository(db *gorm.DB) repository.ShapeDetailRepository {
 	return shapeDetailRepository{Db: db}
 }
 
-/*
 type shapeDetailGeomRepository struct {
 	Db *gorm.DB
 }
@@ -709,8 +782,6 @@ func (s shapeDetailGeomRepository) CreateShapesDetailGeom(shapesDetailGeom []mod
 func NewShapeDetailGeomRepository(db *gorm.DB) repository.ShapeDetailGeomRepository {
 	return shapeDetailGeomRepository{Db: db}
 }
-
-*/
 
 type stopTimesRepository struct {
 	Db *gorm.DB

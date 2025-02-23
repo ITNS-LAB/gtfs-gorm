@@ -23,6 +23,4 @@ type ShapeDetailGeom struct {
 	Geom                  gormdatatypes.Geometry `gorm:"index"`
 }
 
-func (ShapeDetailGeom) TableName() string {
-	return "shapes_detail"
-}
+func (ShapeDetailGeom) TableName() string { return "shapes_detail" }

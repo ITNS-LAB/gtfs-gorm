@@ -6,7 +6,9 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsschedule"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/model"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
+	"github.com/paulmach/orb"
 	"log/slog"
 	"math"
 	"os"
@@ -18,28 +20,28 @@ type GtfsScheduleDbUseCase interface {
 	GtfsDbUrl(options CmdOptions) (digest string, err error)
 	GtfsDbFile(options CmdOptions) (digest string, err error)
 	recalculateShapes() error
-	//recalculateShapesGeom() error
+	recalculateShapesGeom() error
 	recalculateStopTimes() error
-	//recalculateStopTimesGeom() error
+	recalculateStopTimesGeom() error
 	createShapesDetail() error
-	//createShapesDetailGeom() error
+	createShapesDetailGeom() error
 	createShapeEx() error
-	//createShapeExGeom() error
+	createShapeExGeom() error
 }
 
 type gtfsScheduleDbUseCase struct {
-	fileManagerRepo  repository.FileManagerRepository
-	gtfsScheduleRepo repository.GtfsScheduleRepository
-	//gtfsJpGeomRepo      repository.GtfsJpGeomRepository
-	tripRepo repository.TripRepository
-	//tripGeomRepo        repository.TripGeomRepository
-	shapeRepo repository.ShapeRepository
-	//shapeGeomRepo       repository.ShapeGeomRepository
-	shapeExRepo repository.ShapeExRepository
-	//shapeExGeomRepo     repository.ShapeExGeomRepository
-	shapeDetailRepo repository.ShapeDetailRepository
-	//shapeDetailGeomRepo repository.ShapeDetailGeomRepository
-	stopTimeRepo repository.StopTimeRepository
+	fileManagerRepo      repository.FileManagerRepository
+	gtfsScheduleRepo     repository.GtfsScheduleRepository
+	gtfsScheduleGeomRepo repository.GtfsScheduleGeomRepository
+	tripRepo             repository.TripRepository
+	tripGeomRepo         repository.TripGeomRepository
+	shapeRepo            repository.ShapeRepository
+	shapeGeomRepo        repository.ShapeGeomRepository
+	shapeExRepo          repository.ShapeExRepository
+	shapeExGeomRepo      repository.ShapeExGeomRepository
+	shapeDetailRepo      repository.ShapeDetailRepository
+	shapeDetailGeomRepo  repository.ShapeDetailGeomRepository
+	stopTimeRepo         repository.StopTimeRepository
 }
 
 func (g gtfsScheduleDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error) {
@@ -90,36 +92,34 @@ func (g gtfsScheduleDbUseCase) GtfsDbFile(options CmdOptions) (digest string, er
 
 	// マイグレーション, データ挿入
 	if options.Geom {
-		/*
-			if err = g.gtfsJpGeomRepo.MigrateGtfsJpGeom(); err != nil {
+		if err = g.gtfsScheduleGeomRepo.MigrateGtfsScheduleGeom(); err != nil {
+			return "", err
+		}
+		if err = g.gtfsScheduleGeomRepo.CreateGtfsScheduleGeom(gtfsPath); err != nil {
+			return "", err
+		}
+		if options.RecalculateDist {
+			if err := g.recalculateShapesGeom(); err != nil {
 				return "", err
 			}
-			if err = g.gtfsJpGeomRepo.CreateGtfsJpGeom(gtfsPath); err != nil {
+		}
+		if options.ShapesDetail {
+			if err := g.shapeDetailGeomRepo.MigrateShapesDetailGeom(); err != nil {
 				return "", err
 			}
-			if options.RecalculateDist {
-				if err := g.recalculateShapesGeom(); err != nil {
-					return "", err
-				}
+			if err := g.createShapesDetailGeom(); err != nil {
+				return "", err
 			}
-			if options.ShapesDetail {
-				if err := g.shapeDetailGeomRepo.MigrateShapesDetailGeom(); err != nil {
-					return "", err
-				}
-				if err := g.createShapesDetailGeom(); err != nil {
-					return "", err
-				}
+		}
+		if options.ShapesEx {
+			if err := g.shapeExGeomRepo.MigrateShapesExGeom(); err != nil {
+				return "", err
 			}
-			if options.ShapesEx {
-				if err := g.shapeExGeomRepo.MigrateShapesExGeom(); err != nil {
-					return "", err
-				}
-				if err := g.createShapeExGeom(); err != nil {
-					return "", err
-				}
+			if err := g.createShapeExGeom(); err != nil {
+				return "", err
 			}
+		}
 
-		*/
 	} else {
 		if err = g.gtfsScheduleRepo.MigrateGtfsSchedule(); err != nil {
 			return "", err
@@ -224,8 +224,7 @@ func (g gtfsScheduleDbUseCase) recalculateShapes() error {
 	return nil
 }
 
-/*
-func (g gtfsJpDbUseCase) recalculateShapesGeom() error {
+func (g gtfsScheduleDbUseCase) recalculateShapesGeom() error {
 	slog.Info("テーブル[shapes] shape_dist_traveled の再計算を実行します")
 
 	// shape_idのスライスを取得
@@ -295,9 +294,6 @@ func (g gtfsJpDbUseCase) recalculateShapesGeom() error {
 	return nil
 }
 
-
-*/
-
 func (g gtfsScheduleDbUseCase) recalculateStopTimes() error {
 	//tripIds取得
 	//tripIdごとにshape取得
@@ -308,13 +304,10 @@ func (g gtfsScheduleDbUseCase) recalculateStopTimes() error {
 	panic("stop_timesの距離再計算は保留中")
 }
 
-/*
-func (g gtfsJpDbUseCase) recalculateStopTimesGeom() error {
+func (g gtfsScheduleDbUseCase) recalculateStopTimesGeom() error {
 	//TODO 保留中
 	panic("stop_timesの距離再計算は保留中")
 }
-
-*/
 
 // 修正中
 func (g gtfsScheduleDbUseCase) createShapesDetail() error {
@@ -428,121 +421,120 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 	return nil
 }
 
-/*
-	func (g gtfsJpDbUseCase) createShapesDetailGeom() error {
-		slog.Info("テーブル[shapesDetail] 作成開始 数分かかる場合があります")
+func (g gtfsScheduleDbUseCase) createShapesDetailGeom() error {
+	slog.Info("テーブル[shapesDetail] 作成開始 数分かかる場合があります")
 
-		// shapeの間隔
-		interval := 5.0
+	// shapeの間隔
+	interval := 5.0
 
-		shapeIds, err := g.shapeGeomRepo.FindShapeGeomIds()
-		if err != nil {
-			return err
-		}
-
-		var wg sync.WaitGroup
-		errChan := make(chan error, len(shapeIds))
-		semaphore := make(chan struct{}, 50) // 同時に実行されるゴルーチンの最大数を50に制限
-
-		for _, shapeId := range shapeIds {
-			wg.Add(1)
-			semaphore <- struct{}{} // セマフォを取得
-			go func(id string) {
-				defer wg.Done()
-				defer func() { <-semaphore }() // ゴルーチンが終了したらセマフォを解放
-
-				shapes, err := g.shapeGeomRepo.FindShapesGeomByShapeId(id)
-				if err != nil {
-					errChan <- err
-					return
-				}
-
-				shapesDetail := []model.ShapeDetailGeom{{
-					ShapeDetailGeom: gtfsjp.ShapeDetailGeom{
-						ShapeId:               id,
-						ShapePtLat:            shapes[0].ShapePtLat,
-						ShapePtLon:            shapes[0].ShapePtLon,
-						ShapeDetailPtSequence: shapes[0].ShapePtSequence,
-						ShapeDistTraveled:     *shapes[0].ShapeDistTraveled,
-						Geom:                  shapes[0].Geom,
-					},
-				}}
-
-				remainder := 0.0
-				shapePtSeqCnt := shapes[0].ShapePtSequence
-
-				for i := 1; i < len(shapes); i++ {
-					prevShapePtLat := shapesDetail[i-1].ShapePtLat
-					prevShapePtLon := shapesDetail[i-1].ShapePtLon
-					nextShapePtLat := shapes[i].ShapePtLat
-					nextShapePtLon := shapes[i].ShapePtLon
-
-					blockDistance := util.KarneyWgs84(prevShapePtLat, prevShapePtLon, nextShapePtLat, nextShapePtLon)
-					blockDistance += remainder
-
-					repeat := int(blockDistance / interval)
-					remainder = math.Mod(blockDistance, interval)
-
-					if repeat == 0 {
-						shapePtSeqCnt++
-						shapesDetail = append(shapesDetail, model.ShapeDetailGeom{
-							ShapeDetailGeom: gtfsjp.ShapeDetailGeom{
-								ShapeId:               id,
-								ShapePtLat:            shapes[i].ShapePtLat,
-								ShapePtLon:            shapes[i].ShapePtLon,
-								ShapeDetailPtSequence: shapePtSeqCnt,
-								ShapeDistTraveled:     math.Round((shapesDetail[len(shapesDetail)-1].ShapeDistTraveled+remainder)*10) / 10,
-								Geom:                  gormdatatypes.Geometry{Geom: orb.Point{shapes[i].ShapePtLon, shapes[i].ShapePtLat}, Srid: 4326},
-							},
-						})
-						remainder = 0.0
-						continue
-					}
-
-					t := interval / blockDistance
-					dLat := nextShapePtLat - prevShapePtLat
-					dLon := nextShapePtLon - prevShapePtLon
-
-					for j := 0; j < repeat; j++ {
-						shapePtSeqCnt++
-						prevLat := shapesDetail[len(shapesDetail)-1].ShapePtLat
-						prevLon := shapesDetail[len(shapesDetail)-1].ShapePtLon
-						nextLat := t*dLat + prevLat
-						nextLon := t*dLon + prevLon
-
-						shortDistance := util.KarneyWgs84(prevLat, prevLon, nextLat, nextLon)
-
-						shapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + shortDistance
-						shapesDetail = append(shapesDetail, model.ShapeDetailGeom{
-							ShapeDetailGeom: gtfsjp.ShapeDetailGeom{
-								ShapeId:               id,
-								ShapePtLat:            nextLat,
-								ShapePtLon:            nextLon,
-								ShapeDetailPtSequence: shapePtSeqCnt,
-								ShapeDistTraveled:     math.Round(shapeDistTraveled*10) / 10,
-								Geom:                  gormdatatypes.Geometry{Geom: orb.Point{nextLon, nextLat}, Srid: 4326},
-							},
-						})
-					}
-				}
-
-				if err := g.shapeDetailGeomRepo.CreateShapesDetailGeom(shapesDetail); err != nil {
-					errChan <- err
-					return
-				}
-			}(shapeId)
-		}
-
-		wg.Wait()
-		close(errChan)
-		if len(errChan) > 0 {
-			return <-errChan // 最初のエラーを返す
-		}
-
-		slog.Info("テーブル[shapesDetail] 作成完了")
-		return nil
+	shapeIds, err := g.shapeGeomRepo.FindShapeGeomIds()
+	if err != nil {
+		return err
 	}
-*/
+
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(shapeIds))
+	semaphore := make(chan struct{}, 50) // 同時に実行されるゴルーチンの最大数を50に制限
+
+	for _, shapeId := range shapeIds {
+		wg.Add(1)
+		semaphore <- struct{}{} // セマフォを取得
+		go func(id string) {
+			defer wg.Done()
+			defer func() { <-semaphore }() // ゴルーチンが終了したらセマフォを解放
+
+			shapes, err := g.shapeGeomRepo.FindShapesGeomByShapeId(id)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			shapesDetail := []model.ShapeDetailGeom{{
+				ShapeDetailGeom: gtfsschedule.ShapeDetailGeom{
+					ShapeId:               id,
+					ShapePtLat:            shapes[0].ShapePtLat,
+					ShapePtLon:            shapes[0].ShapePtLon,
+					ShapeDetailPtSequence: shapes[0].ShapePtSequence,
+					ShapeDistTraveled:     *shapes[0].ShapeDistTraveled,
+					Geom:                  shapes[0].Geom,
+				},
+			}}
+
+			remainder := 0.0
+			shapePtSeqCnt := shapes[0].ShapePtSequence
+
+			for i := 1; i < len(shapes); i++ {
+				prevShapePtLat := shapesDetail[i-1].ShapePtLat
+				prevShapePtLon := shapesDetail[i-1].ShapePtLon
+				nextShapePtLat := shapes[i].ShapePtLat
+				nextShapePtLon := shapes[i].ShapePtLon
+
+				blockDistance := util.KarneyWgs84(prevShapePtLat, prevShapePtLon, nextShapePtLat, nextShapePtLon)
+				blockDistance += remainder
+
+				repeat := int(blockDistance / interval)
+				remainder = math.Mod(blockDistance, interval)
+
+				if repeat == 0 {
+					shapePtSeqCnt++
+					shapesDetail = append(shapesDetail, model.ShapeDetailGeom{
+						ShapeDetailGeom: gtfsschedule.ShapeDetailGeom{
+							ShapeId:               id,
+							ShapePtLat:            shapes[i].ShapePtLat,
+							ShapePtLon:            shapes[i].ShapePtLon,
+							ShapeDetailPtSequence: shapePtSeqCnt,
+							ShapeDistTraveled:     math.Round((shapesDetail[len(shapesDetail)-1].ShapeDistTraveled+remainder)*10) / 10,
+							Geom:                  gormdatatypes.Geometry{Geom: orb.Point{shapes[i].ShapePtLon, shapes[i].ShapePtLat}, Srid: 4326},
+						},
+					})
+					remainder = 0.0
+					continue
+				}
+
+				t := interval / blockDistance
+				dLat := nextShapePtLat - prevShapePtLat
+				dLon := nextShapePtLon - prevShapePtLon
+
+				for j := 0; j < repeat; j++ {
+					shapePtSeqCnt++
+					prevLat := shapesDetail[len(shapesDetail)-1].ShapePtLat
+					prevLon := shapesDetail[len(shapesDetail)-1].ShapePtLon
+					nextLat := t*dLat + prevLat
+					nextLon := t*dLon + prevLon
+
+					shortDistance := util.KarneyWgs84(prevLat, prevLon, nextLat, nextLon)
+
+					shapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + shortDistance
+					shapesDetail = append(shapesDetail, model.ShapeDetailGeom{
+						ShapeDetailGeom: gtfsschedule.ShapeDetailGeom{
+							ShapeId:               id,
+							ShapePtLat:            nextLat,
+							ShapePtLon:            nextLon,
+							ShapeDetailPtSequence: shapePtSeqCnt,
+							ShapeDistTraveled:     math.Round(shapeDistTraveled*10) / 10,
+							Geom:                  gormdatatypes.Geometry{Geom: orb.Point{nextLon, nextLat}, Srid: 4326},
+						},
+					})
+				}
+			}
+
+			if err := g.shapeDetailGeomRepo.CreateShapesDetailGeom(shapesDetail); err != nil {
+				errChan <- err
+				return
+			}
+		}(shapeId)
+	}
+
+	wg.Wait()
+	close(errChan)
+	if len(errChan) > 0 {
+		return <-errChan // 最初のエラーを返す
+	}
+
+	slog.Info("テーブル[shapesDetail] 作成完了")
+	return nil
+}
+
 func (g gtfsScheduleDbUseCase) createShapeEx() error {
 	slog.Info("テーブル[shapes_ex] 作成開始")
 	// stops, stop_timesを結合して作成したshape_exの取得（stop_idの情報はない）
@@ -612,8 +604,7 @@ func (g gtfsScheduleDbUseCase) createShapeEx() error {
 	return nil
 }
 
-/*
-func (g gtfsJpDbUseCase) createShapeExGeom() error {
+func (g gtfsScheduleDbUseCase) createShapeExGeom() error {
 	slog.Info("テーブル[shapes_ex] 作成開始")
 	// stops, stop_timesを結合して作成したshape_exの取得（stop_idの情報はない）
 	tmpShapesExGeom, err := g.shapeExGeomRepo.FindShapesExGeomByTripsAndShapes()
@@ -663,7 +654,7 @@ func (g gtfsJpDbUseCase) createShapeExGeom() error {
 			}
 
 			insertShapesExGeom = append(insertShapesExGeom, model.ShapeExGeom{
-				ShapeExGeom: gtfsjp.ShapeExGeom{
+				ShapeExGeom: gtfsschedule.ShapeExGeom{
 					TripId:          tripId,
 					ShapeId:         shapesExGeom[idx].ShapeId,
 					ShapePtSequence: shapesExGeom[idx].ShapePtSequence,
@@ -682,34 +673,32 @@ func (g gtfsJpDbUseCase) createShapeExGeom() error {
 	return nil
 }
 
-*/
-
 func NewGtfsScheduleDbUseCase(
 	fileManagerRepository repository.FileManagerRepository,
 	gtfsScheduleRepository repository.GtfsScheduleRepository,
-	//gtfsJpGeomRepository 		repository.GtfsJpGeomRepository,
+	gtfsScheduleGeomRepository repository.GtfsScheduleGeomRepository,
 	tripRepository repository.TripRepository,
-	//tripGeomRepository 		repository.TripGeomRepository,
+	tripGeomRepository repository.TripGeomRepository,
 	shapeRepository repository.ShapeRepository,
-	//shapeGeomRepository 		repository.ShapeGeomRepository,
+	shapeGeomRepository repository.ShapeGeomRepository,
 	shapeExRepository repository.ShapeExRepository,
-	//shapeExGeomRepository 	repository.ShapeExGeomRepository,
+	shapeExGeomRepository repository.ShapeExGeomRepository,
 	shapeDetailRepository repository.ShapeDetailRepository,
-	//shapeDetailGeomRepository repository.ShapeDetailGeomRepository,
+	shapeDetailGeomRepository repository.ShapeDetailGeomRepository,
 	stopTimeRepository repository.StopTimeRepository) GtfsScheduleDbUseCase {
 	return gtfsScheduleDbUseCase{
-		fileManagerRepo:  fileManagerRepository,
-		gtfsScheduleRepo: gtfsScheduleRepository,
-		//gtfsJpGeomRepo:   	gtfsJpGeomRepository,
-		tripRepo: tripRepository,
-		//tripGeomRepo:     	tripGeomRepository,
-		shapeRepo: shapeRepository,
-		//shapeGeomRepo:    	shapeGeomRepository,
-		shapeExRepo: shapeExRepository,
-		//shapeExGeomRepo:  	shapeExGeomRepository,
-		shapeDetailRepo: shapeDetailRepository,
-		//shapeDetailGeomRepo: 	shapeDetailGeomRepository,
-		stopTimeRepo: stopTimeRepository,
+		fileManagerRepo:      fileManagerRepository,
+		gtfsScheduleRepo:     gtfsScheduleRepository,
+		gtfsScheduleGeomRepo: gtfsScheduleGeomRepository,
+		tripRepo:             tripRepository,
+		tripGeomRepo:         tripGeomRepository,
+		shapeRepo:            shapeRepository,
+		shapeGeomRepo:        shapeGeomRepository,
+		shapeExRepo:          shapeExRepository,
+		shapeExGeomRepo:      shapeExGeomRepository,
+		shapeDetailRepo:      shapeDetailRepository,
+		shapeDetailGeomRepo:  shapeDetailGeomRepository,
+		stopTimeRepo:         stopTimeRepository,
 	}
 }
 
