@@ -1,5 +1,7 @@
 package gtfsschedule
 
+import "github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+
 type ShapeDetail struct {
 	ShapeId               string  `gorm:"primaryKey"`
 	ShapePtLat            float64 `gorm:"not null"`
@@ -12,7 +14,6 @@ func (ShapeDetail) TableName() string {
 	return "shapes_detail"
 }
 
-/*
 type ShapeDetailGeom struct {
 	ShapeId               string  `gorm:"primaryKey"`
 	ShapePtLat            float64 `gorm:"not null"`
@@ -25,5 +26,3 @@ type ShapeDetailGeom struct {
 func (ShapeDetailGeom) TableName() string {
 	return "shapes_detail"
 }
-
-*/

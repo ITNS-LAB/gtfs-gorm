@@ -2,6 +2,7 @@ package gtfsschedule
 
 import (
 	"database/sql"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 )
 
 type ShapeEx struct {
@@ -19,7 +20,6 @@ func (ShapeEx) TableName() string {
 	return "shapes_ex"
 }
 
-/*
 type ShapeExGeom struct {
 	TripId            string  `gorm:"primaryKey"`
 	ShapeId           string  `gorm:"primaryKey"`
@@ -35,5 +35,3 @@ type ShapeExGeom struct {
 func (ShapeExGeom) TableName() string {
 	return "shapes_ex"
 }
-
-*/
