@@ -10,6 +10,10 @@ type RouteNetwork struct {
 	RouteId   string `gorm:"not null"`
 }
 
+func (RouteNetwork) TableName() string {
+	return "route_network"
+}
+
 func ParseRouteNetwork(path string) ([]RouteNetwork, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -43,6 +47,10 @@ func ParseRouteNetwork(path string) ([]RouteNetwork, error) {
 type RouteNetworkGeom struct {
 	NetworkId string `gorm:"primary_key"` // networks.network_id を参照する外部 ID
 	RouteId   string `gorm:"not null"`
+}
+
+func (RouteNetworkGeom) TableName() string {
+	return "route_network"
 }
 
 func ParseRouteNetworkGeom(path string) ([]RouteNetworkGeom, error) {

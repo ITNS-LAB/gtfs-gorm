@@ -14,6 +14,10 @@ type FareRules struct {
 	ContainsId    *string
 }
 
+func (FareRules) TableName() string {
+	return "fare_rules"
+}
+
 func ParseFareRules(path string) ([]FareRules, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -69,6 +73,10 @@ type FareRulesGeom struct {
 	OriginId      *string
 	DestinationId *string
 	ContainsId    *string
+}
+
+func (FareRulesGeom) TableName() string {
+	return "fare_rules"
 }
 
 func ParseFareRulesGeom(path string) ([]FareRulesGeom, error) {

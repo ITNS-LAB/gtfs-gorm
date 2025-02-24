@@ -17,6 +17,10 @@ type FeedInfo struct {
 	FeedContactURL    *string
 }
 
+func (FeedInfo) TableName() string {
+	return "feed_info"
+}
+
 func ParseFeedInfo(path string) ([]FeedInfo, error) {
 	// CSV を開く
 	df, err := csvutil.OpenCSV(path)
@@ -99,6 +103,10 @@ type FeedInfoGeom struct {
 	FeedVersion       *string
 	FeedContactEmail  *string
 	FeedContactURL    *string
+}
+
+func (FeedInfoGeom) TableName() string {
+	return "feed_info"
 }
 
 func ParseFeedInfoGeom(path string) ([]FeedInfoGeom, error) {

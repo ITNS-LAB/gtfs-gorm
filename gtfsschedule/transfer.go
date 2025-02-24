@@ -16,6 +16,10 @@ type Transfer struct {
 	MinTransferTime *int
 }
 
+func (Transfer) TableName() string {
+	return "transfers"
+}
+
 func ParseTransfer(path string) ([]Transfer, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -97,6 +101,10 @@ type TransferGeom struct {
 	ToTripId        *string
 	TransferType    int `gorm:"not null"` // 接続タイプを示します (0, 1, 2, 3, 4, 5)
 	MinTransferTime *int
+}
+
+func (TransferGeom) TableName() string {
+	return "transfers"
 }
 
 func ParseTransferGeom(path string) ([]TransferGeom, error) {

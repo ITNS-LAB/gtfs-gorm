@@ -12,6 +12,10 @@ type CalendarDates struct {
 	ExceptionType int            `gorm:"not null"`
 }
 
+func (CalendarDates) TableName() string {
+	return "calendar_dates"
+}
+
 func ParseCalendarDates(path string) ([]CalendarDates, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -52,6 +56,10 @@ type CalendarDatesGeom struct {
 	ServiceId     string         `gorm:"primaryKey"`
 	Date          datatypes.Date `gorm:"primaryKey"`
 	ExceptionType int            `gorm:"not null"`
+}
+
+func (CalendarDatesGeom) TableName() string {
+	return "calendar_dates"
 }
 
 func ParseCalendarDatesGeom(path string) ([]CalendarDatesGeom, error) {

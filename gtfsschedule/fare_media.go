@@ -12,6 +12,10 @@ type FareMedia struct {
 	FareProduct   []FareProduct `gorm:"foreignKey:FareMediaID;references:FareMediaID"`
 }
 
+func (FareMedia) TableName() string {
+	return "fareMedia"
+}
+
 func ParseFareMedia(path string) ([]FareMedia, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -53,6 +57,10 @@ type FareMediaGeom struct {
 	FareMediaName *string
 	FareMediaType int               `gorm:"not null"`
 	FareProduct   []FareProductGeom `gorm:"foreignKey:FareMediaID;references:FareMediaID"`
+}
+
+func (FareMediaGeom) TableName() string {
+	return "fareMedia"
 }
 
 func ParseFareMediaGeom(path string) ([]FareMediaGeom, error) {

@@ -19,6 +19,10 @@ type Attribution struct {
 	AttributionPhone *string
 }
 
+func (Attribution) TableName() string {
+	return "attribution"
+}
+
 func ParseAttribution(path string) ([]Attribution, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -89,6 +93,10 @@ type AttributionGeom struct {
 	AttributionURL   *string
 	AttributionEmail *string
 	AttributionPhone *string
+}
+
+func (AttributionGeom) TableName() string {
+	return "attribution"
 }
 
 func ParseAttributionGeom(path string) ([]AttributionGeom, error) {

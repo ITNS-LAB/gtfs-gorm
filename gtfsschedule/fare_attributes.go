@@ -16,6 +16,10 @@ type FareAttributes struct {
 	FareRules        []FareRules `gorm:"foreignKey:FareId;references:FareId"`
 }
 
+func (FareAttributes) TableName() string {
+	return "fare_attributes"
+}
+
 func ParseFareAttributes(path string) ([]FareAttributes, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -85,6 +89,10 @@ type FareAttributesGeom struct {
 	AgencyId         *string
 	TransferDuration *int
 	FareRules        []FareRulesGeom `gorm:"foreignKey:FareId;references:FareId"`
+}
+
+func (FareAttributesGeom) TableName() string {
+	return "fare_attributes"
 }
 
 func ParseFareAttributesGeom(path string) ([]FareAttributesGeom, error) {

@@ -10,6 +10,10 @@ type LocationGroupStop struct {
 	StopId          string `gorm:"not null"`
 }
 
+func (LocationGroupStop) TableName() string {
+	return "location_group_stop"
+}
+
 func ParseLocationGroupStop(path string) ([]LocationGroupStop, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -43,6 +47,10 @@ func ParseLocationGroupStop(path string) ([]LocationGroupStop, error) {
 type LocationGroupStopGeom struct {
 	LocationGroupId string `gorm:"not null"`
 	StopId          string `gorm:"not null"`
+}
+
+func (LocationGroupStopGeom) TableName() string {
+	return "location_group_stop"
 }
 
 func ParseLocationGroupStopGeom(path string) ([]LocationGroupStopGeom, error) {

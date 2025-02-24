@@ -16,6 +16,10 @@ type Shape struct {
 	//Trips             []Trips `gorm:"foreignKey:ShapeId;references:ShapeId"`
 }
 
+func (Shape) TableName() string {
+	return "shapes"
+}
+
 func ParseShapes(path string) ([]Shape, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -72,6 +76,10 @@ type ShapeGeom struct {
 	ShapeDistTraveled *float64
 	Geom              gormdatatypes.Geometry `gorm:"index"`
 	//Trips             []TripsGeom `gorm:"foreignKey:ShapeId;references:ShapeId"`
+}
+
+func (ShapeGeom) TableName() string {
+	return "shapes"
 }
 
 func ParseShapesGeom(path string) ([]ShapeGeom, error) {

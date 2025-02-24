@@ -10,6 +10,10 @@ type StopArea struct {
 	StopId string `gorm:"not null"`
 }
 
+func (StopArea) TableName() string {
+	return "stop_area"
+}
+
 func ParseStopArea(path string) ([]StopArea, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -43,6 +47,10 @@ func ParseStopArea(path string) ([]StopArea, error) {
 type StopAreaGeom struct {
 	AreaId string `gorm:"primaryKey"`
 	StopId string `gorm:"not null"`
+}
+
+func (StopAreaGeom) TableName() string {
+	return "stop_area"
 }
 
 func ParseStopAreaGeom(path string) ([]StopAreaGeom, error) {

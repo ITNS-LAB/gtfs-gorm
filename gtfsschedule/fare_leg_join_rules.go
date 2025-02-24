@@ -12,6 +12,10 @@ type FareLegJoinRules struct {
 	ToStopId      *string
 }
 
+func (FareLegJoinRules) TableName() string {
+	return "fareLegJoinRules"
+}
+
 func ParseFareLegJoinRules(path string) ([]FareLegJoinRules, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -59,6 +63,10 @@ type FareLegJoinRulesGeom struct {
 	ToNetworkId   string `gorm:"not null"`
 	FromStopId    *string
 	ToStopId      *string
+}
+
+func (FareLegJoinRulesGeom) TableName() string {
+	return "fareLegJoinRules"
 }
 
 func ParseFareLegJoinRulesGeom(path string) ([]FareLegJoinRulesGeom, error) {

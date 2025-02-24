@@ -18,6 +18,10 @@ type FareLegRules struct {
 	FareTransferRuleToLegGroupID   []FareTransferRule `gorm:"foreignKey:ToLegGroupID;references:LegGroupID"`
 }
 
+func (FareLegRules) TableName() string {
+	return "fareLeg"
+}
+
 func ParseFareLeg(path string) ([]FareLegRules, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -95,6 +99,10 @@ type FareLegRulesGeom struct {
 	RulePriority                   *int
 	FareTransferRuleFromLegGroupID []FareTransferRuleGeom `gorm:"foreignKey:FromLegGroupID;references:LegGroupID"`
 	FareTransferRuleToLegGroupID   []FareTransferRuleGeom `gorm:"foreignKey:ToLegGroupID;references:LegGroupID"`
+}
+
+func (FareLegRulesGeom) TableName() string {
+	return "fareLeg"
 }
 
 func ParseFareLegGeom(path string) ([]FareLegRulesGeom, error) {

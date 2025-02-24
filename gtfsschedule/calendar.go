@@ -22,6 +22,10 @@ type Calendar struct {
 	BookingRule []BookingRule  `gorm:"foreignKey:PriorNoticeServiceId;references:ServiceId"`
 }
 
+func (Calendar) TableName() string {
+	return "calendar"
+}
+
 func ParseCalendar(path string) ([]Calendar, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -114,6 +118,10 @@ type CalendarGeom struct {
 	Trips       []TripsGeom       `gorm:"foreignKey:ServiceId;references:ServiceId"`
 	TimeFrame   []TimeFrameGeom   `gorm:"foreignKey:ServiceId;references:ServiceId"`
 	BookingRule []BookingRuleGeom `gorm:"foreignKey:PriorNoticeServiceId;references:ServiceId"`
+}
+
+func (CalendarGeom) TableName() string {
+	return "calendar"
 }
 
 func ParseCalendarGeom(path string) ([]CalendarGeom, error) {

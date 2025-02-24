@@ -14,6 +14,10 @@ type Network struct {
 	RouteNetwork                  []RouteNetwork   `gorm:"foreignKey:NetworkId;references:NetworkId"`
 }
 
+func (Network) TableName() string {
+	return "network"
+}
+
 func ParseNetwork(path string) ([]Network, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -51,6 +55,10 @@ type NetworkGeom struct {
 	FareLegJoinRulesFromNetworkID FareLegJoinRulesGeom `gorm:"foreignKey:FromNetworkId;references:NetworkId"`
 	FareLegJoinRulesToNetworkID   FareLegJoinRulesGeom `gorm:"foreignKey:ToNetworkId;references:NetworkId"`
 	RouteNetwork                  []RouteNetworkGeom   `gorm:"foreignKey:NetworkId;references:NetworkId"`
+}
+
+func (NetworkGeom) TableName() string {
+	return "network"
 }
 
 func ParseNetworkGeom(path string) ([]NetworkGeom, error) {

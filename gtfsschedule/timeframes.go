@@ -15,6 +15,10 @@ type TimeFrame struct {
 	//FareLegToTimeframeGroupID   []FareLeg `gorm:"foreignKey:TimeframeGroupId;references:ToTimeframeGroupID"`
 }
 
+func (TimeFrame) TableName() string {
+	return "timeframe"
+}
+
 func ParseTimeFrame(path string) ([]TimeFrame, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -65,6 +69,10 @@ type TimeFrameGeom struct {
 	ServiceId        string `gorm:"not null"`
 	//FareLegFromTimeframeGroupID []FareLegGeom `gorm:"foreignKey:TimeframeGroupId;references:FromTimeframeGroupID"`
 	//FareLegToTimeframeGroupID   []FareLegGeom `gorm:"foreignKey:TimeframeGroupId;references:ToTimeframeGroupID"`
+}
+
+func (TimeFrameGeom) TableName() string {
+	return "timeframe"
 }
 
 func ParseTimeFrameGeom(path string) ([]TimeFrameGeom, error) {

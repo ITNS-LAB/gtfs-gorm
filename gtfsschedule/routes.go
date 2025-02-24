@@ -30,6 +30,10 @@ type Route struct {
 	Attribution         []Attribution  `gorm:"foreignKey:RouteId;references:RouteId"`
 }
 
+func (Route) TableName() string {
+	return "routes"
+}
+
 func ParseRoutes(path string) ([]Route, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -149,6 +153,10 @@ type RouteGeom struct {
 	TransferFromRouteID []TransferGeom     `gorm:"foreignKey:FromRouteId;references:RouteId"`
 	TransferToRouteID   []TransferGeom     `gorm:"foreignKey:ToRouteId;references:RouteId"`
 	Attribution         []AttributionGeom  `gorm:"foreignKey:RouteId;references:RouteId"`
+}
+
+func (RouteGeom) TableName() string {
+	return "routes"
 }
 
 func ParseRoutesGeom(path string) ([]RouteGeom, error) {

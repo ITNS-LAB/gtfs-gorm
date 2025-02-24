@@ -27,6 +27,10 @@ type StopTimes struct {
 	DropOffBookingRuleid     *string
 }
 
+func (StopTimes) TableName() string {
+	return "stop_times"
+}
+
 func ParseStopTimes(path string) ([]StopTimes, error) {
 	// Open the CSV
 	df, err := csvutil.OpenCSV(path)
@@ -172,6 +176,10 @@ type StopTimesGeom struct {
 	Timepoint                *int
 	PickupBookingRuleId      *string
 	DropOffBookingRuleid     *string
+}
+
+func (StopTimesGeom) TableName() string {
+	return "stop_times"
 }
 
 func ParseStopTimesGeom(path string) ([]StopTimesGeom, error) {

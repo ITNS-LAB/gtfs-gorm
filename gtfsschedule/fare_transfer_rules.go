@@ -15,6 +15,10 @@ type FareTransferRule struct {
 	FareProductID     *string
 }
 
+func (FareTransferRule) TableName() string {
+	return "fare_transfer_rule"
+}
+
 func ParseFareTransferRule(path string) ([]FareTransferRule, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -83,6 +87,10 @@ type FareTransferRuleGeom struct {
 	DurationLimitType *int
 	FareTransferType  int `gorm:"not null"`
 	FareProductID     *string
+}
+
+func (FareTransferRuleGeom) TableName() string {
+	return "fare_transfer_rule"
 }
 
 func ParseFareTransferRuleGeom(path string) ([]FareTransferRuleGeom, error) {

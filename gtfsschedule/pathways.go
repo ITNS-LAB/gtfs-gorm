@@ -20,6 +20,10 @@ type Pathway struct {
 	ReversedSignpostedAs *string
 }
 
+func (Pathway) TableName() string {
+	return "pathway"
+}
+
 func ParsePathway(path string) ([]Pathway, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -124,6 +128,10 @@ type PathwayGeom struct {
 	MinWidth             *float64
 	SignpostedAs         *string
 	ReversedSignpostedAs *string
+}
+
+func (PathwayGeom) TableName() string {
+	return "pathway"
 }
 
 func ParsePathwayGeom(path string) ([]PathwayGeom, error) {

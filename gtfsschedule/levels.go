@@ -12,6 +12,10 @@ type Levels struct {
 	Stop       []Stop `gorm:"foreignKey:LevelId;references:LevelId"`
 }
 
+func (Levels) TableName() string {
+	return "levels"
+}
+
 func ParseLevels(path string) ([]Levels, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -53,6 +57,10 @@ type LevelsGeom struct {
 	LevelIndex float64 `gorm:"not null"`
 	LevelName  *string
 	Stop       []StopGeom `gorm:"foreignKey:LevelId;references:LevelId"`
+}
+
+func (LevelsGeom) TableName() string {
+	return "levels"
 }
 
 func ParseLevelsGeom(path string) ([]LevelsGeom, error) {

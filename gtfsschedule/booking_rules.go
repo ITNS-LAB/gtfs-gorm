@@ -25,6 +25,10 @@ type BookingRule struct {
 	StopTimesDropOffBookingRuleId []StopTimes `gorm:"foreignKey:DropOffBookingRuleid;references:BookingRuleId "`
 }
 
+func (BookingRule) TableName() string {
+	return "bookingRule"
+}
+
 func ParseBookingRule(path string) ([]BookingRule, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -151,6 +155,10 @@ type BookingRuleGeom struct {
 	BookingURL                    *string         // 予約リクエスト用の URL
 	StopTimesPickupBookingRuleId  []StopTimesGeom `gorm:"foreignKey:PickupBookingRuleId;references:BookingRuleId"`
 	StopTimesDropOffBookingRuleId []StopTimesGeom `gorm:"foreignKey:DropOffBookingRuleid;references:BookingRuleId "`
+}
+
+func (BookingRuleGeom) TableName() string {
+	return "bookingRule"
 }
 
 func ParseBookingRuleGeom(path string) ([]BookingRuleGeom, error) {

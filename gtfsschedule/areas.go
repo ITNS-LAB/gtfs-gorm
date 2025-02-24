@@ -13,6 +13,10 @@ type Areas struct {
 	StopArea []StopArea `gorm:"foreignKey:AreaId;references:AreaId"`
 }
 
+func (Areas) TableName() string {
+	return "areas"
+}
+
 func ParseAreas(path string) ([]Areas, error) {
 	//CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -50,6 +54,10 @@ type AreasGeom struct {
 	//FareLegFromAreaID []FareLeg  `gorm:"foreignKey:FromAreaId;references:AreaId"`
 	//FareLegToAreaID   []FareLeg  `gorm:"foreignKey:ToAreaId;references:AreaId"`
 	StopArea []StopAreaGeom `gorm:"foreignKey:AreaId;references:AreaId"`
+}
+
+func (AreasGeom) TableName() string {
+	return "areas"
 }
 
 func ParseAreasGeom(path string) ([]AreasGeom, error) {

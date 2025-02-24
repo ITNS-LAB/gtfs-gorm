@@ -12,6 +12,10 @@ type LocationGroup struct {
 	LocationGroupStop []LocationGroupStop `gorm:"foreignKey:LocationGroupId;references:LocationGroupId"`
 }
 
+func (LocationGroup) TableName() string {
+	return "location_group"
+}
+
 func ParseLocationGroup(path string) ([]LocationGroup, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -47,6 +51,10 @@ type LocationGroupGeom struct {
 	LocationGroupName *string
 	StopTimes         []StopTimesGeom         `gorm:"foreignKey:LocationGroupId;references:LocationGroupId"`
 	LocationGroupStop []LocationGroupStopGeom `gorm:"foreignKey:LocationGroupId;references:LocationGroupId"`
+}
+
+func (LocationGroupGeom) TableName() string {
+	return "location_group"
 }
 
 func ParseLocationGroupGeom(path string) ([]LocationGroupGeom, error) {

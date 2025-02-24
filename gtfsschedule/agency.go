@@ -19,6 +19,10 @@ type Agency struct {
 	Attribution    []Attribution    `gorm:"foreignKey:AgencyId;references:AgencyId"`
 }
 
+func (Agency) TableName() string {
+	return "agency"
+}
+
 func ParseAgency(path string) ([]Agency, error) {
 	//CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -97,6 +101,10 @@ type AgencyGeom struct {
 	Route          []RouteGeom          `gorm:"foreignKey:AgencyId;references:AgencyId"`
 	FareAttributes []FareAttributesGeom `gorm:"foreignKey:AgencyId;references:AgencyId"`
 	Attribution    []AttributionGeom    `gorm:"foreignKey:AgencyId;references:AgencyId"`
+}
+
+func (AgencyGeom) TableName() string {
+	return "agency"
 }
 
 func ParseAgencyGeom(path string) ([]AgencyGeom, error) {

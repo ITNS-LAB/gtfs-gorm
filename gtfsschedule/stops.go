@@ -35,6 +35,10 @@ type Stop struct {
 	LocationGroupStop          []LocationGroupStop `gorm:"foreignKey:StopId;references:StopId"`
 }
 
+func (Stop) TableName() string {
+	return "stops"
+}
+
 func ParseStop(path string) ([]Stop, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -171,6 +175,10 @@ type StopGeom struct {
 	PathwayFromStopID          []PathwayGeom           `gorm:"foreignKey:FromStopId;references:StopId"`
 	PathwayToStopID            []PathwayGeom           `gorm:"foreignKey:ToStopId;references:StopId"`
 	LocationGroupStop          []LocationGroupStopGeom `gorm:"foreignKey:StopId;references:StopId"`
+}
+
+func (StopGeom) TableName() string {
+	return "stops"
 }
 
 func ParseStopGeom(path string) ([]StopGeom, error) {

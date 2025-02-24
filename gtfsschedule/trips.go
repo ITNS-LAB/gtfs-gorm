@@ -23,6 +23,10 @@ type Trips struct {
 	Attribution          []Attribution `gorm:"foreignKey:TripId ;references:TripId"`
 }
 
+func (Trips) TableName() string {
+	return "trips"
+}
+
 func ParseTrips(path string) ([]Trips, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -117,6 +121,10 @@ type TripsGeom struct {
 	TransferFromTripID   []TransferGeom    `gorm:"foreignKey:FromTripId ;references:TripId"`
 	TransferToTripID     []TransferGeom    `gorm:"foreignKey:ToTripId ;references:TripId"`
 	Attribution          []AttributionGeom `gorm:"foreignKey:TripId ;references:TripId"`
+}
+
+func (TripsGeom) TableName() string {
+	return "trips"
 }
 
 func ParseTripsGeom(path string) ([]TripsGeom, error) {

@@ -15,6 +15,10 @@ type FareProduct struct {
 	FareTransferRule []FareTransferRule `gorm:"foreignKey:FareProductID;references:FareProductID"`
 }
 
+func (FareProduct) TableName() string {
+	return "fareProduct"
+}
+
 func ParseFareProduct(path string) ([]FareProduct, error) {
 	// CSVを開く
 	df, err := csvutil.OpenCSV(path)
@@ -71,6 +75,10 @@ type FareProductGeom struct {
 	Currency        string  `gorm:"not null"`
 	//FareLeg          []FareLeg          `gorm:"foreignKey:FareProductID;references:FareProductID"`
 	FareTransferRule []FareTransferRuleGeom `gorm:"foreignKey:FareProductID;references:FareProductID"`
+}
+
+func (FareProductGeom) TableName() string {
+	return "fareProduct"
 }
 
 func ParseFareProductGeom(path string) ([]FareProductGeom, error) {

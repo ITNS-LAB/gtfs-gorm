@@ -13,6 +13,10 @@ type Frequencies struct {
 	ExactTimes  *int
 }
 
+func (Frequencies) TableName() string {
+	return "frequencies"
+}
+
 func ParseFrequencies(path string) ([]Frequencies, error) {
 	// Open the CSV file
 	df, err := csvutil.OpenCSV(path)
@@ -67,6 +71,10 @@ type FrequenciesGeom struct {
 	EndTime     string `gorm:"not null"`
 	HeadwaySecs int    `gorm:"not null"`
 	ExactTimes  *int
+}
+
+func (FrequenciesGeom) TableName() string {
+	return "frequencies"
 }
 
 func ParseFrequenciesGeom(path string) ([]FrequenciesGeom, error) {
