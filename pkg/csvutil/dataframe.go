@@ -205,3 +205,5 @@ func (df *DataFrame) GetTimePtr(rowIndex int, columnName string) (*datatypes.Tim
 	t := datatypes.NewTime(parsed.Hour(), parsed.Minute(), parsed.Second(), 0)
 	return &t, nil
 }
+
+//GetBoolPtrは指定されたカラムの値をポインタ型のプリミティブ型として取得します。
