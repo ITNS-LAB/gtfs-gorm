@@ -2,10 +2,10 @@ package infrastructure
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsschedule"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/repository"
 	"gorm.io/gorm"
 	"log/slog"
 	"path/filepath"

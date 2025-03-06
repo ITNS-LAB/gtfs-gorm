@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/model"
 )
 
 type GtfsJpRepository interface {

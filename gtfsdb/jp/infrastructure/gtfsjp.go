@@ -2,8 +2,8 @@ package infrastructure
 
 import (
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"gorm.io/gorm"
 	"log/slog"

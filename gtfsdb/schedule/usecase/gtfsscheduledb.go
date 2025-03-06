@@ -1,11 +1,11 @@
-package usecaseschedule
+package usecase
 
 import (
 	"database/sql"
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/model"
+	repository2 "github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsschedule"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/paulmach/orb"
@@ -30,18 +30,18 @@ type GtfsScheduleDbUseCase interface {
 }
 
 type gtfsScheduleDbUseCase struct {
-	fileManagerRepo      repository.FileManagerRepository
-	gtfsScheduleRepo     repository.GtfsScheduleRepository
-	gtfsScheduleGeomRepo repository.GtfsScheduleGeomRepository
-	tripRepo             repository.TripRepository
-	tripGeomRepo         repository.TripGeomRepository
-	shapeRepo            repository.ShapeRepository
-	shapeGeomRepo        repository.ShapeGeomRepository
-	shapeExRepo          repository.ShapeExRepository
-	shapeExGeomRepo      repository.ShapeExGeomRepository
-	shapeDetailRepo      repository.ShapeDetailRepository
-	shapeDetailGeomRepo  repository.ShapeDetailGeomRepository
-	stopTimeRepo         repository.StopTimeRepository
+	fileManagerRepo      repository2.FileManagerRepository
+	gtfsScheduleRepo     repository2.GtfsScheduleRepository
+	gtfsScheduleGeomRepo repository2.GtfsScheduleGeomRepository
+	tripRepo             repository2.TripRepository
+	tripGeomRepo         repository2.TripGeomRepository
+	shapeRepo            repository2.ShapeRepository
+	shapeGeomRepo        repository2.ShapeGeomRepository
+	shapeExRepo          repository2.ShapeExRepository
+	shapeExGeomRepo      repository2.ShapeExGeomRepository
+	shapeDetailRepo      repository2.ShapeDetailRepository
+	shapeDetailGeomRepo  repository2.ShapeDetailGeomRepository
+	stopTimeRepo         repository2.StopTimeRepository
 }
 
 func (g gtfsScheduleDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error) {
@@ -69,7 +69,7 @@ func (g gtfsScheduleDbUseCase) GtfsDbFile(options CmdOptions) (digest string, er
 	}
 
 	// tmpディレクトリの削除
-	defer func(fileManagerRepo repository.FileManagerRepository, path string) {
+	defer func(fileManagerRepo repository2.FileManagerRepository, path string) {
 		_ = fileManagerRepo.Remove(path)
 	}(g.fileManagerRepo, tmp)
 
@@ -674,18 +674,18 @@ func (g gtfsScheduleDbUseCase) createShapeExGeom() error {
 }
 
 func NewGtfsScheduleDbUseCase(
-	fileManagerRepository repository.FileManagerRepository,
-	gtfsScheduleRepository repository.GtfsScheduleRepository,
-	gtfsScheduleGeomRepository repository.GtfsScheduleGeomRepository,
-	tripRepository repository.TripRepository,
-	tripGeomRepository repository.TripGeomRepository,
-	shapeRepository repository.ShapeRepository,
-	shapeGeomRepository repository.ShapeGeomRepository,
-	shapeExRepository repository.ShapeExRepository,
-	shapeExGeomRepository repository.ShapeExGeomRepository,
-	shapeDetailRepository repository.ShapeDetailRepository,
-	shapeDetailGeomRepository repository.ShapeDetailGeomRepository,
-	stopTimeRepository repository.StopTimeRepository) GtfsScheduleDbUseCase {
+	fileManagerRepository repository2.FileManagerRepository,
+	gtfsScheduleRepository repository2.GtfsScheduleRepository,
+	gtfsScheduleGeomRepository repository2.GtfsScheduleGeomRepository,
+	tripRepository repository2.TripRepository,
+	tripGeomRepository repository2.TripGeomRepository,
+	shapeRepository repository2.ShapeRepository,
+	shapeGeomRepository repository2.ShapeGeomRepository,
+	shapeExRepository repository2.ShapeExRepository,
+	shapeExGeomRepository repository2.ShapeExGeomRepository,
+	shapeDetailRepository repository2.ShapeDetailRepository,
+	shapeDetailGeomRepository repository2.ShapeDetailGeomRepository,
+	stopTimeRepository repository2.StopTimeRepository) GtfsScheduleDbUseCase {
 	return gtfsScheduleDbUseCase{
 		fileManagerRepo:      fileManagerRepository,
 		gtfsScheduleRepo:     gtfsScheduleRepository,
