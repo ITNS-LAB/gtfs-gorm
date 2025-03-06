@@ -3,8 +3,8 @@ package usecase
 import (
 	"database/sql"
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/model"
+	repository2 "github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
@@ -30,18 +30,18 @@ type GtfsJpDbUseCase interface {
 }
 
 type gtfsJpDbUseCase struct {
-	fileManagerRepo     repository.FileManagerRepository
-	gtfsJpRepo          repository.GtfsJpRepository
-	gtfsJpGeomRepo      repository.GtfsJpGeomRepository
-	tripRepo            repository.TripRepository
-	tripGeomRepo        repository.TripGeomRepository
-	shapeRepo           repository.ShapeRepository
-	shapeGeomRepo       repository.ShapeGeomRepository
-	shapeExRepo         repository.ShapeExRepository
-	shapeExGeomRepo     repository.ShapeExGeomRepository
-	shapeDetailRepo     repository.ShapeDetailRepository
-	shapeDetailGeomRepo repository.ShapeDetailGeomRepository
-	stopTimeRepo        repository.StopTimeRepository
+	fileManagerRepo     repository2.FileManagerRepository
+	gtfsJpRepo          repository2.GtfsJpRepository
+	gtfsJpGeomRepo      repository2.GtfsJpGeomRepository
+	tripRepo            repository2.TripRepository
+	tripGeomRepo        repository2.TripGeomRepository
+	shapeRepo           repository2.ShapeRepository
+	shapeGeomRepo       repository2.ShapeGeomRepository
+	shapeExRepo         repository2.ShapeExRepository
+	shapeExGeomRepo     repository2.ShapeExGeomRepository
+	shapeDetailRepo     repository2.ShapeDetailRepository
+	shapeDetailGeomRepo repository2.ShapeDetailGeomRepository
+	stopTimeRepo        repository2.StopTimeRepository
 }
 
 func (g gtfsJpDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error) {
@@ -69,7 +69,7 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 	}
 
 	// tmpディレクトリの削除
-	defer func(fileManagerRepo repository.FileManagerRepository, path string) {
+	defer func(fileManagerRepo repository2.FileManagerRepository, path string) {
 		_ = fileManagerRepo.Remove(path)
 	}(g.fileManagerRepo, tmp)
 
@@ -671,18 +671,18 @@ func (g gtfsJpDbUseCase) createShapeExGeom() error {
 	return nil
 }
 
-func NewGtfsJpDbUseCase(fileManagerRepository repository.FileManagerRepository,
-	gtfsJpRepository repository.GtfsJpRepository,
-	gtfsJpGeomRepository repository.GtfsJpGeomRepository,
-	tripRepository repository.TripRepository,
-	tripGeomRepository repository.TripGeomRepository,
-	shapeRepository repository.ShapeRepository,
-	shapeGeomRepository repository.ShapeGeomRepository,
-	shapeExRepository repository.ShapeExRepository,
-	shapeExGeomRepository repository.ShapeExGeomRepository,
-	shapeDetailRepository repository.ShapeDetailRepository,
-	shapeDetailGeomRepository repository.ShapeDetailGeomRepository,
-	stopTimeRepository repository.StopTimeRepository) GtfsJpDbUseCase {
+func NewGtfsJpDbUseCase(fileManagerRepository repository2.FileManagerRepository,
+	gtfsJpRepository repository2.GtfsJpRepository,
+	gtfsJpGeomRepository repository2.GtfsJpGeomRepository,
+	tripRepository repository2.TripRepository,
+	tripGeomRepository repository2.TripGeomRepository,
+	shapeRepository repository2.ShapeRepository,
+	shapeGeomRepository repository2.ShapeGeomRepository,
+	shapeExRepository repository2.ShapeExRepository,
+	shapeExGeomRepository repository2.ShapeExGeomRepository,
+	shapeDetailRepository repository2.ShapeDetailRepository,
+	shapeDetailGeomRepository repository2.ShapeDetailGeomRepository,
+	stopTimeRepository repository2.StopTimeRepository) GtfsJpDbUseCase {
 	return gtfsJpDbUseCase{
 		fileManagerRepo:     fileManagerRepository,
 		gtfsJpRepo:          gtfsJpRepository,

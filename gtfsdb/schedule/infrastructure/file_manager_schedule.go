@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"os"
 )

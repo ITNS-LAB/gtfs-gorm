@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsscheduledb/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/model"
 )
 
 type GtfsScheduleRepository interface {
