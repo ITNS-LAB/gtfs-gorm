@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"fmt"
-	infrastructure2 "github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/infrastructure"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/infrastructure"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/usecase"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,18 +19,18 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	}
 
 	// DI注入
-	fileManagerRepository := infrastructure2.NewFileManagerRepository()
-	gtfsJpRepository := infrastructure2.NewGtfsJpRepository(db)
-	gtfsJpGeomRepository := infrastructure2.NewGtfsJpGeomRepository(db)
-	tripRepository := infrastructure2.NewTripRepository(db)
-	tripGeomRepository := infrastructure2.NewTripGeomRepository(db)
-	shapeRepository := infrastructure2.NewShapeRepository(db)
-	shapeGeomRepository := infrastructure2.NewShapeGeomRepository(db)
-	shapeExRepository := infrastructure2.NewShapeExRepository(db)
-	shapeExGeomRepository := infrastructure2.NewShapeExGeomRepository(db)
-	shapeDetailRepository := infrastructure2.NewShapeDetailRepository(db)
-	shapeDetailGeomRepository := infrastructure2.NewShapeDetailGeomRepository(db)
-	stopTimeRepository := infrastructure2.NewStopTimesRepository(db)
+	fileManagerRepository := infrastructure.NewFileManagerRepository()
+	gtfsJpRepository := infrastructure.NewGtfsJpRepository(db)
+	gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	tripRepository := infrastructure.NewTripRepository(db)
+	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
+	shapeRepository := infrastructure.NewShapeRepository(db)
+	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
+	shapeExRepository := infrastructure.NewShapeExRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
+	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
+	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
@@ -63,18 +63,18 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 	}
 
 	// DI注入
-	fileManagerRepository := infrastructure2.NewFileManagerRepository()
-	gtfsJpRepository := infrastructure2.NewGtfsJpRepository(db)
-	gtfsJpGeomRepository := infrastructure2.NewGtfsJpGeomRepository(db)
-	tripRepository := infrastructure2.NewTripRepository(db)
-	tripGeomRepository := infrastructure2.NewTripGeomRepository(db)
-	shapeRepository := infrastructure2.NewShapeRepository(db)
-	shapeGeomRepository := infrastructure2.NewShapeGeomRepository(db)
-	shapeExRepository := infrastructure2.NewShapeExRepository(db)
-	shapeExGeomRepository := infrastructure2.NewShapeExGeomRepository(db)
-	shapeDetailRepository := infrastructure2.NewShapeDetailRepository(db)
-	shapeDetailGeomRepository := infrastructure2.NewShapeDetailGeomRepository(db)
-	stopTimeRepository := infrastructure2.NewStopTimesRepository(db)
+	fileManagerRepository := infrastructure.NewFileManagerRepository()
+	gtfsJpRepository := infrastructure.NewGtfsJpRepository(db)
+	gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	tripRepository := infrastructure.NewTripRepository(db)
+	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
+	shapeRepository := infrastructure.NewShapeRepository(db)
+	shapeGeomRepository := infrastructure.NewShapeGeomRepository(db)
+	shapeExRepository := infrastructure.NewShapeExRepository(db)
+	shapeExGeomRepository := infrastructure.NewShapeExGeomRepository(db)
+	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
+	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
+	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
 	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
