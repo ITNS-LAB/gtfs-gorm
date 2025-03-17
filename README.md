@@ -34,4 +34,5 @@ Step1でビルドしたアプリケーションを以下のコマンドで実行
 
 ### 使用例
 `noglob ./gtfsdb-go --type jp  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom`
+
 `noglob ./gtfsdb-go --type schedule  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom` 
