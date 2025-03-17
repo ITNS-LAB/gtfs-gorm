@@ -18,7 +18,7 @@ gtfsファイルまたは，URLを指定し実行します．
 
 ### Step2 run
 Step1でビルドしたアプリケーションを以下のコマンドで実行します．  
-`./gtfsdb-go`書き換える
+`noglob ./gtfsdb-go`書き換える
 ### オプション
 | オプション          | 説明                                                              | 例                                                        | 
 |----------------|-----------------------------------------------------------------|----------------------------------------------------------| 
@@ -33,5 +33,5 @@ Step1でビルドしたアプリケーションを以下のコマンドで実行
 | --geom         | オプション(有効を推奨): ジオメトリデータ処理を有効にし,PostGISの幾何計算を含むことができます.           | --geom                                                   | 
 
 ### 使用例
-`./gtfsdb-go --type jp --file hoge.zip --schema public --dsn postgres://username:password@localhost:5432/dbname`  
-`./gtfsdb-go --type schedule --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname --recal --shapesex --shapesdetail --geom`  
+`noglob ./gtfsdb-go --type jp  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom`
+`noglob ./gtfsdb-go --type schedule  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom` 
