@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/model"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/domain/repository"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsschedule"
 	"gorm.io/gorm"
 	"log/slog"
@@ -469,7 +468,7 @@ func (t tripGeomRepository) UpdateTripsGeom(tripsGeom []model.TripGeom) error {
 	}
 
 	for _, tripGeom := range tripsGeom {
-		if result := tx.Model(&gtfsjp.TripGeom{}).
+		if result := tx.Model(&gtfsschedule.TripsGeom{}).
 			Where("trip_id = ?", tripGeom.TripId).
 			Updates(tripGeom); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
@@ -554,7 +553,7 @@ func (s shapeGeomRepository) UpdateShapesGeom(shapesGeom []model.ShapeGeom) erro
 	}
 
 	for _, shapeGeom := range shapesGeom {
-		if result := tx.Model(&gtfsjp.Shape{}).
+		if result := tx.Model(&gtfsschedule.Shape{}).
 			Where("shape_id = ? AND shape_pt_sequence = ?", shapeGeom.ShapeId, shapeGeom.ShapePtSequence).
 			Updates(shapeGeom); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
