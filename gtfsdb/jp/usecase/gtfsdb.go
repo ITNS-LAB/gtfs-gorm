@@ -27,6 +27,7 @@ type GtfsJpDbUseCase interface {
 	createShapesDetailGeom() error
 	createShapeEx() error
 	createShapeExGeom() error
+	createTripGeom() error
 }
 
 type gtfsJpDbUseCase struct {
@@ -118,6 +119,10 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 			if err := g.createShapeExGeom(); err != nil {
 				return "", err
 			}
+		}
+		//Geom(linestring)を更新する処理を実行する
+		if err = g.createTripGeom(); err != nil {
+			return "", err
 		}
 	} else {
 		if err = g.gtfsJpRepo.MigrateGtfsJp(); err != nil {
@@ -668,6 +673,56 @@ func (g gtfsJpDbUseCase) createShapeExGeom() error {
 		}
 	}
 	slog.Info("テーブル[shapes_ex] 作成完了")
+	return nil
+}
+
+func (g gtfsJpDbUseCase) createTripGeom() error {
+	slog.Info("テーブル[trip] geom の計算を実行します")
+	//tripIdの一覧表を取得する
+	tripIds, err := g.tripRepo.FindTripIds()
+	if err != nil {
+		return err
+	}
+	var tripGeom []model.TripGeomLine
+
+	//tripIdごとにGeomlineを生成、更新用の構造体に格納していく
+	for _, tripId := range tripIds {
+		shapeId, err := g.tripRepo.FindShapeIdByTripId(tripId)
+		if err != nil {
+			return err
+		}
+		shapesGeom, err := g.shapeGeomRepo.FindShapesGeomByShapeId(shapeId)
+		if err != nil {
+			return nil
+		}
+
+		//shapesGeomのgeomフィールドのみのデータからなるスライスを作成
+		var geoms []gormdatatypes.Geometry
+		for _, shapeGeom := range shapesGeom {
+			geoms = append(geoms, shapeGeom.Geom)
+		}
+
+		//gormdatatypes.Geometry型のスライスをorb.Point型のスライスに変換する
+		var pointSlice []orb.Point
+		for _, geom := range geoms {
+			point := geom.Geom.(orb.Point)
+			pointSlice = append(pointSlice, point)
+		}
+
+		//Geomのlinestring型のデータを生成する
+		GeomLine := orb.LineString(pointSlice)
+
+		//更新用の構造体にデータを入れる
+		tripGeom = append(tripGeom, model.TripGeomLine{
+			TripId: tripId,
+			Geom:   GeomLine,
+		})
+	}
+	//tripテーブルのGeomカラムのデータをstring_line型で更新する
+	if err := g.tripGeomRepo.UpdateTripsGeom(tripGeom); err != nil {
+		return err
+	}
+	slog.Info("テーブル[trip] geomの計算完了")
 	return nil
 }
 

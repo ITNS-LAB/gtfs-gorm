@@ -21,7 +21,7 @@ type TripRepository interface {
 
 type TripGeomRepository interface {
 	FindTripsGeomIds() ([]string, error)
-	UpdateTripsGeom([]model.TripGeom) error
+	UpdateTripsGeom(tripsGeom []model.TripGeomLine) error
 }
 
 type ShapeRepository interface {
