@@ -252,7 +252,7 @@ func ParseTripsGeom(path string) ([]TripGeom, error) {
 			JpTripDescSymbol:     jpTripDescSymbol,
 			JpOfficeId:           jpOfficeId,
 			JpPatternId:          jpPatternId,
-			Geom:                 gormdatatypes.Geometry{Geom: orb.LineString{}, Srid: 4236},
+			Geom:                 gormdatatypes.Geometry{Geom: orb.LineString{}, Srid: 4326},
 		})
 	}
 

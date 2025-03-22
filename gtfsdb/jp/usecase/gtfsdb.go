@@ -715,7 +715,7 @@ func (g gtfsJpDbUseCase) createTripGeom() error {
 		//更新用の構造体にデータを入れる
 		tripGeom = append(tripGeom, model.TripGeomLine{
 			TripId: tripId,
-			Geom:   GeomLine,
+			Geom:   gormdatatypes.Geometry{Geom: GeomLine, Srid: 4326},
 		})
 	}
 	//tripテーブルのGeomカラムのデータをstring_line型で更新する

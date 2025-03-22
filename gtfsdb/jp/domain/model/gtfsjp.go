@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
-	"github.com/paulmach/orb"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 )
 
 type GtfsJp struct {
@@ -55,7 +55,7 @@ type TripGeom struct {
 
 type TripGeomLine struct {
 	TripId string
-	Geom   orb.LineString
+	Geom   gormdatatypes.Geometry
 }
 
 type Shape struct {
