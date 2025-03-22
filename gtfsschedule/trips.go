@@ -2,7 +2,9 @@ package gtfsschedule
 
 import (
 	"fmt"
+	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/pkg/csvutil"
+	"github.com/paulmach/orb"
 )
 
 type Trips struct {
@@ -116,6 +118,7 @@ type TripsGeom struct {
 	ShapeId              string  `gorm:"index"`
 	WheelchairAccessible *int
 	BikesAllowed         *int
+	Geom                 gormdatatypes.Geometry
 	StopTimes            []StopTimesGeom   `gorm:"foreignKey:TripId;references:TripId"`
 	Frequencies          []FrequenciesGeom `gorm:"foreignKey:TripId;references:TripId"`
 	TransferFromTripID   []TransferGeom    `gorm:"foreignKey:FromTripId ;references:TripId"`
@@ -199,6 +202,7 @@ func ParseTripsGeom(path string) ([]TripsGeom, error) {
 			ShapeId:              shapeId,
 			WheelchairAccessible: wheelchairAccessible,
 			BikesAllowed:         bikesAllowed,
+			Geom:                 gormdatatypes.Geometry{Geom: orb.LineString{}, Srid: 4236},
 		})
 	}
 
