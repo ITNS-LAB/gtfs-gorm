@@ -14,7 +14,7 @@ type Stop struct {
 	StopDesc              *string
 	StopLat               float64 `gorm:"not null"`
 	StopLon               float64 `gorm:"not null"`
-	ZoneId                *string `gorm:"unique"`
+	ZoneId                *string
 	StopUrl               *string
 	LocationType          *int `gorm:"default:0"`
 	ParentStation         *string
@@ -140,7 +140,7 @@ type StopGeom struct {
 	StopDesc              *string
 	StopLat               float64 `gorm:"not null"`
 	StopLon               float64 `gorm:"not null"`
-	ZoneId                *string `gorm:"unique"`
+	ZoneId                *string
 	StopUrl               *string
 	LocationType          *int `gorm:"default:0"`
 	ParentStation         *string
