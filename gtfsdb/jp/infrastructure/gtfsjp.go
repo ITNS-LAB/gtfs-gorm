@@ -2,8 +2,8 @@ package infrastructure
 
 import (
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/repository"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/repository"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"gorm.io/gorm"
 	"log/slog"
@@ -275,8 +275,9 @@ func (t tripRepository) FindTripIds() (tripIds []string, err error) {
 }
 
 func (t tripRepository) FindShapeIdByTripId(tripId string) (string, error) {
-	t.Db.Table("trips").Select("shape_id").Where("trip_id = ?", tripId).Find(&tripId)
-	return tripId, nil
+	var shapeId string
+	t.Db.Table("trips").Select("shape_id").Where("trip_id = ?", tripId).Find(&shapeId)
+	return shapeId, nil
 }
 
 func NewTripRepository(db *gorm.DB) repository.TripRepository {
@@ -292,7 +293,7 @@ func (t tripGeomRepository) FindTripsGeomIds() (tripIds []string, err error) {
 	return tripIds, nil
 }
 
-func (t tripGeomRepository) UpdateTripsGeom(tripsGeom []model.TripGeom) error {
+func (t tripGeomRepository) UpdateTripsGeom(tripsGeom []model.TripGeomLine) error {
 	tx := t.Db.Begin()
 	if tx.Error != nil {
 		return tx.Error
@@ -301,7 +302,8 @@ func (t tripGeomRepository) UpdateTripsGeom(tripsGeom []model.TripGeom) error {
 	for _, tripGeom := range tripsGeom {
 		if result := tx.Model(&gtfsjp.TripGeom{}).
 			Where("trip_id = ?", tripGeom.TripId).
-			Updates(tripGeom); result.Error != nil {
+			//Updates()部分を変更
+			Update("geom", tripGeom.Geom); result.Error != nil {
 			tx.Rollback() // エラーが発生したらロールバック
 			return result.Error
 		}

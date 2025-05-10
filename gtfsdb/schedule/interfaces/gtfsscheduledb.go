@@ -2,26 +2,26 @@ package interfaces
 
 import (
 	"fmt"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/infrastructure"
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/usecase"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/infrastructure"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/usecase"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 func GtfsDbFile(options usecase.CmdOptions) error {
-	// db接続
-	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
+	// db接続	"%s?search_path=%s"の?を&に変更している
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s&search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
 		return err
 	}
 
-	// DI注入
+	// DI
 	fileManagerRepository := infrastructure.NewFileManagerRepository()
-	gtfsJpRepository := infrastructure.NewGtfsJpRepository(db)
-	gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	gtfsScheduleRepository := infrastructure.NewGtfsScheduleRepository(db)
+	gtfsScheduleGeomRepository := infrastructure.NewGtfsScheduleGeomRepository(db)
 	tripRepository := infrastructure.NewTripRepository(db)
 	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
 	shapeRepository := infrastructure.NewShapeRepository(db)
@@ -31,10 +31,11 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
 	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
-	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
+
+	gtfsScheduleDBuseCase := usecase.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
-		gtfsJpRepository,
-		gtfsJpGeomRepository,
+		gtfsScheduleRepository,
+		gtfsScheduleGeomRepository,
 		tripRepository,
 		tripGeomRepository,
 		shapeRepository,
@@ -46,7 +47,7 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 		stopTimeRepository,
 	)
 
-	if _, err := gtfsJpDBuseCase.GtfsDbFile(options); err != nil {
+	if _, err := gtfsScheduleDBuseCase.GtfsDbFile(options); err != nil {
 		return err
 	}
 
@@ -64,8 +65,8 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 
 	// DI注入
 	fileManagerRepository := infrastructure.NewFileManagerRepository()
-	gtfsJpRepository := infrastructure.NewGtfsJpRepository(db)
-	gtfsJpGeomRepository := infrastructure.NewGtfsJpGeomRepository(db)
+	gtfsJpRepository := infrastructure.NewGtfsScheduleRepository(db)
+	gtfsScheduleGeomRepository := infrastructure.NewGtfsScheduleGeomRepository(db)
 	tripRepository := infrastructure.NewTripRepository(db)
 	tripGeomRepository := infrastructure.NewTripGeomRepository(db)
 	shapeRepository := infrastructure.NewShapeRepository(db)
@@ -75,10 +76,10 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 	shapeDetailRepository := infrastructure.NewShapeDetailRepository(db)
 	shapeDetailGeomRepository := infrastructure.NewShapeDetailGeomRepository(db)
 	stopTimeRepository := infrastructure.NewStopTimesRepository(db)
-	gtfsJpDBuseCase := usecase.NewGtfsJpDbUseCase(
+	gtfsScheduleDBuseCase := usecase.NewGtfsScheduleDbUseCase(
 		fileManagerRepository,
 		gtfsJpRepository,
-		gtfsJpGeomRepository,
+		gtfsScheduleGeomRepository,
 		tripRepository,
 		tripGeomRepository,
 		shapeRepository,
@@ -90,7 +91,7 @@ func GtfsDbUrl(options usecase.CmdOptions) error {
 		stopTimeRepository,
 	)
 
-	if _, err := gtfsJpDBuseCase.GtfsDbUrl(options); err != nil {
+	if _, err := gtfsScheduleDBuseCase.GtfsDbUrl(options); err != nil {
 		return err
 	}
 

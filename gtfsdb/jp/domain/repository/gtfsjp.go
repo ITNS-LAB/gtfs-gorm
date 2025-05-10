@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/domain/model"
+	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/jp/domain/model"
 )
 
 type GtfsJpRepository interface {
@@ -21,7 +21,7 @@ type TripRepository interface {
 
 type TripGeomRepository interface {
 	FindTripsGeomIds() ([]string, error)
-	UpdateTripsGeom([]model.TripGeom) error
+	UpdateTripsGeom([]model.TripGeomLine) error
 }
 
 type ShapeRepository interface {
