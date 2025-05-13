@@ -44,7 +44,7 @@ func saveUnZipFiles(destDir string, f *zip.File) error {
 	}
 
 	// 子孫ディレクトリがあれば作成する
-	if err := os.MkdirAll(filepath.Dir(destPath), f.Mode()); err != nil {
+	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
 		return err
 	}
 
@@ -56,7 +56,7 @@ func saveUnZipFiles(destDir string, f *zip.File) error {
 	defer rc.Close()
 
 	// 展開先ファイルを作成する
-	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+	destFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
