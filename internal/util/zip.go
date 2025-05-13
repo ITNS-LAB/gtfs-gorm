@@ -39,13 +39,12 @@ func UnZip(src, dest string) (string, error) {
 }
 
 func saveUnZipFiles(destDir string, f *zip.File) error {
-	// __MACOSX フォルダをスキップ
+	// __MACOSX フォルダはスキップ
 	if strings.Contains(f.Name, "__MACOSX") {
 		return nil
 	}
 
-	// ファイル名のみ取得（ディレクトリ階層を無視）
-	relPath := filepath.Base(f.Name)
+	relPath := filepath.Base(f.Name) // フラット展開
 	destPath := filepath.Join(destDir, relPath)
 
 	// ZIPスリップ攻撃対策
