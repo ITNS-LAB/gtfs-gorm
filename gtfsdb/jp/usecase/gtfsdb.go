@@ -65,7 +65,7 @@ func (g gtfsJpDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error
 func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
-	if err = os.MkdirAll(tmp, 0755); err != nil {
+	if err = os.MkdirAll(tmp, 0777); err != nil {
 		return "", err
 	}
 
