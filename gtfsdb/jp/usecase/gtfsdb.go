@@ -80,12 +80,8 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 	if err != nil {
 		return "", err
 	}
-
 	// digestの取得
-	digest, err = util.Sha256(options.GtfsFile)
-	if err != nil {
-		return "", err
-	}
+	//digest, err = util.Sha256(options.GtfsFile)
 
 	// option shapes_ex, shapes_detailがtrueの場合は、距離再計算が必須
 	if options.ShapesDetail || options.ShapesEx {
@@ -156,7 +152,7 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 
 	}
 
-	return digest, err
+	return "", err
 }
 
 func (g gtfsJpDbUseCase) recalculateShapes() error {
