@@ -23,6 +23,10 @@ func UnZip(src, dest string) (string, error) {
 
 	// 全ファイル展開
 	for _, f := range r.File {
+		// __MACOSX フォルダ内のファイルをスキップ
+		if strings.Contains(f.Name, "__MACOSX") {
+			continue
+		}
 		if f.Mode().IsDir() {
 			continue
 		}
@@ -35,6 +39,11 @@ func UnZip(src, dest string) (string, error) {
 }
 
 func saveUnZipFiles(destDir string, f *zip.File) error {
+	// __MACOSX フォルダはスキップ
+	if strings.Contains(f.Name, "__MACOSX") {
+		return nil
+	}
+
 	// 展開先のパスを設定する
 	destPath := filepath.Join(destDir, f.Name)
 
@@ -44,7 +53,7 @@ func saveUnZipFiles(destDir string, f *zip.File) error {
 	}
 
 	// 子孫ディレクトリがあれば作成する
-	if err := os.MkdirAll(filepath.Dir(destPath), f.Mode()); err != nil {
+	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
 		return err
 	}
 
