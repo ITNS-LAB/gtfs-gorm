@@ -75,7 +75,6 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 	}(g.fileManagerRepo, tmp)
 
 	// gtfsを解凍
-	slog.Info(options.GtfsFile)
 	gtfsPath := options.GtfsFile
 	if err != nil {
 		return "", err
