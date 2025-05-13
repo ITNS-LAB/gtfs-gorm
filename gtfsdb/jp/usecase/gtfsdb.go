@@ -18,7 +18,7 @@ import (
 
 type GtfsJpDbUseCase interface {
 	GtfsDbUrl(options CmdOptions) (digest string, err error)
-	GtfsDbFile(options CmdOptions) (digest string, err error)
+	GtfsDbFile(options CmdOptions) (test string, err error)
 	recalculateShapes() error
 	recalculateShapesGeom() error
 	recalculateStopTimes() error
@@ -62,7 +62,7 @@ func (g gtfsJpDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error
 	return digest, nil
 }
 
-func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error) {
+func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (test string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err = os.MkdirAll(tmp, 0755); err != nil {
@@ -82,7 +82,7 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 	//--------------------
 	a := 1
 	if a == 1 {
-		return "", fmt.Errorf("gorm側の状況確認 %d", gtfsPath)
+		return gtfsPath, fmt.Errorf("gorm側の状況確認 %d", gtfsPath)
 	}
 	//----------------------
 	// digestの取得

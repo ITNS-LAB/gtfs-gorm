@@ -9,13 +9,13 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func GtfsDbFile(options usecase.CmdOptions) error {
+func GtfsDbFile(options usecase.CmdOptions) (string, error) {
 	// db接続
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// DI注入
@@ -46,11 +46,9 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 		stopTimeRepository,
 	)
 
-	if _, err := gtfsJpDBuseCase.GtfsDbFile(options); err != nil {
-		return err
-	}
+	test, err := gtfsJpDBuseCase.GtfsDbFile(options)
 
-	return nil
+	return test, err
 }
 
 func GtfsDbUrl(options usecase.CmdOptions) error {
