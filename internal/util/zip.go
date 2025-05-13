@@ -39,8 +39,14 @@ func UnZip(src, dest string) (string, error) {
 }
 
 func saveUnZipFiles(destDir string, f *zip.File) error {
+	relPath := f.Name
+	parts := strings.SplitN(relPath, string(os.PathSeparator), 2)
+	if len(parts) == 2 && !strings.Contains(parts[0], "__MACOSX") {
+		relPath = parts[1]
+	}
+
 	// 展開先のパスを設定する
-	destPath := filepath.Join(destDir, f.Name)
+	destPath := filepath.Join(destDir, relPath)
 
 	// ZIPスリップ攻撃対策: 展開先のパスが期待されるディレクトリ内にあることを確認
 	if !strings.HasPrefix(destPath, filepath.Clean(destDir)+string(os.PathSeparator)) {
