@@ -79,6 +79,12 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 	if err != nil {
 		return "", err
 	}
+	//--------------------
+	a := 1
+	if a == 1 {
+		return "", fmt.Errorf("gorm側の状況確認 %d", gtfsPath)
+	}
+	//----------------------
 	// digestの取得
 	//digest, err = util.Sha256(options.GtfsFile)
 
