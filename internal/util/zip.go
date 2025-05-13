@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -17,27 +16,34 @@ func UnZip(src, dest string) (string, error) {
 	}
 	defer r.Close()
 
-	ext := filepath.Ext(src)
-	rep := regexp.MustCompile(ext + "$")
-	dir := filepath.Base(rep.ReplaceAllString(src, ""))
-
-	destDir := filepath.Join(dest, dir)
-	// Create the directory for the extracted files
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	// 展開先ディレクトリを作成
+	if err := os.MkdirAll(dest, 0755); err != nil {
 		return "", err
 	}
 
+	// 全ファイル展開
 	for _, f := range r.File {
 		if f.Mode().IsDir() {
-			// Ignore directories
 			continue
 		}
-		if err := saveUnZipFiles(destDir, f); err != nil {
+		if err := saveUnZipFiles(dest, f); err != nil {
 			return "", err
 		}
 	}
 
-	return destDir, nil
+	// サブディレクトリがあるならそれを返す
+	entries, err := os.ReadDir(dest)
+	if err != nil {
+		return "", err
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			return filepath.Join(dest, entry.Name()), nil
+		}
+	}
+
+	// サブディレクトリがなければそのまま返す
+	return dest, nil
 }
 
 func saveUnZipFiles(destDir string, f *zip.File) error {
