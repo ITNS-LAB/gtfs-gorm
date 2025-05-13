@@ -31,18 +31,6 @@ func UnZip(src, dest string) (string, error) {
 		}
 	}
 
-	// サブディレクトリがあるならそれを返す
-	entries, err := os.ReadDir(dest)
-	if err != nil {
-		return "", err
-	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			return filepath.Join(dest, entry.Name()), nil
-		}
-	}
-
-	// サブディレクトリがなければそのまま返す
 	return dest, nil
 }
 
