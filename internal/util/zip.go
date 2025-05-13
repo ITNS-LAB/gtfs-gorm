@@ -17,7 +17,7 @@ func UnZip(src, dest string) (string, error) {
 	defer r.Close()
 
 	// 展開先ディレクトリを作成
-	if err := os.MkdirAll(dest, 0755); err != nil {
+	if err := os.MkdirAll("temp", 0755); err != nil {
 		return "", err
 	}
 
@@ -30,12 +30,12 @@ func UnZip(src, dest string) (string, error) {
 		if f.Mode().IsDir() {
 			continue
 		}
-		if err := saveUnZipFiles(dest, f); err != nil {
+		if err := saveUnZipFiles("temp", f); err != nil {
 			return "", err
 		}
 	}
 
-	return dest, nil
+	return "temp", nil
 }
 
 func saveUnZipFiles(destDir string, f *zip.File) error {
