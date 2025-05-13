@@ -81,6 +81,9 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 		return "", err
 	}
 
+	//実験
+	gtfsPath = "temp"
+
 	// digestの取得
 	digest, err = util.Sha256(options.GtfsFile)
 	if err != nil {
