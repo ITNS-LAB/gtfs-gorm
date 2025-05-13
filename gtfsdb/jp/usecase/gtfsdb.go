@@ -62,7 +62,7 @@ func (g gtfsJpDbUseCase) GtfsDbUrl(options CmdOptions) (digest string, err error
 	return digest, nil
 }
 
-func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (test string, err error) {
+func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err error) {
 	// tmpディレクトリを作成
 	tmp := "tmp"
 	if err = os.MkdirAll(tmp, 0755); err != nil {
@@ -75,18 +75,16 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (test string, err error)
 	}(g.fileManagerRepo, tmp)
 
 	// gtfsを解凍
-	gtfsPath := options.GtfsFile
+	gtfsPath, err := g.fileManagerRepo.UnZip(options.GtfsFile, tmp)
 	if err != nil {
 		return "", err
 	}
-	//--------------------
-	a := 1
-	if a == 1 {
-		return gtfsPath, fmt.Errorf("gorm側の状況確認 %d", gtfsPath)
-	}
-	//----------------------
+
 	// digestの取得
-	//digest, err = util.Sha256(options.GtfsFile)
+	digest, err = util.Sha256(options.GtfsFile)
+	if err != nil {
+		return "", err
+	}
 
 	// option shapes_ex, shapes_detailがtrueの場合は、距離再計算が必須
 	if options.ShapesDetail || options.ShapesEx {

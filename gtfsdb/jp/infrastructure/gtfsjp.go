@@ -7,15 +7,10 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"gorm.io/gorm"
 	"log/slog"
-	"os"
 	"path/filepath"
 )
 
 func createGtfsJp[T any](filePath string, parser func(string) ([]T, error), db *gorm.DB) error {
-	if info, err := os.Stat(filePath); err != nil || info.IsDir() {
-		slog.Warn(fmt.Sprintf("%s は存在しないか、ファイルではありません。", filePath))
-		return nil
-	}
 	// ファイルのパース
 	data, err := parser(filePath)
 	if err != nil {
