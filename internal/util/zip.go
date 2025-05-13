@@ -23,6 +23,10 @@ func UnZip(src, dest string) (string, error) {
 
 	// 全ファイル展開
 	for _, f := range r.File {
+		// __MACOSX フォルダ内のファイルをスキップ
+		if strings.Contains(f.Name, "__MACOSX") {
+			continue
+		}
 		if f.Mode().IsDir() {
 			continue
 		}

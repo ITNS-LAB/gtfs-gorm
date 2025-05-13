@@ -8,23 +8,21 @@ import (
 )
 
 type Stop struct {
-	StopId                string `gorm:"primaryKey"`
-	StopCode              *string
-	StopName              string `gorm:"not null"`
-	StopDesc              *string
-	StopLat               float64 `gorm:"not null"`
-	StopLon               float64 `gorm:"not null"`
-	ZoneId                *string
-	StopUrl               *string
-	LocationType          *int `gorm:"default:0"`
-	ParentStation         *string
-	StopTimezone          *string
-	WheelchairBoarding    *int `gorm:"default:0"`
-	LevelId               *string
-	PlatformCode          *string
-	StopTimes             []StopTime `gorm:"foreignKey:StopId;references:StopId"`
-	FareRuleOriginId      []FareRule `gorm:"foreignKey:OriginId;references:ZoneId"`
-	FareRuleDestinationId []FareRule `gorm:"foreignKey:DestinationId;references:ZoneId"`
+	StopId             string `gorm:"primaryKey"`
+	StopCode           *string
+	StopName           string `gorm:"not null"`
+	StopDesc           *string
+	StopLat            float64 `gorm:"not null"`
+	StopLon            float64 `gorm:"not null"`
+	ZoneId             *string
+	StopUrl            *string
+	LocationType       *int `gorm:"default:0"`
+	ParentStation      *string
+	StopTimezone       *string
+	WheelchairBoarding *int `gorm:"default:0"`
+	LevelId            *string
+	PlatformCode       *string
+	StopTimes          []StopTime `gorm:"foreignKey:StopId;references:StopId"`
 }
 
 func (Stop) TableName() string {
