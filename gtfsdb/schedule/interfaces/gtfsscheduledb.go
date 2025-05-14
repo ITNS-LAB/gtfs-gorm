@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/infrastructure"
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsdb/schedule/usecase"
@@ -10,6 +11,10 @@ import (
 )
 
 func GtfsDbFile(options usecase.CmdOptions) error {
+	a := 1
+	if a == 1 {
+		return errors.New("db接続より前まで実行できているよ！！(file)")
+	}
 	// db接続	"%s?search_path=%s"の?を&に変更している
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s&search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
@@ -55,6 +60,10 @@ func GtfsDbFile(options usecase.CmdOptions) error {
 }
 
 func GtfsDbUrl(options usecase.CmdOptions) error {
+	a := 1
+	if a == 1 {
+		return errors.New("db接続より前まで実行できているよ！！(url)")
+	}
 	// db接続
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("%s?search_path=%s", options.Dsn, options.Schema)), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
