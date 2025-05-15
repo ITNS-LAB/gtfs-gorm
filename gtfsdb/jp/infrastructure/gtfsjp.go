@@ -87,7 +87,6 @@ func (g gtfsJpRepository) MigrateGtfsJp() error {
 }
 
 func (g gtfsJpRepository) CreateGtfsJp(gtfsPath string) error {
-	slog.Info("gtfsファイルまでのパス、多分tempなはず...", gtfsPath)
 	if err := createGtfsJp(filepath.Join(gtfsPath, "agency.txt"), gtfsjp.ParseAgency, g.Db); err != nil {
 		return err
 	}
