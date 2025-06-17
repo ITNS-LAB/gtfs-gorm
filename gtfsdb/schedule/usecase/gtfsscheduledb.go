@@ -348,22 +348,19 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 				},
 			}}
 
-			remainder := 0.0
 			shapePtSeqCnt := shapes[0].ShapePtSequence
 
 			for i := 1; i < len(shapes); i++ {
-				prevShapePtLat := shapesDetail[i-1].ShapePtLat
-				prevShapePtLon := shapesDetail[i-1].ShapePtLon
+				prevShapePtLat := shapes[i-1].ShapePtLat
+				prevShapePtLon := shapes[i-1].ShapePtLon
 				nextShapePtLat := shapes[i].ShapePtLat
 				nextShapePtLon := shapes[i].ShapePtLon
 
 				blockDistance := util.KarneyWgs84(prevShapePtLat, prevShapePtLon, nextShapePtLat, nextShapePtLon)
-				blockDistance += remainder
-
 				repeat := int(blockDistance / interval)
-				remainder = math.Mod(blockDistance, interval)
 
 				if repeat == 0 {
+					nextShapeDistTraveled := math.Round((shapesDetail[len(shapesDetail)-1].ShapeDistTraveled)*10) / 10
 					shapePtSeqCnt++
 					shapesDetail = append(shapesDetail, model.ShapeDetail{
 						ShapeDetail: gtfsschedule.ShapeDetail{
@@ -371,10 +368,9 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 							ShapePtLat:            shapes[i].ShapePtLat,
 							ShapePtLon:            shapes[i].ShapePtLon,
 							ShapeDetailPtSequence: shapePtSeqCnt,
-							ShapeDistTraveled:     math.Round((shapesDetail[len(shapesDetail)-1].ShapeDistTraveled+remainder)*10) / 10,
+							ShapeDistTraveled:     nextShapeDistTraveled,
 						},
 					})
-					remainder = 0.0
 					continue
 				}
 
@@ -382,25 +378,25 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 				dLat := nextShapePtLat - prevShapePtLat
 				dLon := nextShapePtLon - prevShapePtLon
 
-				for j := 0; j < repeat; j++ {
+				for j := 1; j <= repeat; j++ {
+					nextLat := t*dLat + prevShapePtLat
+					nextLon := t*dLon + prevShapePtLon
+
+					nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + 5
+					nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
+
 					shapePtSeqCnt++
-					prevLat := shapesDetail[len(shapesDetail)-1].ShapePtLat
-					prevLon := shapesDetail[len(shapesDetail)-1].ShapePtLon
-					nextLat := t*dLat + prevLat
-					nextLon := t*dLon + prevLon
-
-					shortDistance := util.KarneyWgs84(prevLat, prevLon, nextLat, nextLon)
-
-					shapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + shortDistance
 					shapesDetail = append(shapesDetail, model.ShapeDetail{
 						ShapeDetail: gtfsschedule.ShapeDetail{
 							ShapeId:               id,
 							ShapePtLat:            nextLat,
 							ShapePtLon:            nextLon,
 							ShapeDetailPtSequence: shapePtSeqCnt,
-							ShapeDistTraveled:     math.Round(shapeDistTraveled*10) / 10,
+							ShapeDistTraveled:     nextShapeDistTraveled,
 						},
 					})
+					prevShapePtLat = nextLat
+					prevShapePtLon = nextLon
 				}
 			}
 
