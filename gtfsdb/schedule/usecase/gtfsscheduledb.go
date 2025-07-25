@@ -398,6 +398,19 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 					prevShapePtLat = nextLat
 					prevShapePtLon = nextLon
 				}
+
+				nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + 5
+				nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
+				shapePtSeqCnt++
+				shapesDetail = append(shapesDetail, model.ShapeDetail{
+					ShapeDetail: gtfsschedule.ShapeDetail{
+						ShapeId:               id,
+						ShapePtLat:            nextShapePtLat,
+						ShapePtLon:            nextShapePtLon,
+						ShapeDetailPtSequence: shapePtSeqCnt,
+						ShapeDistTraveled:     nextShapeDistTraveled,
+					},
+				})
 			}
 
 			if err := g.shapeDetailRepo.CreateShapesDetail(shapesDetail); err != nil {
