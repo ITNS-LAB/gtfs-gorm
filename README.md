@@ -14,7 +14,7 @@ gtfsファイルまたは，URLを指定し実行します．
 ### Step1 build
 以下のコマンドでビルドします．
 
-`go build ./cmd/gtfsdb-go`  書き換える
+`go build ./cmd/gtfsdb-go`
 
 ### Step2 run
 Step1でビルドしたアプリケーションを以下のコマンドで実行します．  
@@ -36,3 +36,6 @@ Step1でビルドしたアプリケーションを以下のコマンドで実行
 `noglob ./gtfsdb-go --type jp  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom`
 
 `noglob ./gtfsdb-go --type schedule  --url https://hoge.com/foo/bar --dsn postgres://username:password@localhost:5432/dbname  --recal --shapesex --shapesdetail --geom` 
+
+### リファクタリング中の注意
+データベースにデータを書き込んだ状態で実行すると主キーの重複エラーが出るので実行毎にデータベースを空にするのを忘れずに。

@@ -18,6 +18,8 @@ func createGtfsJp[T any](filePath string, parser func(string) ([]T, error), db *
 		return nil
 	}
 
+	slog.Info(fmt.Sprintf("%s を読み込みます。", filepath.Base(filePath)))
+
 	// データベースへ挿入
 	if err := db.CreateInBatches(&data, 1000).Error; err != nil {
 		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)

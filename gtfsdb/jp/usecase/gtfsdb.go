@@ -382,8 +382,8 @@ func (g gtfsJpDbUseCase) createShapesDetail() error {
 				dLon := nextShapePtLon - prevShapePtLon
 
 				for j := 1; j <= repeat; j++ {
-					nextLat := t*dLat + prevShapePtLat
-					nextLon := t*dLon + prevShapePtLon
+					nextLat := float64(j)*t*dLat + prevShapePtLat
+					nextLon := float64(j)*t*dLon + prevShapePtLon
 
 					nextShapeDistTraveled := shapesDetail[shapePtSeqCnt-1].ShapeDistTraveled + 5
 					nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
@@ -402,7 +402,7 @@ func (g gtfsJpDbUseCase) createShapesDetail() error {
 					prevShapePtLon = nextLon
 				}
 
-				nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + 5
+				nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled
 				nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
 				shapePtSeqCnt++
 				shapesDetail = append(shapesDetail, model.ShapeDetail{

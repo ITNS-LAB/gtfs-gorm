@@ -309,7 +309,6 @@ func (g gtfsScheduleDbUseCase) recalculateStopTimesGeom() error {
 	panic("stop_timesの距離再計算は保留中")
 }
 
-// 修正中
 func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 	slog.Info("テーブル[shapesDetail] 作成開始 数分かかる場合があります")
 
@@ -365,8 +364,8 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 					shapesDetail = append(shapesDetail, model.ShapeDetail{
 						ShapeDetail: gtfsschedule.ShapeDetail{
 							ShapeId:               id,
-							ShapePtLat:            shapes[i].ShapePtLat,
-							ShapePtLon:            shapes[i].ShapePtLon,
+							ShapePtLat:            nextShapePtLat,
+							ShapePtLon:            nextShapePtLon,
 							ShapeDetailPtSequence: shapePtSeqCnt,
 							ShapeDistTraveled:     nextShapeDistTraveled,
 						},
@@ -379,10 +378,10 @@ func (g gtfsScheduleDbUseCase) createShapesDetail() error {
 				dLon := nextShapePtLon - prevShapePtLon
 
 				for j := 1; j <= repeat; j++ {
-					nextLat := t*dLat + prevShapePtLat
-					nextLon := t*dLon + prevShapePtLon
+					nextLat := float64(j)*t*dLat + prevShapePtLat
+					nextLon := float64(j)*t*dLon + prevShapePtLon
 
-					nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled + 5
+					nextShapeDistTraveled := shapesDetail[len(shapesDetail)-1].ShapeDistTraveled
 					nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
 
 					shapePtSeqCnt++
