@@ -352,6 +352,7 @@ func (g gtfsJpDbUseCase) createShapesDetail() error {
 			}}
 
 			shapePtSeqCnt := shapes[0].ShapePtSequence
+			firstPtSeqCnt := shapePtSeqCnt
 
 			for i := 1; i < len(shapes); i++ {
 				prevShapePtLat := shapes[i-1].ShapePtLat
@@ -363,7 +364,12 @@ func (g gtfsJpDbUseCase) createShapesDetail() error {
 				repeat := int(blockDistance / interval)
 
 				if repeat == 0 {
-					nextShapeDistTraveled := math.Round((shapesDetail[shapePtSeqCnt-1].ShapeDistTraveled)*10) / 10
+					var nextShapeDistTraveled float64
+					if firstPtSeqCnt == 0 {
+						nextShapeDistTraveled = shapesDetail[shapePtSeqCnt].ShapeDistTraveled + 5
+					} else {
+						nextShapeDistTraveled = shapesDetail[shapePtSeqCnt-1].ShapeDistTraveled + 5
+					}
 					shapePtSeqCnt++
 					shapesDetail = append(shapesDetail, model.ShapeDetail{
 						ShapeDetail: gtfsjp.ShapeDetail{
@@ -385,7 +391,13 @@ func (g gtfsJpDbUseCase) createShapesDetail() error {
 					nextLat := t*dLat + prevShapePtLat
 					nextLon := t*dLon + prevShapePtLon
 
-					nextShapeDistTraveled := shapesDetail[shapePtSeqCnt-1].ShapeDistTraveled + 5
+					//shapesのShapePtSequenceが0から始まっている事業者と1から始まっている事業者で
+					var nextShapeDistTraveled float64
+					if firstPtSeqCnt == 0 {
+						nextShapeDistTraveled = shapesDetail[shapePtSeqCnt].ShapeDistTraveled + 5
+					} else {
+						nextShapeDistTraveled = shapesDetail[shapePtSeqCnt-1].ShapeDistTraveled + 5
+					}
 					nextShapeDistTraveled = math.Round(nextShapeDistTraveled*10) / 10
 
 					shapePtSeqCnt++
