@@ -65,6 +65,13 @@ func ParseShapes(path string) ([]Shape, error) {
 		})
 	}
 
+	// shape_pt_sequenceカラムの値が0から始まるように統一する
+	if shapes[0].ShapePtSequence == 1 {
+		for i := range shapes {
+			shapes[i].ShapePtSequence -= 1
+		}
+	}
+
 	return shapes, nil
 }
 
