@@ -93,7 +93,6 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 
 	// マイグレーション, データ挿入
 	if options.Geom {
-		slog.Info("Geomに分岐した")
 		if err = g.gtfsJpGeomRepo.MigrateGtfsJpGeom(); err != nil {
 			return "", err
 		}
@@ -126,7 +125,6 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 			return "", err
 		}
 	} else {
-		slog.Info("Geomに分岐していない")
 		if err = g.gtfsJpRepo.MigrateGtfsJp(); err != nil {
 			return "", err
 		}
@@ -139,7 +137,6 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 			}
 		}
 		if options.ShapesDetail {
-			slog.Info("detailオプションに分岐")
 			if err := g.shapeDetailRepo.MigrateShapesDetail(); err != nil {
 				return "", err
 			}
@@ -318,7 +315,6 @@ func (g gtfsJpDbUseCase) recalculateStopTimesGeom() error {
 
 func (g gtfsJpDbUseCase) createShapesDetail() error {
 	slog.Info("テーブル[shapesDetail] 作成開始 数分かかる場合があります")
-	slog.Info("geomではない、scheduleでもない、detailのメソッドの到着")
 
 	// shapeの間隔
 	interval := 5.0
