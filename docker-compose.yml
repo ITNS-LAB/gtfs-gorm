@@ -1,7 +1,8 @@
 services:
   postgres:
     container_name: orm_postgres
-    image: postgres:latest
+    image: postgis/postgis:latest
+    platform: linux/amd64
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Ns5200ST34b
@@ -10,23 +11,6 @@ services:
       - '5434:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-
-  schemaspy:
-    container_name: schema_spy
-    image: schemaspy/schemaspy:latest
-    depends_on:
-      - postgres
-    environment:
-     -t: pgsql
-     -host: orm_postgres
-     -db: postgres
-     -u: postgres
-     -p: Ns5200ST34b
-    volumes:
-      - ./schemaspy_output:/output
-    ports:
-      - '8080:8080'
 
 volumes:
   pgdata:

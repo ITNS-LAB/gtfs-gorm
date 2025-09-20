@@ -453,7 +453,7 @@ func (s shapeExRepository) UpdateShapesEx(shapeEx []model.ShapeEx) error {
 func (s shapeExRepository) FindShapesExByTripsAndShapes() ([]model.ShapeEx, error) {
 	var shapesEx []model.ShapeEx
 	if err := s.Db.Table("shapes").
-		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id").
+		Select("trips.trip_id, trips.shape_id, shapes.shape_pt_lat, shapes.shape_pt_lon, shapes.shape_pt_sequence, shapes.shape_dist_traveled, NULL AS stop_id, NULL AS shapes_time").
 		Joins("join trips on trips.shape_id = shapes.shape_id").
 		Order("trips.trip_id").
 		Order("shapes.shape_pt_sequence").
@@ -475,10 +475,10 @@ func (s shapeExRepository) FindShapesExByTripId(tripId string) ([]model.ShapeEx,
 	return shapesEx, nil
 }
 
-func (s shapeExRepository) FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error) {
-	var tWSL []model.TripWithStopLocation
+func (s shapeExRepository) FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocationRaw, error) {
+	var tWSL []model.TripWithStopLocationRaw
 	if err := s.Db.Table("stop_times").
-		Select("stop_times.trip_id, stop_times.stop_id, stop_times.stop_sequence, stops.stop_lat, stops.stop_lon").
+		Select("stop_times.trip_id, stop_times.stop_id, stop_times.stop_sequence, stop_times.arrival_time::text, stop_times.departure_time::text, stops.stop_lat, stops.stop_lon").
 		Joins("join stops on stop_times.stop_id = stops.stop_id").
 		Where("trip_id = ?", tripId).
 		Order("stop_sequence").

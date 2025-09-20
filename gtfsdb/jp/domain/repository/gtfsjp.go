@@ -44,7 +44,7 @@ type ShapeExRepository interface {
 	UpdateShapesEx([]model.ShapeEx) error
 	FindShapesExByTripsAndShapes() ([]model.ShapeEx, error)
 	FindShapesExByTripId(tripId string) ([]model.ShapeEx, error)
-	FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocation, error)
+	FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocationRaw, error)
 }
 
 type ShapeExGeomRepository interface {

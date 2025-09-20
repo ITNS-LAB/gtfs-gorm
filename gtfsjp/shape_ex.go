@@ -3,6 +3,8 @@ package gtfsjp
 import (
 	"database/sql"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+	"gorm.io/datatypes"
+	"time"
 )
 
 type ShapeEx struct {
@@ -13,7 +15,19 @@ type ShapeEx struct {
 	ShapePtSequence   int     `gorm:"primaryKey"`
 	ShapeDistTraveled float64
 	StopId            sql.NullString
+	ShapesTime        datatypes.Time
 	Stop              Stop `gorm:"foreignKey:StopId"`
+}
+
+type ShapeExTemp struct {
+	TripId            string  `gorm:"primaryKey"`
+	ShapeId           string  `gorm:"primaryKey"`
+	ShapePtLat        float64 `gorm:"not null"`
+	ShapePtLon        float64 `gorm:"not null"`
+	ShapePtSequence   int     `gorm:"primaryKey"`
+	ShapeDistTraveled float64
+	StopId            sql.NullString
+	ShapesTime        time.Time
 }
 
 func (ShapeEx) TableName() string {

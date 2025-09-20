@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/ITNS-LAB/gtfs-gorm/gtfsjp"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
+	"time"
 )
 
 type GtfsJp struct {
@@ -70,6 +71,10 @@ type ShapeEx struct {
 	gtfsjp.ShapeEx
 }
 
+type ShapeExTemp struct {
+	gtfsjp.ShapeExTemp
+}
+
 type ShapeExGeom struct {
 	gtfsjp.ShapeExGeom
 }
@@ -87,9 +92,21 @@ type StopTime struct {
 }
 
 type TripWithStopLocation struct {
+	TripId        string
+	StopId        string
+	StopSequence  int
+	StopLat       float64
+	StopLon       float64
+	ArrivalTime   time.Time
+	DepartureTime time.Time
+}
+
+type TripWithStopLocationRaw struct {
 	TripId       string
 	StopId       string
 	StopSequence int
+	Arrival      string `gorm:"column:arrival_time"`
+	Departure    string `gorm:"column:departure_time"`
 	StopLat      float64
 	StopLon      float64
 }

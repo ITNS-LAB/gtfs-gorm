@@ -9,11 +9,14 @@ import (
 	"github.com/ITNS-LAB/gtfs-gorm/internal/gormdatatypes"
 	"github.com/ITNS-LAB/gtfs-gorm/internal/util"
 	"github.com/paulmach/orb"
+	"gorm.io/datatypes"
 	"log/slog"
 	"math"
 	"os"
 	"path"
+	"sort"
 	"sync"
+	"time"
 )
 
 type GtfsJpDbUseCase interface {
@@ -562,23 +565,24 @@ func (g gtfsJpDbUseCase) createShapesDetailGeom() error {
 func (g gtfsJpDbUseCase) createShapeEx() error {
 	slog.Info("テーブル[shapes_ex] 作成開始")
 	// stops, stop_timesを結合して作成したshape_exの取得（stop_idの情報はない）
-	tmpShapesEx, err := g.shapeExRepo.FindShapesExByTripsAndShapes()
+	tmpShapesEx, err := g.shapeExRepo.FindShapesExByTripsAndShapes() //trip_idに対応するshapeの情報がくっついたもの
 	if err != nil {
 		return err
 	}
 
-	if err := g.shapeExRepo.CreateShapesEx(tmpShapesEx); err != nil {
+	if err := g.shapeExRepo.CreateShapesEx(tmpShapesEx); err != nil { // さっき作ったshape_exデータをDBに書き込んでいる
 		return err
 	}
 
-	tripIds, err := g.tripRepo.FindTripIds()
+	tripIds, err := g.tripRepo.FindTripIds() // trip_idの一覧を取得
 	if err != nil {
 		return err
 	}
 
 	for _, tripId := range tripIds {
+		var insertShapesExTemp []model.ShapeExTemp
 		var insertShapesEx []model.ShapeEx
-		shapesEx, err := g.shapeExRepo.FindShapesExByTripId(tripId)
+		shapesEx, err := g.shapeExRepo.FindShapesExByTripId(tripId) // さっき作ったshapes_exのテーブルに対してtrip_idを指定してshapes_exデータを取得
 		if err != nil {
 			return err
 		}
@@ -587,15 +591,43 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 			continue
 		}
 
-		stopLocation, err := g.shapeExRepo.FindTripWithStopLocationByTripId(tripId)
+		stopLocationStr, err := g.shapeExRepo.FindTripWithStopLocationByTripId(tripId) //stop_timeにバス停のくっついたデータに対して指定のtrip_idに対応するデータを取得
 		if err != nil {
 			return err
+		}
+
+		var stopLocation []model.TripWithStopLocation
+		for _, r := range stopLocationStr {
+			arrivalTime, _ := time.Parse("15:04:05", r.Arrival)
+			departure, _ := time.Parse("15:04:05", r.Departure)
+
+			stopLocation = append(stopLocation, model.TripWithStopLocation{
+				TripId:        r.TripId,
+				StopId:        r.StopId,
+				StopSequence:  r.StopSequence,
+				StopLat:       r.StopLat,
+				StopLon:       r.StopLon,
+				ArrivalTime:   arrivalTime,
+				DepartureTime: departure,
+			})
+		}
+
+		for _, s := range shapesEx {
+			insertShapesExTemp = append(insertShapesExTemp, model.ShapeExTemp{
+				ShapeExTemp: gtfsjp.ShapeExTemp{
+					TripId:          tripId,
+					ShapeId:         s.ShapeId,
+					ShapePtSequence: s.ShapePtSequence,
+					ShapePtLat:      s.ShapePtLat,
+					ShapePtLon:      s.ShapePtLon,
+				},
+			})
 		}
 
 		shapesLen := len(shapesEx)
 		idx := 0
 
-		for _, stop := range stopLocation {
+		for _, stop := range stopLocation { //shape_exの一行に対してバス停データを緯度経度の距離を見て総当たりで一番近いものを見つけてstop_id情報をくっつける
 			minDist := math.MaxFloat64
 			for i := idx; i < shapesLen; i++ {
 				dist := util.KarneyWgs84(stop.StopLat, stop.StopLon, shapesEx[i].ShapePtLat, shapesEx[i].ShapePtLon)
@@ -608,18 +640,60 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 				}
 			}
 
+			insertShapesExTemp[idx].StopId = sql.NullString{
+				String: stop.StopId,
+				Valid:  true,
+			}
+
+			insertShapesExTemp[idx].ShapesTime = stop.ArrivalTime
+		}
+
+		// ここまででshapes_exデータにarrival_timeとdeparture_timeカラムがくっついたデータができてる
+		sort.Slice(insertShapesExTemp, func(i, j int) bool {
+			return insertShapesExTemp[i].ShapePtSequence < insertShapesExTemp[j].ShapePtSequence
+		})
+
+		firstId := 0
+		secondId := 0
+
+		for i := 1; i < len(insertShapesExTemp); i++ { //insertは更新されたデータしか入っていないから今回の場合はstop_idが入ったデータだけ
+			if insertShapesExTemp[i].StopId.Valid { //stop_idカラムに値が入っている
+				secondId = i
+				shapesNum := secondId - firstId
+
+				if shapesNum == 1 {
+					continue
+				}
+
+				temp := insertShapesExTemp[secondId].ShapesTime.Sub(insertShapesExTemp[firstId].ShapesTime)
+				segment := temp / time.Duration(shapesNum)
+
+				for j := firstId + 1; j < secondId; j++ {
+					insertShapesExTemp[j].ShapesTime = insertShapesExTemp[j-1].ShapesTime.Add(segment)
+				}
+				firstId = secondId
+			}
+		}
+
+		// 仮で作成したinsertShapesExTempからarrival_time、departure_time属性を除いたshape_ex構造体にデータ型を合わせる
+		for i := 0; i < len(insertShapesExTemp); i++ {
+
+			// time.Timeをdatatypes.Time に変換
+			hour, minute, sec := insertShapesExTemp[i].ShapesTime.Clock()
+			nsec := insertShapesExTemp[i].ShapesTime.Nanosecond()
+			shapesTime := datatypes.NewTime(hour, minute, sec, nsec)
+
 			insertShapesEx = append(insertShapesEx, model.ShapeEx{
 				ShapeEx: gtfsjp.ShapeEx{
 					TripId:          tripId,
-					ShapeId:         shapesEx[idx].ShapeId,
-					ShapePtSequence: shapesEx[idx].ShapePtSequence,
-					StopId: sql.NullString{
-						String: stop.StopId,
-						Valid:  true,
-					},
+					ShapeId:         insertShapesExTemp[i].ShapeId,
+					ShapePtSequence: insertShapesExTemp[i].ShapePtSequence,
+					StopId:          insertShapesExTemp[i].StopId,
+					ShapesTime:      shapesTime,
 				},
 			})
 		}
+
 		if err := g.shapeExRepo.UpdateShapesEx(insertShapesEx); err != nil {
 			return err
 		}
