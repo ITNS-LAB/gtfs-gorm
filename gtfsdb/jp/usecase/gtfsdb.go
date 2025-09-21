@@ -662,6 +662,7 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 				shapesNum := secondId - firstId
 
 				if shapesNum == 1 {
+					firstId = secondId
 					continue
 				}
 
