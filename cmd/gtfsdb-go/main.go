@@ -21,6 +21,7 @@ func main() {
 	gtfsFile := flag.String("file", "", "GTFSのファイルパス")
 	shapesEx := flag.Bool("shapesex", false, "shapes_exテーブルの作成")
 	shapesDetail := flag.Bool("shapesdetail", false, "shapes_detailテーブルの作成")
+	shapesDeatilEx := flag.Bool("shapesdetailex", false, "shapes_detail_exテーブルの作成")
 	geom := flag.Bool("geom", false, "geomカラムにgeomを格納")
 	recalculateDist := flag.Bool("recal", false, "'shape_dist_traveled'を再計算")
 	dsn := flag.String("dsn", "", "Required: postgresのdsn 例)postgres://hoge:hoge@localhost:5432/hoge")
@@ -34,6 +35,7 @@ func main() {
 		GtfsFile:        *gtfsFile,
 		ShapesEx:        *shapesEx,
 		ShapesDetail:    *shapesDetail,
+		ShapesDetailEx:  *shapesDeatilEx,
 		Geom:            *geom,
 		RecalculateDist: *recalculateDist,
 		Dsn:             *dsn,

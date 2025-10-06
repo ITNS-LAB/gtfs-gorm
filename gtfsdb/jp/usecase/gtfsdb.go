@@ -155,7 +155,13 @@ func (g gtfsJpDbUseCase) GtfsDbFile(options CmdOptions) (digest string, err erro
 				return "", err
 			}
 		}
-
+		if options.ShapesDetailEx {
+			if err := g.shapeExRepo.MigrateShapesDetailEx(); err != nil {
+				return "", err
+			}
+			if err := g.createShapeDetailEx(); err != nil {
+			}
+		}
 	}
 
 	return "", err
@@ -591,13 +597,13 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 			continue
 		}
 
-		stopLocationStr, err := g.shapeExRepo.FindTripWithStopLocationByTripId(tripId) //stop_timeにバス停のくっついたデータに対して指定のtrip_idに対応するデータを取得
+		stopLocationStr, err := g.shapeExRepo.FindTripWithStopLocationByTripId(tripId) //stop_timeに緯度経度データがくっついたデータを取得
 		if err != nil {
 			return err
 		}
 
 		var stopLocation []model.TripWithStopLocation
-		for _, r := range stopLocationStr {
+		for _, r := range stopLocationStr { // stopLocationのarrivaltimeとdepaturetimeをtime型に変えてるだけ
 			arrivalTime, _ := time.Parse("15:04:05", r.Arrival)
 			departure, _ := time.Parse("15:04:05", r.Departure)
 
@@ -612,7 +618,7 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 			})
 		}
 
-		for _, s := range shapesEx {
+		for _, s := range shapesEx { // このデータにバス停データをくっつける
 			insertShapesExTemp = append(insertShapesExTemp, model.ShapeExTemp{
 				ShapeExTemp: gtfsjp.ShapeExTemp{
 					TripId:          tripId,
@@ -627,7 +633,7 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 		shapesLen := len(shapesEx)
 		idx := 0
 
-		for _, stop := range stopLocation { //shape_exの一行に対してバス停データを緯度経度の距離を見て総当たりで一番近いものを見つけてstop_id情報をくっつける
+		for _, stop := range stopLocation { //バス停データ１つに対してshapeデータ全てを見て距離が一番近いものを対応させていく
 			minDist := math.MaxFloat64
 			for i := idx; i < shapesLen; i++ {
 				dist := util.KarneyWgs84(stop.StopLat, stop.StopLon, shapesEx[i].ShapePtLat, shapesEx[i].ShapePtLon)
@@ -640,23 +646,22 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 				}
 			}
 
-			insertShapesExTemp[idx].StopId = sql.NullString{
+			insertShapesExTemp[idx].StopId = sql.NullString{ // 書き込み用データにバス停データ時刻データを追加する
 				String: stop.StopId,
 				Valid:  true,
 			}
-
-			insertShapesExTemp[idx].ShapesTime = stop.ArrivalTime
+			insertShapesExTemp[idx].ShapesTime = stop.ArrivalTime //shapestimeはarrivaltimeにしている
 		}
 
-		// ここまででshapes_exデータにarrival_timeとdeparture_timeカラムがくっついたデータができてる
-		sort.Slice(insertShapesExTemp, func(i, j int) bool {
+		// ここまででshapes_exデータにarrival_timeとdeparture_timeカラムがくっついた書き込み用データができてる
+		sort.Slice(insertShapesExTemp, func(i, j int) bool { //sequenceで昇順に並び替えている
 			return insertShapesExTemp[i].ShapePtSequence < insertShapesExTemp[j].ShapePtSequence
 		})
 
 		firstId := 0
 		secondId := 0
 
-		for i := 1; i < len(insertShapesExTemp); i++ { //insertは更新されたデータしか入っていないから今回の場合はstop_idが入ったデータだけ
+		for i := 1; i < len(insertShapesExTemp); i++ {
 			if insertShapesExTemp[i].StopId.Valid { //stop_idカラムに値が入っている
 				secondId = i
 				shapesNum := secondId - firstId
@@ -676,9 +681,8 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 			}
 		}
 
-		// 仮で作成したinsertShapesExTempからarrival_time、departure_time属性を除いたshape_ex構造体にデータ型を合わせる
+		// shapesTimeをdatetype型のデータに変更し、shape_ex構造体にデータ構造を合わせる
 		for i := 0; i < len(insertShapesExTemp); i++ {
-
 			// time.Timeをdatatypes.Time に変換
 			hour, minute, sec := insertShapesExTemp[i].ShapesTime.Clock()
 			nsec := insertShapesExTemp[i].ShapesTime.Nanosecond()
@@ -700,6 +704,146 @@ func (g gtfsJpDbUseCase) createShapeEx() error {
 		}
 	}
 	slog.Info("テーブル[shapes_ex] 作成完了")
+	return nil
+}
+
+func (g gtfsJpDbUseCase) createShapeDetailEx() error {
+	slog.Info("テーブル[shapes_detail_ex] 作成開始")
+	tmpShapeDetailEx, err := g.shapeExRepo.FindShapesDetailByTripsAndShapes() //shapes_detailにtrip_idカラムがくっついたデータ
+	if err != nil {
+		return err
+	}
+
+	if err := g.shapeExRepo.CreateShapeDetailEx(tmpShapeDetailEx); err != nil {
+		return err
+	}
+
+	tripIds, err := g.tripRepo.FindTripIds() // trip_idの一覧を取得
+	if err != nil {
+		return err
+	}
+
+	for _, tripId := range tripIds {
+		var insertShapesDetailExTemp []model.ShapeDetailExTemp
+		var insertShapesDetailEx []model.ShapeDetailEx
+		shapeDetailEx, err := g.shapeExRepo.FindShapesDetailExByTripId(tripId)
+		if err != nil {
+			return err
+		}
+		if len(shapeDetailEx) == 0 {
+			slog.Warn(fmt.Sprintf("trip_id: %sのshapesが存在しないためスキップします", tripId))
+			continue
+		}
+
+		stopLocationStr, err := g.shapeExRepo.FindTripWithStopLocationByTripId(tripId) //stop_timeに緯度経度データがくっついたデータを取得
+		if err != nil {
+			return err
+		}
+
+		var stopLocation []model.TripWithStopLocation
+		for _, r := range stopLocationStr { // stopLocationのarrivaltimeとdepaturetimeをtime型に変えてるだけ
+			arrivalTime, _ := time.Parse("15:04:05", r.Arrival)
+			departure, _ := time.Parse("15:04:05", r.Departure)
+
+			stopLocation = append(stopLocation, model.TripWithStopLocation{
+				TripId:        r.TripId,
+				StopId:        r.StopId,
+				StopSequence:  r.StopSequence,
+				StopLat:       r.StopLat,
+				StopLon:       r.StopLon,
+				ArrivalTime:   arrivalTime,
+				DepartureTime: departure,
+			})
+		}
+
+		for _, s := range shapeDetailEx { // このデータにバス停データをくっつける
+			insertShapesDetailExTemp = append(insertShapesDetailExTemp, model.ShapeDetailExTemp{
+				ShapeDetailExTemp: gtfsjp.ShapeDetailExTemp{
+					TripId:                tripId,
+					ShapeId:               s.ShapeId,
+					ShapeDetailPtSequence: s.ShapeDetailPtSequence,
+					ShapePtLat:            s.ShapePtLat,
+					ShapePtLon:            s.ShapePtLon,
+				},
+			})
+		}
+
+		shapesLen := len(shapeDetailEx)
+		idx := 0
+
+		for _, stop := range stopLocation {
+			minDist := math.MaxFloat64
+			for i := idx; i < shapesLen; i++ {
+				dist := util.KarneyWgs84(stop.StopLat, stop.StopLon, shapeDetailEx[i].ShapePtLat, shapeDetailEx[i].ShapePtLon)
+				if dist < minDist {
+					minDist = dist
+					idx = i
+				}
+				if minDist <= 0 {
+					break
+				}
+			}
+
+			insertShapesDetailExTemp[idx].StopId = sql.NullString{ // 書き込み用データにバス停データ時刻データを追加する
+				String: stop.StopId,
+				Valid:  true,
+			}
+			insertShapesDetailExTemp[idx].ShapesTime = stop.ArrivalTime //shapestimeはarrivaltimeにしている
+		}
+
+		// ここまででshapes_exデータにarrival_timeとdeparture_timeカラムがくっついた書き込み用データができてる
+		sort.Slice(insertShapesDetailExTemp, func(i, j int) bool { //sequenceで昇順に並び替えている
+			return insertShapesDetailExTemp[i].ShapeDetailPtSequence < insertShapesDetailExTemp[j].ShapeDetailPtSequence
+		})
+
+		firstId := 0
+		secondId := 0
+
+		for i := 1; i < len(insertShapesDetailExTemp); i++ {
+			if insertShapesDetailExTemp[i].StopId.Valid { //stop_idカラムに値が入っている
+				secondId = i
+				shapesNum := secondId - firstId
+
+				if shapesNum == 1 {
+					firstId = secondId
+					continue
+				}
+
+				temp := insertShapesDetailExTemp[secondId].ShapesTime.Sub(insertShapesDetailExTemp[firstId].ShapesTime)
+				segment := temp / time.Duration(shapesNum)
+
+				for j := firstId + 1; j < secondId; j++ {
+					insertShapesDetailExTemp[j].ShapesTime = insertShapesDetailExTemp[j-1].ShapesTime.Add(segment)
+				}
+				firstId = secondId
+			}
+		}
+
+		// shapesTimeをdatetype型のデータに変更し、shape_ex構造体にデータ構造を合わせる
+		for i := 0; i < len(insertShapesDetailExTemp); i++ {
+			// time.Timeをdatatypes.Time に変換
+			hour, minute, sec := insertShapesDetailExTemp[i].ShapesTime.Clock()
+			nsec := insertShapesDetailExTemp[i].ShapesTime.Nanosecond()
+			shapesTime := datatypes.NewTime(hour, minute, sec, nsec)
+
+			insertShapesDetailEx = append(insertShapesDetailEx, model.ShapeDetailEx{
+				ShapeDetailEx: gtfsjp.ShapeDetailEx{
+					TripId:                tripId,
+					ShapeId:               insertShapesDetailExTemp[i].ShapeId,
+					ShapeDetailPtSequence: insertShapesDetailExTemp[i].ShapeDetailPtSequence,
+					StopId:                insertShapesDetailExTemp[i].StopId,
+					ShapesTime:            shapesTime,
+				},
+			})
+		}
+
+		if err := g.shapeExRepo.UpdateShapesDetailEx(insertShapesDetailEx); err != nil {
+			return err
+		}
+
+	}
+
+	slog.Info("テーブル[shapes_detail_ex] 作成完了")
 	return nil
 }
 
@@ -855,6 +999,7 @@ type CmdOptions struct {
 	GtfsFile        string
 	ShapesEx        bool
 	ShapesDetail    bool
+	ShapesDetailEx  bool
 	Geom            bool
 	RecalculateDist bool
 	Dsn             string

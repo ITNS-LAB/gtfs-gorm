@@ -40,10 +40,15 @@ type ShapeGeomRepository interface {
 
 type ShapeExRepository interface {
 	MigrateShapesEx() error
+	MigrateShapesDetailEx() error
 	CreateShapesEx([]model.ShapeEx) error
+	CreateShapeDetailEx([]model.ShapeDetailEx) error
 	UpdateShapesEx([]model.ShapeEx) error
+	UpdateShapesDetailEx(shapeDetailEx []model.ShapeDetailEx) error
 	FindShapesExByTripsAndShapes() ([]model.ShapeEx, error)
+	FindShapesDetailByTripsAndShapes() ([]model.ShapeDetailEx, error)
 	FindShapesExByTripId(tripId string) ([]model.ShapeEx, error)
+	FindShapesDetailExByTripId(tripId string) ([]model.ShapeDetailEx, error)
 	FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocationRaw, error)
 }
 

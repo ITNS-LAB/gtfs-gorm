@@ -87,6 +87,14 @@ type ShapeDetailGeom struct {
 	gtfsjp.ShapeDetailGeom
 }
 
+type ShapeDetailEx struct {
+	gtfsjp.ShapeDetailEx
+}
+
+type ShapeDetailExTemp struct {
+	gtfsjp.ShapeDetailExTemp
+}
+
 type StopTime struct {
 	gtfsjp.StopTime
 }

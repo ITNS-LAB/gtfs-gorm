@@ -422,8 +422,22 @@ func (s shapeExRepository) MigrateShapesEx() error {
 	return nil
 }
 
+func (s shapeExRepository) MigrateShapesDetailEx() error {
+	if err := s.Db.AutoMigrate(&model.ShapeDetailEx{}); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s shapeExRepository) CreateShapesEx(shapesEx []model.ShapeEx) error {
 	if err := s.Db.CreateInBatches(&shapesEx, 1000).Error; err != nil {
+		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
+	}
+	return nil
+}
+
+func (s shapeExRepository) CreateShapeDetailEx(shapesDetailEx []model.ShapeDetailEx) error {
+	if err := s.Db.CreateInBatches(&shapesDetailEx, 1000).Error; err != nil {
 		return fmt.Errorf("データベースへの挿入に失敗しました。%s", err)
 	}
 	return nil
@@ -450,6 +464,27 @@ func (s shapeExRepository) UpdateShapesEx(shapeEx []model.ShapeEx) error {
 	return nil
 }
 
+func (s shapeExRepository) UpdateShapesDetailEx(shapeDetailEx []model.ShapeDetailEx) error {
+	tx := s.Db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	for _, shapeDetailEx := range shapeDetailEx {
+		if result := tx.Model(&model.ShapeDetailEx{}).
+			Where("trip_id = ? AND shape_id = ? AND shape_detail_pt_sequence = ?", shapeDetailEx.TripId, shapeDetailEx.ShapeId, shapeDetailEx.ShapeDetailPtSequence).
+			Updates(shapeDetailEx); result.Error != nil {
+			tx.Rollback() // エラーが発生したらロールバック
+			return result.Error
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s shapeExRepository) FindShapesExByTripsAndShapes() ([]model.ShapeEx, error) {
 	var shapesEx []model.ShapeEx
 	if err := s.Db.Table("shapes").
@@ -463,6 +498,19 @@ func (s shapeExRepository) FindShapesExByTripsAndShapes() ([]model.ShapeEx, erro
 	return shapesEx, nil
 }
 
+func (s shapeExRepository) FindShapesDetailByTripsAndShapes() ([]model.ShapeDetailEx, error) {
+	var shapesDetailEx []model.ShapeDetailEx
+	if err := s.Db.Table("shapes_detail").
+		Select("trips.trip_id, trips.shape_id, shapes_detail.shape_pt_lat, shapes_detail.shape_pt_lon, shapes_detail.shape_detail_pt_sequence, shapes_detail.shape_dist_traveled, NULL AS stop_id, NULL AS shapes_time").
+		Joins("join trips on trips.shape_id = shapes_detail.shape_id").
+		Order("trips.trip_id").
+		Order("shapes_detail.shape_detail_pt_sequence").
+		Scan(&shapesDetailEx).Error; err != nil {
+		return shapesDetailEx, err
+	}
+	return shapesDetailEx, nil
+}
+
 func (s shapeExRepository) FindShapesExByTripId(tripId string) ([]model.ShapeEx, error) {
 	var shapesEx []model.ShapeEx
 	if err := s.Db.Table("shapes_ex").
@@ -473,6 +521,18 @@ func (s shapeExRepository) FindShapesExByTripId(tripId string) ([]model.ShapeEx,
 		return shapesEx, err
 	}
 	return shapesEx, nil
+}
+
+func (s shapeExRepository) FindShapesDetailExByTripId(tripId string) ([]model.ShapeDetailEx, error) {
+	var shapesDetailEx []model.ShapeDetailEx
+	if err := s.Db.Table("shapes_detail_ex").
+		Select("trip_id, shape_id, shape_pt_lat, shape_pt_lon, shape_detail_pt_sequence, shape_dist_traveled, stop_id").
+		Where("trip_id = ?", tripId).
+		Order("shape_detail_pt_sequence").
+		Scan(&shapesDetailEx).Error; err != nil {
+		return shapesDetailEx, err
+	}
+	return shapesDetailEx, nil
 }
 
 func (s shapeExRepository) FindTripWithStopLocationByTripId(tripId string) ([]model.TripWithStopLocationRaw, error) {
