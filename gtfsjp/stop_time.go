@@ -6,10 +6,14 @@ import (
 	"gorm.io/datatypes"
 )
 
-type StopTime struct {
-	TripId            string         `gorm:"primaryKey"`
-	ArrivalTime       datatypes.Time `gorm:"index;not null"`
-	DepartureTime     datatypes.Time `gorm:"index;not null"`
+type StopTimeTemp struct {
+	TripId        string `gorm:"primaryKey"`
+	ArrivalTime   string `gorm:"index;not null"`
+	DepartureTime string `gorm:"index;not null"`
+	/*
+		ArrivalTime       datatypes.Time `gorm:"index;not null"`
+		DepartureTime     datatypes.Time `gorm:"index;not null"`
+	*/
 	StopId            string
 	StopSequence      int `gorm:"primaryKey"`
 	StopHeadsign      *string
@@ -25,6 +29,21 @@ func (StopTime) TableName() string {
 	return "stop_times"
 }
 
+type StopTime struct {
+	TripId            string         `gorm:"primaryKey"`
+	ArrivalTime       datatypes.Time `gorm:"index;not null"`
+	DepartureTime     datatypes.Time `gorm:"index;not null"`
+	StopId            string
+	StopSequence      int `gorm:"primaryKey"`
+	StopHeadsign      *string
+	PickupType        *int `gorm:"default:0"`
+	DropOffType       *int `gorm:"default:0"`
+	ContinuousPickup  *int `gorm:"default:1"`
+	ContinuousDropOff *int `gorm:"default:1"`
+	ShapeDistTraveled *float64
+	Timepoint         *int `gorm:"default:1"` // Not used in Japan (GTFS-JP)
+}
+
 func ParseStopTimes(path string) ([]StopTime, error) {
 	// CSV を開く
 	df, err := csvutil.OpenCSV(path)
@@ -33,22 +52,35 @@ func ParseStopTimes(path string) ([]StopTime, error) {
 	}
 
 	// データを解析して StopTime 構造体のスライスを作成
-	var stopTimes []StopTime
+	var stopTimes []StopTimeTemp
 	for i := 0; i < len(df.Records); i++ {
 		tripId, err := df.GetString(i, "trip_id")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'trip_id' at row %d: %w", i, err)
 		}
 
-		arrivalTime, err := df.GetTime(i, "arrival_time")
+		arrivalTime, err := df.GetString(i, "arrival_time")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'arrival_time' at row %d: %w", i, err)
 		}
 
-		departureTime, err := df.GetTime(i, "departure_time")
+		departureTime, err := df.GetString(i, "departure_time")
 		if err != nil {
 			return nil, fmt.Errorf("failed to get 'departure_time' at row %d: %w", i, err)
 		}
+
+		// stop_timeのhour out of rangeへの一時的な対処
+		/*
+			arrivalTime, err := df.GetTime(i, "arrival_time")
+			if err != nil {
+				return nil, fmt.Errorf("failed to get 'arrival_time' at row %d: %w", i, err)
+			}
+
+			departureTime, err := df.GetTime(i, "departure_time")
+			if err != nil {
+				return nil, fmt.Errorf("failed to get 'departure_time' at row %d: %w", i, err)
+			}
+		*/
 
 		stopId, err := df.GetString(i, "stop_id")
 		if err != nil {
@@ -96,7 +128,7 @@ func ParseStopTimes(path string) ([]StopTime, error) {
 		}
 
 		// StopTime 構造体を作成しリストに追加
-		stopTimes = append(stopTimes, StopTime{
+		stopTimes = append(stopTimes, StopTimeTemp{
 			TripId:            tripId,
 			ArrivalTime:       arrivalTime,
 			DepartureTime:     departureTime,
@@ -112,7 +144,44 @@ func ParseStopTimes(path string) ([]StopTime, error) {
 		})
 	}
 
-	return stopTimes, nil
+	// 構造体から路線がドリーミントの部分だけを取り除く処理をして返す。
+	var stop_time_filtered []StopTime
+	for _, stopTime := range stopTimes {
+		if stopTime.TripId == "土日祝_17時55分_系統901" ||
+			stopTime.TripId == "平日_17時55分_系統901" ||
+			stopTime.TripId == "土日祝_19時20分_系統905" ||
+			stopTime.TripId == "平日_19時20分_系統905" {
+			continue
+		}
+		var h, m, s int
+		_, err := fmt.Sscanf(stopTime.ArrivalTime, "%d:%d:%d", &h, &m, &s)
+		if err != nil {
+			return nil, err
+		}
+		arrival := datatypes.NewTime(h, m, s, 0)
+		_, err = fmt.Sscanf(stopTime.DepartureTime, "%d:%d:%d", &h, &m, &s)
+		if err != nil {
+			return nil, err
+		}
+		departure := datatypes.NewTime(h, m, s, 0)
+
+		stop_time_filtered = append(stop_time_filtered, StopTime{
+			TripId:            stopTime.TripId,
+			ArrivalTime:       arrival,
+			DepartureTime:     departure,
+			StopId:            stopTime.StopId,
+			StopSequence:      stopTime.StopSequence,
+			StopHeadsign:      stopTime.StopHeadsign,
+			PickupType:        stopTime.PickupType,
+			DropOffType:       stopTime.DropOffType,
+			ContinuousPickup:  stopTime.ContinuousPickup,
+			ContinuousDropOff: stopTime.ContinuousDropOff,
+			ShapeDistTraveled: stopTime.ShapeDistTraveled,
+			Timepoint:         stopTime.Timepoint,
+		})
+	}
+
+	return stop_time_filtered, nil
 }
 
 type StopTimeGeom struct {
